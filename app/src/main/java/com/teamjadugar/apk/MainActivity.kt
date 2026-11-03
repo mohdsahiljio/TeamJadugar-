@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
+import android.util.Base64
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -14,11 +15,14 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
     companion object {
         var userKey: String = "" 
         var userExpiry: String = ""
+        private const val SECRET_KEY = "JadugarSecretKey1234567890123456" // 32 bytes for AES-256
     }
     
     private lateinit var prefs: SharedPreferences
@@ -29,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         prefs = getSharedPreferences("JadugarPrefs", MODE_PRIVATE)
-        userKey = prefs.getString("saved_key", "") ?: ""
+        userKey = decrypt(prefs.getString("saved_key", "") ?: "")
         userExpiry = prefs.getString("saved_expiry", "") ?: ""
 
         val etKey = findViewById<EditText>(R.id.etKey)
@@ -42,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         tvDeviceId.text = "Device ID: $deviceId"
 
         if (userKey.isNotEmpty()) {
-            // Already Logged In - Show Dashboard
             etKey.visibility = EditText.GONE
             btnVerify.visibility = Button.GONE
             tvTimer.visibility = TextView.VISIBLE
@@ -57,9 +60,7 @@ class MainActivity : AppCompatActivity() {
                     stopService(Intent(this, FloatingService::class.java))
                 }
             }
-
         } else {
-            // Not Logged In - Show Redeem
             tvTimer.visibility = TextView.GONE
             switchFloating.visibility = Switch.GONE
             
@@ -84,24 +85,24 @@ class MainActivity : AppCompatActivity() {
             if (timeLeft > 0) {
                 timer = object : CountDownTimer(timeLeft, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
-                        val hours = (millisUntilFinished / (1000 * 60 * 60)) % 24
-                        val minutes = (millisUntilFinished / (1000 * 60)) % 60
-                        val seconds = (millisUntilFinished / 1000) % 60
-                        tvTimer.text = String.format("TIME LEFT: %02d:%02d:%02d", hours, minutes, seconds)
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#22C55E"))
+                        val h = (millisUntilFinished / (1000 * 60 * 60)) % 24
+                        val m = (millisUntilFinished / (1000 * 60)) % 60
+                        val s = (millisUntilFinished / 1000) % 60
+                        tvTimer.text = String.format("ACTIVE: %02d:%02d:%02d", h, m, s)
+                        tvTimer.setTextColor(android.graphics.Color.parseColor("#00FFCC"))
                     }
                     override fun onFinish() {
-                        tvTimer.text = "KEY EXPIRED"
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                        tvTimer.text = "ACCESS EXPIRED"
+                        tvTimer.setTextColor(android.graphics.Color.parseColor("#FF003C"))
                         prefs.edit().clear().apply()
                     }
                 }.start()
             } else {
-                tvTimer.text = "KEY EXPIRED"
-                tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                tvTimer.text = "ACCESS EXPIRED"
+                tvTimer.setTextColor(android.graphics.Color.parseColor("#FF003C"))
             }
         } catch (e: Exception) {
-            tvTimer.text = "Time not available"
+            tvTimer.text = "Time Error"
         }
     }
 
@@ -120,28 +121,24 @@ class MainActivity : AppCompatActivity() {
                 val jsonInputString = """{"key": "$key", "device_id": "$deviceId"}"""
                 conn.outputStream.use { os -> os.write(jsonInputString.toByteArray()) }
 
-                val responseCode = conn.responseCode
-                if (responseCode == 200) {
-                    val response = conn.inputStream.bufferedReader().readText()
-                    val json = JSONObject(response)
-                    
+                if (conn.responseCode == 200) {
+                    val json = JSONObject(conn.inputStream.bufferedReader().readText())
                     if (json.getBoolean("valid")) {
                         userKey = key 
                         userExpiry = json.optString("expires_at", "")
                         
-                        prefs.edit().putString("saved_key", userKey).apply()
+                        // Saving Encrypted Key
+                        prefs.edit().putString("saved_key", encrypt(userKey)).apply()
                         prefs.edit().putString("saved_expiry", userExpiry).apply()
                         
                         runOnUiThread {
-                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            // Intent use kar rahe hain recreate ki jagah
+                            Toast.makeText(this, "Access Granted!", Toast.LENGTH_SHORT).show()
                             val intent = intent
                             finish()
                             startActivity(intent)
                         }
                     } else {
-                        val msg = json.optString("msg", "Invalid Key")
-                        runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_LONG).show() }
+                        runOnUiThread { Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() }
                     }
                 }
             } catch (e: Exception) {
@@ -150,34 +147,37 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun encrypt(data: String): String {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
+        return Base64.encodeToString(cipher.doFinal(data.toByteArray()), Base64.DEFAULT)
+    }
+
+    private fun decrypt(data: String): String {
+        if (data.isEmpty()) return ""
+        return try {
+            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
+            cipher.init(Cipher.DECRYPT_MODE, keySpec)
+            String(cipher.doFinal(Base64.decode(data, Base64.DEFAULT)))
+        } catch (e: Exception) { "" }
+    }
+
     private fun checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-            startActivityForResult(intent, 101)
+            startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
-            startFloatingService()
+            startService(Intent(this, FloatingService::class.java))
+            finish()
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingService()
-            } else {
-                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show()
-            }
+        if (requestCode == 101 && Settings.canDrawOverlays(this)) {
+            startService(Intent(this, FloatingService::class.java))
+            finish()
         }
-    }
-
-    private fun startFloatingService() {
-        startService(Intent(this, FloatingService::class.java))
-        Toast.makeText(this, "Floating Panel ON", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-    
-    override fun onDestroy() {
-        super.onDestroy()
-        timer?.cancel()
     }
 }
