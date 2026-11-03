@@ -3,6 +3,7 @@ package com.teamjadugar.apk
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
             switchFloating.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    checkPermissions()
+                    checkVpnPermission()
                 } else {
                     stopService(Intent(this, FloatingService::class.java))
                 }
@@ -71,7 +72,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkPermissions() {
+    private fun checkVpnPermission() {
+        val intent = VpnService.prepare(this)
+        if (intent != null) {
+            startActivityForResult(intent, 102)
+        } else {
+            checkOverlayPermission()
+        }
+    }
+
+    private fun checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
@@ -149,8 +159,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101 && Settings.canDrawOverlays(this)) {
-            startFloatingService()
+        if (requestCode == 102) {
+            if (resultCode == RESULT_OK) {
+                checkOverlayPermission()
+            } else {
+                Toast.makeText(this, "VPN Permission Denied!", Toast.LENGTH_SHORT).show()
+                findViewById<Switch>(R.id.switchFloating).isChecked = false
+            }
+        } else if (requestCode == 101) {
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingService()
+            } else {
+                Toast.makeText(this, "Overlay Permission Denied!", Toast.LENGTH_SHORT).show()
+                findViewById<Switch>(R.id.switchFloating).isChecked = false
+            }
         }
     }
 
