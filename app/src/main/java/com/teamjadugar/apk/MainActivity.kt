@@ -33,7 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun verifyKey(key: String) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val panelUrl = "http://13.211.179.172:5000/connect/init" // TERA VPS IP
+        // TERA VPS IP YAHAN HAI
+        val panelUrl = "http://13.211.179.172:5000/connect/init" 
 
         Thread {
             try {
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity() {
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
                 conn.doOutput = true
+                conn.connectTimeout = 10000
+                conn.readTimeout = 10000
 
                 val jsonInputString = """{"key": "$key", "device_id": "$deviceId"}"""
                 conn.outputStream.use { os -> os.write(jsonInputString.toByteArray()) }
@@ -60,9 +63,11 @@ class MainActivity : AppCompatActivity() {
                         val msg = json.optString("msg", "Invalid Key")
                         runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_LONG).show() }
                     }
+                } else {
+                     runOnUiThread { Toast.makeText(this, "Server Error: $responseCode", Toast.LENGTH_LONG).show() }
                 }
             } catch (e: Exception) {
-                runOnUiThread { Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show() }
+                runOnUiThread { Toast.makeText(this, "Network Error: Check VPS or Port 5000", Toast.LENGTH_LONG).show() }
             }
         }.start()
     }
