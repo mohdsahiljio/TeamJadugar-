@@ -43,11 +43,8 @@ class VpnService : VpnService() {
                         val ipPacket = buffer.copyOf(length)
                         val ipPort = parseBgmiPacket(ipPacket)
                         if (ipPort != null) {
-                            // Yahan hum IP aur PORT alag karke bhej rahe hain
                             val parts = ipPort.split(":")
-                            val ip = parts[0]
-                            val port = parts[1]
-                            FloatingService.onIpFound(ip, port)
+                            FloatingService.onIpFound(parts[0], parts[1])
                             stopVpn() 
                             break
                         } else {
