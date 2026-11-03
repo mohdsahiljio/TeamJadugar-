@@ -134,7 +134,10 @@ class MainActivity : AppCompatActivity() {
                         
                         runOnUiThread {
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            recreate() 
+                            // Intent use kar rahe hain recreate ki jagah
+                            val intent = intent
+                            finish()
+                            startActivity(intent)
                         }
                     } else {
                         val msg = json.optString("msg", "Invalid Key")
