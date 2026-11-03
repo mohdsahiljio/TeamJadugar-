@@ -2,77 +2,122 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#05030B"
-    android:padding="30dp">
+    android:background="#050505"
+    android:padding="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TEAM JADUGAR"
-        android:textColor="#D946EF"
-        android:textSize="32sp"
-        android:textStyle="bold"
+    <!-- BACKGROUND GRADIENT -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0A0710"/>
+
+    <!-- LOGO -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:shadowColor="#D946EF"
+        android:src="@drawable/ic_launcher"
+        android:background="@drawable/logo_circle_clip"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="TEAM JADUGAR"
+        android:textColor="#FBBF24"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:shadowColor="#FBBF24"
         android:shadowDx="0"
         android:shadowDy="0"
-        android:shadowRadius="15"/>
+        android:shadowRadius="10"/>
 
-    <TextView
-        android:id="@+id/tvTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:textColor="#22C55E"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/tvDeviceId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvTimer"
-        android:layout_centerHorizontal="true"
-        android:textColor="#888888"
-        android:textSize="12sp"
-        android:layout_marginTop="10dp"/>
-
-    <EditText
-        android:id="@+id/etKey"
+    <!-- TIMER & DETAILS (Visible after login) -->
+    <LinearLayout
+        android:id="@+id/layoutDashboard"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:hint="ENTER YOUR KEY"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#666666"
+        android:orientation="vertical"
         android:gravity="center"
-        android:background="#0A0710"
-        android:padding="10dp"/>
+        android:visibility="gone">
 
-    <Button
-        android:id="@+id/btnVerify"
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00d 00h 00m 00s"
+            android:textColor="#22C55E"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace"/>
+
+        <TextView
+            android:id="@+id/tvExpiryDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expires on: Friday, 12 Dec 2026"
+            android:textColor="#D1D5DB"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/tvDeviceId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device: 1234567890"
+            android:textColor="#6B7280"
+            android:textSize="12sp"
+            android:layout_marginTop="15dp"/>
+
+        <Switch
+            android:id="@+id/switchFloating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="LAUNCH FLOATING PANEL"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:thumbTint="#FBBF24"
+            android:trackTint="#4B5563"/>
+    </LinearLayout>
+
+    <!-- LOGIN SECTION (Visible before login) -->
+    <LinearLayout
+        android:id="@+id/layoutLogin"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_below="@id/etKey"
-        android:layout_marginTop="20dp"
-        android:text="ACCESS PANEL"
-        android:backgroundTint="#D946EF"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
-
-    <Switch
-        android:id="@+id/switchFloating"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvDeviceId"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="FLOATING WINDOW"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:visibility="gone"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etKey"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="ENTER YOUR LICENSE KEY"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#4B5563"
+            android:gravity="center"
+            android:background="#1F2937"
+            android:padding="10dp"
+            android:textSize="16sp"/>
+
+        <Button
+            android:id="@+id/btnVerify"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="ACCESS DASHBOARD"
+            android:backgroundTint="#FBBF24"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+    </LinearLayout>
 
 </RelativeLayout>
