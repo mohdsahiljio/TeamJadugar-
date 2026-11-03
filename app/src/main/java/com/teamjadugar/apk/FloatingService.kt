@@ -118,8 +118,9 @@ class FloatingService : Service() {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                // Tera API key encrypt kiya hua hai
-                val encryptedKey = "QkFTRTY0X0FFU19FTkNSWVBURURfS0VZX0ZPUl9URUFNX0pBRFVHQVJfUFJFTUlVTV9TUEVDVEVS"
+                
+                // TERA ENCRYPTED API KEY (Decrypts to sp_live_065a318078f3efc19e0be720102e9a7e)
+                val encryptedKey = "dDNad1gyeHBkbVZmTURZMVlUTXhPREEzT0dZelpXWmpNVGxsTUdKbE56SXdNVEF5WlRsaE4yVT0="
                 val apiKey = decryptData(encryptedKey)
 
                 val url = URL(apiUrl)
@@ -151,10 +152,9 @@ class FloatingService : Service() {
         }.start()
     }
 
-    // AES Decryption Function
     private fun decryptData(encryptedData: String): String {
         return try {
-            val secretKey = "JadugarSecretKey1234567890123456" // 32 bytes for AES-256
+            val secretKey = "JadugarSecretKey1234567890123456" 
             val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
             val keySpec = SecretKeySpec(secretKey.toByteArray(), "AES")
             cipher.init(Cipher.DECRYPT_MODE, keySpec)
