@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
-import android.util.Base64
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -15,14 +15,11 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
     companion object {
         var userKey: String = "" 
         var userExpiry: String = ""
-        private const val SECRET_KEY = "JadugarSecretKey1234567890123456" // 32 bytes for AES-256
     }
     
     private lateinit var prefs: SharedPreferences
@@ -33,12 +30,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         prefs = getSharedPreferences("JadugarPrefs", MODE_PRIVATE)
-        userKey = decrypt(prefs.getString("saved_key", "") ?: "")
+        userKey = prefs.getString("saved_key", "") ?: ""
         userExpiry = prefs.getString("saved_expiry", "") ?: ""
 
+        val layoutLogin = findViewById<LinearLayout>(R.id.layoutLogin)
+        val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
         val etKey = findViewById<EditText>(R.id.etKey)
         val btnVerify = findViewById<Button>(R.id.btnVerify)
         val tvTimer = findViewById<TextView>(R.id.tvTimer)
+        val tvExpiryDate = findViewById<TextView>(R.id.tvExpiryDate)
         val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
         val switchFloating = findViewById<Switch>(R.id.switchFloating)
 
@@ -46,12 +46,9 @@ class MainActivity : AppCompatActivity() {
         tvDeviceId.text = "Device ID: $deviceId"
 
         if (userKey.isNotEmpty()) {
-            etKey.visibility = EditText.GONE
-            btnVerify.visibility = Button.GONE
-            tvTimer.visibility = TextView.VISIBLE
-            switchFloating.visibility = Switch.VISIBLE
-            
-            startExpiryTimer(userExpiry, tvTimer)
+            layoutLogin.visibility = LinearLayout.GONE
+            layoutDashboard.visibility = LinearLayout.VISIBLE
+            startExpiryTimer(userExpiry, tvTimer, tvExpiryDate)
 
             switchFloating.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -61,8 +58,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         } else {
-            tvTimer.visibility = TextView.GONE
-            switchFloating.visibility = Switch.GONE
+            layoutLogin.visibility = LinearLayout.VISIBLE
+            layoutDashboard.visibility = LinearLayout.GONE
             
             btnVerify.setOnClickListener {
                 val key = etKey.text.toString().trim()
@@ -75,31 +72,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startExpiryTimer(expiryStr: String, tvTimer: TextView) {
+    private fun startExpiryTimer(expiryStr: String, tvTimer: TextView, tvDate: TextView) {
         try {
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
+            
+            // Format Date for Display (e.g., Friday, 12 Dec 2026)
+            val displayFormat = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.US)
+            tvDate.text = "Expires on: ${displayFormat.format(expiryDate)}"
+
             val timeLeft = expiryDate.time - System.currentTimeMillis()
 
             if (timeLeft > 0) {
                 timer = object : CountDownTimer(timeLeft, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
-                        val h = (millisUntilFinished / (1000 * 60 * 60)) % 24
-                        val m = (millisUntilFinished / (1000 * 60)) % 60
-                        val s = (millisUntilFinished / 1000) % 60
-                        tvTimer.text = String.format("ACTIVE: %02d:%02d:%02d", h, m, s)
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#00FFCC"))
+                        val d = (millisUntilFinished / (1000 * 60 * 60 * 24)).toInt()
+                        val h = ((millisUntilFinished / (1000 * 60 * 60)) % 24).toInt()
+                        val m = ((millisUntilFinished / (1000 * 60)) % 60).toInt()
+                        val s = ((millisUntilFinished / 1000) % 60).toInt()
+                        tvTimer.text = String.format("%02dd %02dh %02dm %02ds", d, h, m, s)
                     }
                     override fun onFinish() {
-                        tvTimer.text = "ACCESS EXPIRED"
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#FF003C"))
+                        tvTimer.text = "EXPIRED"
+                        tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                         prefs.edit().clear().apply()
                     }
                 }.start()
             } else {
-                tvTimer.text = "ACCESS EXPIRED"
-                tvTimer.setTextColor(android.graphics.Color.parseColor("#FF003C"))
+                tvTimer.text = "EXPIRED"
+                tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
             }
         } catch (e: Exception) {
             tvTimer.text = "Time Error"
@@ -127,12 +129,11 @@ class MainActivity : AppCompatActivity() {
                         userKey = key 
                         userExpiry = json.optString("expires_at", "")
                         
-                        // Saving Encrypted Key
-                        prefs.edit().putString("saved_key", encrypt(userKey)).apply()
+                        prefs.edit().putString("saved_key", userKey).apply()
                         prefs.edit().putString("saved_expiry", userExpiry).apply()
                         
                         runOnUiThread {
-                            Toast.makeText(this, "Access Granted!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
                             val intent = intent
                             finish()
                             startActivity(intent)
@@ -145,23 +146,6 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show() }
             }
         }.start()
-    }
-
-    private fun encrypt(data: String): String {
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-        val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec)
-        return Base64.encodeToString(cipher.doFinal(data.toByteArray()), Base64.DEFAULT)
-    }
-
-    private fun decrypt(data: String): String {
-        if (data.isEmpty()) return ""
-        return try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-            val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
-            cipher.init(Cipher.DECRYPT_MODE, keySpec)
-            String(cipher.doFinal(Base64.decode(data, Base64.DEFAULT)))
-        } catch (e: Exception) { "" }
     }
 
     private fun checkOverlayPermission() {
@@ -179,5 +163,10 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(this, FloatingService::class.java))
             finish()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
     }
 }
