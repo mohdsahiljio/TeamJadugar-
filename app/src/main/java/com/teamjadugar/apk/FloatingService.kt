@@ -1,10 +1,8 @@
 package com.teamjadugar.apk
 
-import android.app.Activity
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.net.VpnService
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -119,23 +117,14 @@ class FloatingService : Service() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        // YAHAN HAI VPN PERMISSION KA SCENE
         btnGetIp.setOnClickListener {
             tvLog.text = "> REQUESTING VPN..."
             btnGetIp.text = "WAIT..."
-            
-            // Check VPN Permission
-            val intent = VpnService.prepare(this)
-            if (intent != null) {
-                // Permission nahi hai, popup dikhao
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                tvLog.text = "> ALLOW VPN IN POPUP"
-                btnGetIp.text = "ALLOW VPN!"
-            } else {
-                // Permission pehle se hai
-                startVpnService()
-            }
+            val intent = Intent(this, VpnPermissionActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            btnGetIp.text = "SNIFFING..."
+            btnGetIp.isEnabled = false
         }
 
         btnVpnOff.setOnClickListener {
@@ -161,13 +150,6 @@ class FloatingService : Service() {
         }
 
         setupPanelDragAndResize()
-    }
-
-    fun startVpnService() {
-        tvLog.text = "> SNIFFING BGMI..."
-        btnGetIp.text = "SNIFFING..."
-        btnGetIp.isEnabled = false
-        startService(Intent(this, VpnService::class.java))
     }
 
     private var initialX = 0
@@ -211,10 +193,8 @@ class FloatingService : Service() {
                 MotionEvent.ACTION_MOVE -> {
                     val newWidth = initialWidth + (event.rawX - initialTouchX).toInt()
                     val newHeight = initialHeight + (event.rawY - initialTouchY).toInt()
-                    
                     paramsPanel.width = if (newWidth > 300) newWidth else 300
                     paramsPanel.height = if (newHeight > 200) newHeight else WindowManager.LayoutParams.WRAP_CONTENT
-                    
                     windowManager.updateViewLayout(floatingView, paramsPanel)
                     true
                 }
@@ -252,9 +232,7 @@ class FloatingService : Service() {
                     true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (!isBubbleDragging) {
-                        bubbleView.performClick()
-                    }
+                    if (!isBubbleDragging) bubbleView.performClick()
                     true
                 }
                 else -> false
