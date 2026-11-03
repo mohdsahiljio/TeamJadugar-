@@ -28,7 +28,6 @@
             android:name=".FloatingService" 
             android:exported="false" />
 
-        <!-- Yahan foregroundServiceType add kiya hai -->
         <service 
             android:name=".VpnService" 
             android:exported="false" 
