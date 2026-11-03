@@ -26,6 +26,8 @@ class VpnService : VpnService() {
             builder.addRoute("0.0.0.0", 0)
             builder.setSession("Jadugar Sniffer")
             
+            builder.setBlocking(false) 
+
             vpnInterface = builder.establish()
             isRunning = true
 
@@ -40,7 +42,6 @@ class VpnService : VpnService() {
                         if (length > 0) {
                             val packet = buffer.copyOf(length)
                             
-                            // Check for IP
                             val ipPort = parseBgmiPacket(packet)
                             if (ipPort != null) {
                                 val parts = ipPort.split(":")
@@ -48,7 +49,7 @@ class VpnService : VpnService() {
                                 stopVpn() 
                                 break
                             }
-                            // Forward traffic so game doesn't hang
+                            
                             output.write(packet)
                         }
                     }
@@ -65,26 +66,24 @@ class VpnService : VpnService() {
     private fun parseBgmiPacket(packet: ByteArray): String? {
         if (packet.size < 28) return null
         
-        // IPv4 Check
-        if (((packet[0].toInt() shr 4) and 0xF) != 4) return null
+        val version = (packet[0].toInt() shr 4) and 0xF
+        if (version != 4) return null
         
-        // UDP Check
-        if ((packet[9].toInt() and 0xFF) != 17) return null
+        val protocol = packet[9].toInt() and 0xFF
+        if (protocol != 17) return null
 
         val headerLen = (packet[0].toInt() and 0xF) * 4
         if (packet.size < headerLen + 8) return null
 
-        // Get Destination Port
         val dstPort = ((packet[headerLen + 2].toInt() and 0xFF) shl 8) or (packet[headerLen + 3].toInt() and 0xFF)
         
-        // Get Destination IP
+        if (dstPort <= 10000 || dstPort >= 30000) return null
+        if (dstPort == 17001 || dstPort == 20000 || dstPort == 20001 || dstPort == 20002) return null
+
         val dstIp = "${packet[16].toInt() and 0xFF}.${packet[17].toInt() and 0xFF}.${packet[18].toInt() and 0xFF}.${packet[19].toInt() and 0xFF}"
         
-        // Ignore local IPs
         if (dstIp.startsWith("10.") || dstIp.startsWith("192.168.") || dstIp.startsWith("172.") || dstIp == "127.0.0.1") return null
-        if (dstIp == "0.0.0.0") return null
 
-        // Return any UDP packet that is NOT local
         return "$dstIp:$dstPort"
     }
 
