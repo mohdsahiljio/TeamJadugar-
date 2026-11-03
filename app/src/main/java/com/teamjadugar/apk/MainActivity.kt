@@ -94,8 +94,10 @@ class MainActivity : AppCompatActivity() {
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
+            
             val displayFormat = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.US)
             tvDate.text = "Expires on: ${displayFormat.format(expiryDate)}"
+
             val timeLeft = expiryDate.time - System.currentTimeMillis()
 
             if (timeLeft > 0) {
@@ -109,11 +111,17 @@ class MainActivity : AppCompatActivity() {
                     }
                     override fun onFinish() {
                         tvTimer.text = "EXPIRED"
+                        tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                         prefs.edit().clear().apply()
                     }
                 }.start()
+            } else {
+                tvTimer.text = "EXPIRED"
+                tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
             }
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+            tvTimer.text = "Time Error"
+        }
     }
 
     private fun verifyKey(key: String) {
