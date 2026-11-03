@@ -3,6 +3,7 @@ package com.teamjadugar.apk
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.net.VpnService
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -120,11 +121,14 @@ class FloatingService : Service() {
         btnGetIp.setOnClickListener {
             tvLog.text = "> REQUESTING VPN..."
             btnGetIp.text = "WAIT..."
-            val intent = Intent(this, VpnPermissionActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            btnGetIp.text = "SNIFFING..."
-            btnGetIp.isEnabled = false
+            
+            val intent = VpnService.prepare(this)
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            } else {
+                startVpn()
+            }
         }
 
         btnVpnOff.setOnClickListener {
@@ -150,6 +154,13 @@ class FloatingService : Service() {
         }
 
         setupPanelDragAndResize()
+    }
+
+    fun startVpn() {
+        tvLog.text = "> SNIFFING BGMI..."
+        btnGetIp.text = "SNIFFING..."
+        btnGetIp.isEnabled = false
+        startService(Intent(this, VpnService::class.java))
     }
 
     private var initialX = 0
