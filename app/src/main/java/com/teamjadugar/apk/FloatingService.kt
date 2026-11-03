@@ -6,7 +6,6 @@ import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Base64
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -15,8 +14,6 @@ import android.view.WindowManager
 import android.widget.*
 import java.net.HttpURLConnection
 import java.net.URL
-import javax.crypto.Cipher
-import javax.crypto.spec.SecretKeySpec
 
 class FloatingService : Service() {
     private lateinit var windowManager: WindowManager
@@ -242,8 +239,9 @@ class FloatingService : Service() {
             var conn: HttpURLConnection? = null
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                val encryptedKey = "dDNad1gyeHBkbVZmTURZMVlUTXhPREEzT0dZelpXWmpNVGxsTUdKbE56SXdNVEF5WlRsaE4yVT0="
-                val apiKey = decryptData(encryptedKey)
+                
+                // DIRECT API KEY (No Decryption needed)
+                val apiKey = "sp_live_065a318078f3efc19e0be720102e9a7e"
 
                 var finalIp = ip
                 var finalPort = port
@@ -300,16 +298,6 @@ class FloatingService : Service() {
                 conn?.disconnect()
             }
         }.start()
-    }
-
-    private fun decryptData(encryptedData: String): String {
-        return try {
-            val secretKey = "JadugarSecretKey1234567890123456" 
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-            val keySpec = SecretKeySpec(secretKey.toByteArray(), "AES")
-            cipher.init(Cipher.DECRYPT_MODE, keySpec)
-            String(cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT)))
-        } catch (e: Exception) { "" }
     }
 
     override fun onDestroy() {
