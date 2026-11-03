@@ -3,7 +3,6 @@ package com.teamjadugar.apk
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -52,8 +51,7 @@ class MainActivity : AppCompatActivity() {
 
             switchFloating.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    // PEHLE VPN PERMISSION MAANGO
-                    checkVpnAndOverlayPermission()
+                    checkPermissions()
                 } else {
                     stopService(Intent(this, FloatingService::class.java))
                 }
@@ -73,41 +71,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkVpnAndOverlayPermission() {
-        // 1. VPN Permission Check
-        val vpnIntent = VpnService.prepare(this)
-        if (vpnIntent != null) {
-            startActivityForResult(vpnIntent, 102)
-        } else {
-            checkOverlayPermission()
-        }
-    }
-
-    private fun checkOverlayPermission() {
-        // 2. Overlay Permission Check
+    private fun checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
             startFloatingService()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 102) {
-            if (resultCode == RESULT_OK) {
-                checkOverlayPermission()
-            } else {
-                Toast.makeText(this, "VPN Permission Denied!", Toast.LENGTH_SHORT).show()
-                findViewById<Switch>(R.id.switchFloating).isChecked = false
-            }
-        } else if (requestCode == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingService()
-            } else {
-                Toast.makeText(this, "Overlay Permission Denied!", Toast.LENGTH_SHORT).show()
-                findViewById<Switch>(R.id.switchFloating).isChecked = false
-            }
         }
     }
 
@@ -116,10 +84,8 @@ class MainActivity : AppCompatActivity() {
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
-            
             val displayFormat = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.US)
             tvDate.text = "Expires on: ${displayFormat.format(expiryDate)}"
-
             val timeLeft = expiryDate.time - System.currentTimeMillis()
 
             if (timeLeft > 0) {
@@ -133,17 +99,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     override fun onFinish() {
                         tvTimer.text = "EXPIRED"
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                         prefs.edit().clear().apply()
                     }
                 }.start()
-            } else {
-                tvTimer.text = "EXPIRED"
-                tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
             }
-        } catch (e: Exception) {
-            tvTimer.text = "Time Error"
-        }
+        } catch (e: Exception) {}
     }
 
     private fun verifyKey(key: String) {
@@ -157,7 +117,6 @@ class MainActivity : AppCompatActivity() {
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
                 conn.doOutput = true
-
                 val jsonInputString = """{"key": "$key", "device_id": "$deviceId"}"""
                 conn.outputStream.use { os -> os.write(jsonInputString.toByteArray()) }
 
@@ -166,10 +125,8 @@ class MainActivity : AppCompatActivity() {
                     if (json.getBoolean("valid")) {
                         userKey = key 
                         userExpiry = json.optString("expires_at", "")
-                        
                         prefs.edit().putString("saved_key", userKey).apply()
                         prefs.edit().putString("saved_expiry", userExpiry).apply()
-                        
                         runOnUiThread {
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
                             val intent = intent
@@ -180,9 +137,7 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread { Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() }
                     }
                 }
-            } catch (e: Exception) {
-                runOnUiThread { Toast.makeText(this, "Network Error!", Toast.LENGTH_SHORT).show() }
-            }
+            } catch (e: Exception) {}
         }.start()
     }
 
@@ -190,6 +145,13 @@ class MainActivity : AppCompatActivity() {
         startService(Intent(this, FloatingService::class.java))
         Toast.makeText(this, "Floating Panel ON", Toast.LENGTH_SHORT).show()
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 101 && Settings.canDrawOverlays(this)) {
+            startFloatingService()
+        }
     }
 
     override fun onDestroy() {
