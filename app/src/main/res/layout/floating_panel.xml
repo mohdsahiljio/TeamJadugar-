@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#0A0710"
+    android:padding="16dp"
+    android:elevation="10dp"
+    android:backgroundTint="#0A0710">
+
+    <!-- HEADER -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TEAM JADUGAR"
+        android:textColor="#D946EF"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:shadowColor="#D946EF"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="10"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22C55E"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- IP INPUT -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TARGET IP"
+        android:textColor="#A855F7"
+        android:textSize="10sp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/fEtIp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter Game IP (e.g. 10.1.1.1)"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#666666"
+        android:background="#15102A"
+        android:padding="12dp"
+        android:layout_marginTop="5dp"
+        android:inputType="text"/>
+
+    <!-- GET IP BUTTON -->
+    <Button
+        android:id="@+id/fBtnGetIp"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="🎯 GET BGMI IP"
+        android:backgroundTint="#A855F7"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"/>
+
+    <!-- VPN STATUS -->
+    <TextView
+        android:id="@+id/fTvVpnStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="VPN: OFF"
+        android:textColor="#EF4444"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="8dp"/>
+
+    <!-- TIME SLIDER -->
+    <TextView
+        android:id="@+id/fTvTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TIME: 60s"
+        android:textColor="#22C55E"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="15dp"/>
+    
+    <SeekBar
+        android:id="@+id/fSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="240"
+        android:progress="0"
+        android:progressTint="#D946EF"
+        android:thumbTint="#D946EF"
+        android:layout_marginTop="5dp"/>
+
+    <!-- ATTACK BUTTON -->
+    <Button
+        android:id="@+id/fBtnAttack"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="🚀 START ATTACK"
+        android:backgroundTint="#EF4444"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>
