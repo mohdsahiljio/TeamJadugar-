@@ -121,7 +121,7 @@ class FloatingService : Service() {
             tvLog.text = "> SNIFFING BGMI..."
             btnGetIp.text = "SNIFFING..."
             btnGetIp.isEnabled = false
-            // Direct VPN start (Permission pehle hi le li gayi hai)
+            // Direct VPN start
             startService(Intent(this, VpnService::class.java))
         }
 
