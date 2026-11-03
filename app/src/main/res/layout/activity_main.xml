@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#05030B"
+    android:padding="30dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TEAM JADUGAR"
+        android:textColor="#D946EF"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:shadowColor="#D946EF"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="15"/>
+
+    <EditText
+        android:id="@+id/etKey"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_centerInParent="true"
+        android:hint="ENTER YOUR KEY"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#666666"
+        android:gravity="center"
+        android:background="#0A0710"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_below="@id/etKey"
+        android:layout_marginTop="20dp"
+        android:text="ACCESS PANEL"
+        android:backgroundTint="#D946EF"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
