@@ -17,11 +17,9 @@ class VpnService : VpnService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isRunning) {
-            // Foreground service start karo taaki Android app ko kill na kare
             createNotificationChannel()
             val notification = createNotification()
             startForeground(1, notification)
-            
             startVpn()
         }
         return START_STICKY
