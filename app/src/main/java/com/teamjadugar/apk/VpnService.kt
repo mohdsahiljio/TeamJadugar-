@@ -1,8 +1,13 @@
 package com.teamjadugar.apk
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.net.VpnService
+import android.os.Build
 import android.os.ParcelFileDescriptor
+import androidx.core.app.NotificationCompat
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -11,7 +16,14 @@ class VpnService : VpnService() {
     private var isRunning = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (!isRunning) startVpn()
+        if (!isRunning) {
+            // Foreground service start karo taaki Android app ko kill na kare
+            createNotificationChannel()
+            val notification = createNotification()
+            startForeground(1, notification)
+            
+            startVpn()
+        }
         return START_STICKY
     }
 
@@ -66,11 +78,32 @@ class VpnService : VpnService() {
         return "$dstIp:$dstPort"
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "vpn_channel",
+                "VPN Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this, "vpn_channel")
+            .setContentTitle("Team Jadugar")
+            .setContentText("Sniffing BGMI IP...")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
+    }
+
     private fun stopVpn() {
         isRunning = false
         try {
             vpnInterface?.close()
             vpnInterface = null
+            stopForeground(true)
             stopSelf()
         } catch (e: Exception) {}
     }
