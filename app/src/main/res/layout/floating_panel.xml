@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="320dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="#0A0710"
-    android:padding="16dp"
-    android:elevation="12dp">
+    android:padding="12dp"
+    android:elevation="10dp">
 
-    <!-- HEADER -->
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
@@ -16,7 +15,6 @@
         android:gravity="center_vertical"
         android:layout_marginBottom="12dp">
         
-        <!-- APK LOGO -->
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -53,103 +51,115 @@
             android:textSize="18sp"/>
     </LinearLayout>
 
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#333333" android:layout_marginBottom="16dp"/>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#333333" android:layout_marginBottom="12dp"/>
 
-    <!-- TARGET -->
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TARGET ENDPOINT" android:textColor="#FBBF24" android:textSize="10sp" android:textStyle="bold"/>
-    <LinearLayout
+    <!-- SCROLLVIEW ADD KIYA HAI -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="6dp">
-        <EditText
-            android:id="@+id/fEtIp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="2"
-            android:hint="IP ADDRESS"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#4B5563"
-            android:background="#1F2937"
-            android:padding="12dp"
-            android:layout_marginEnd="6dp"
-            android:fontFamily="monospace"
-            android:inputType="text"/>
-        <EditText
-            android:id="@+id/fEtPort"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:hint="PORT"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#4B5563"
-            android:background="#1F2937"
-            android:padding="12dp"
-            android:fontFamily="monospace"
-            android:inputType="number"/>
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:fillViewport="true">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <!-- TIMER -->
-    <TextView android:id="@+id/fTvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DURATION: 120s" android:textColor="#FFFFFF" android:textSize="12sp" android:layout_marginTop="16dp"/>
-    <SeekBar
-        android:id="@+id/fSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="240"
-        android:progress="60"
-        android:progressTint="#FBBF24"
-        android:thumbTint="#FBBF24"
-        android:layout_marginTop="6dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TARGET ENDPOINT" android:textColor="#FBBF24" android:textSize="10sp" android:textStyle="bold"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
+                <EditText
+                    android:id="@+id/fEtIp"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="2"
+                    android:hint="IP ADDRESS"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#4B5563"
+                    android:background="#1F2937"
+                    android:padding="12dp"
+                    android:layout_marginEnd="6dp"
+                    android:fontFamily="monospace"
+                    android:inputType="text"/>
+                <EditText
+                    android:id="@+id/fEtPort"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:hint="PORT"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#4B5563"
+                    android:background="#1F2937"
+                    android:padding="12dp"
+                    android:fontFamily="monospace"
+                    android:inputType="number"/>
+            </LinearLayout>
 
-    <!-- BUTTONS -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
-        <Button
-            android:id="@+id/fBtnGetIp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="GET IP"
-            android:backgroundTint="#1F2937"
-            android:textColor="#FBBF24"
-            android:textStyle="bold"
-            android:layout_marginEnd="6dp"/>
-        <Button
-            android:id="@+id/fBtnVpnOff"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="VPN OFF"
-            android:backgroundTint="#1F2937"
-            android:textColor="#EF4444"
-            android:textStyle="bold"
-            android:layout_marginStart="6dp"/>
-    </LinearLayout>
+            <TextView android:id="@+id/fTvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DURATION: 120s" android:textColor="#FFFFFF" android:textSize="12sp" android:layout_marginTop="16dp"/>
+            <SeekBar
+                android:id="@+id/fSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="240"
+                android:progress="60"
+                android:progressTint="#FBBF24"
+                android:thumbTint="#FBBF24"
+                android:layout_marginTop="6dp"/>
 
-    <Button
-        android:id="@+id/fBtnAttack"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="LAUNCH 🚀"
-        android:backgroundTint="#FBBF24"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+                <Button
+                    android:id="@+id/fBtnGetIp"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="GET IP"
+                    android:backgroundTint="#1F2937"
+                    android:textColor="#FBBF24"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="6dp"/>
+                <Button
+                    android:id="@+id/fBtnVpnOff"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="VPN OFF"
+                    android:backgroundTint="#1F2937"
+                    android:textColor="#EF4444"
+                    android:textStyle="bold"
+                    android:layout_marginStart="6dp"/>
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvLog"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="> SYSTEM READY"
-        android:textColor="#22C55E"
-        android:fontFamily="monospace"
-        android:layout_marginTop="12dp"
-        android:textSize="11sp"
-        android:gravity="center"/>
+            <Button
+                android:id="@+id/fBtnAttack"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="LAUNCH 🚀"
+                android:backgroundTint="#FBBF24"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/tvLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="> SYSTEM READY"
+                android:textColor="#22C55E"
+                android:fontFamily="monospace"
+                android:layout_marginTop="12dp"
+                android:textSize="11sp"
+                android:gravity="center"/>
+        </LinearLayout>
+    </ScrollView>
 
     <!-- RESIZE HANDLE -->
     <ImageView
