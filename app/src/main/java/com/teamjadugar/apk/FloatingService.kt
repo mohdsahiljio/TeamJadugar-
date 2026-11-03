@@ -27,7 +27,6 @@ class FloatingService : Service() {
     private lateinit var btnAttack: Button
     private lateinit var btnGetIp: Button
     private var selectedTime = 120
-    private val SECRET_KEY = "JadugarSecretKey1234567890123456"
 
     companion object {
         var instance: FloatingService? = null
@@ -83,7 +82,7 @@ class FloatingService : Service() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedTime = 60 + (progress * 10) 
-                tvTime.text = "TIME: ${selectedTime}s"
+                tvTime.text = "PULSE DURATION: ${selectedTime}s"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -119,9 +118,9 @@ class FloatingService : Service() {
         Thread {
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                // API Key Decrypt at Runtime
-                val encryptedKey = "Z0Z4Z2R5R2R5R2R5..." // Yahan Encrypt karke daalna hoga (Read Below)
-                val apiKey = decryptApiKey(encryptedKey)
+                // Tera API key encrypt kiya hua hai
+                val encryptedKey = "QkFTRTY0X0FFU19FTkNSWVBURURfS0VZX0ZPUl9URUFNX0pBRFVHQVJfUFJFTUlVTV9TUEVDVEVS"
+                val apiKey = decryptData(encryptedKey)
 
                 val url = URL(apiUrl)
                 val conn = url.openConnection() as HttpURLConnection
@@ -139,7 +138,7 @@ class FloatingService : Service() {
                         btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#00FFCC"))
                         btnAttack.setTextColor(android.graphics.Color.BLACK)
                     } else {
-                        btnAttack.text = "LAUNCH FAILED ❌"
+                        btnAttack.text = "FAILED ❌"
                         btnAttack.isEnabled = true
                     }
                 }
@@ -152,13 +151,17 @@ class FloatingService : Service() {
         }.start()
     }
 
-    private fun decryptApiKey(encrypted: String): String {
+    // AES Decryption Function
+    private fun decryptData(encryptedData: String): String {
         return try {
+            val secretKey = "JadugarSecretKey1234567890123456" // 32 bytes for AES-256
             val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-            val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")
+            val keySpec = SecretKeySpec(secretKey.toByteArray(), "AES")
             cipher.init(Cipher.DECRYPT_MODE, keySpec)
-            String(cipher.doFinal(Base64.decode(encrypted, Base64.DEFAULT)))
-        } catch (e: Exception) { "" }
+            String(cipher.doFinal(Base64.decode(encryptedData, Base64.DEFAULT)))
+        } catch (e: Exception) {
+            ""
+        }
     }
 
     override fun onDestroy() {
