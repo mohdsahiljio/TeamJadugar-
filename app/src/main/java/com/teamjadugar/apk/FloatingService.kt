@@ -42,10 +42,10 @@ class FloatingService : Service() {
             Handler(Looper.getMainLooper()).post {
                 etIpRef?.setText(ip)
                 etPortRef?.setText(port)
-                btnGetIpRef?.text = "IP CAUGHT ✅"
+                btnGetIpRef?.text = "IP FOUND ✅"
                 btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                 btnGetIpRef?.setTextColor(android.graphics.Color.BLACK)
-                Toast.makeText(instance, "BGMI IP Found!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(instance, "BGMI IP Caught: $ip", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -102,6 +102,9 @@ class FloatingService : Service() {
             windowManager.addView(bubbleView, paramsBubble)
         }
 
+        // Bubble Drag Logic
+        setupBubbleDrag()
+        
         bubbleView.setOnClickListener {
             windowManager.removeView(bubbleView)
             windowManager.addView(floatingView, paramsPanel)
@@ -151,7 +154,7 @@ class FloatingService : Service() {
             executeAttack(ip, port, selectedTime)
         }
 
-        setupDragAndResize()
+        setupPanelDragAndResize()
     }
 
     private var initialX = 0
@@ -159,7 +162,7 @@ class FloatingService : Service() {
     private var initialTouchX = 0f
     private var initialTouchY = 0f
 
-    private fun setupDragAndResize() {
+    private fun setupPanelDragAndResize() {
         val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
         header.setOnTouchListener { _, event ->
             when (event.action) {
@@ -200,6 +203,45 @@ class FloatingService : Service() {
                     paramsPanel.height = if (newHeight > 200) newHeight else WindowManager.LayoutParams.WRAP_CONTENT
                     
                     windowManager.updateViewLayout(floatingView, paramsPanel)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private var bubbleInitialX = 0
+    private var bubbleInitialY = 0
+    private var bubbleInitialTouchX = 0f
+    private var bubbleInitialTouchY = 0f
+    private var isBubbleDragging = false
+
+    private fun setupBubbleDrag() {
+        bubbleView.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    bubbleInitialX = paramsBubble.x
+                    bubbleInitialY = paramsBubble.y
+                    bubbleInitialTouchX = event.rawX
+                    bubbleInitialTouchY = event.rawY
+                    isBubbleDragging = false
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = event.rawX - bubbleInitialTouchX
+                    val dy = event.rawY - bubbleInitialTouchY
+                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                        isBubbleDragging = true
+                        paramsBubble.x = bubbleInitialX + dx.toInt()
+                        paramsBubble.y = bubbleInitialY + dy.toInt()
+                        windowManager.updateViewLayout(bubbleView, paramsBubble)
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (!isBubbleDragging) {
+                        bubbleView.performClick()
+                    }
                     true
                 }
                 else -> false
