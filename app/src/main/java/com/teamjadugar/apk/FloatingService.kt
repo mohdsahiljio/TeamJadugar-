@@ -1,5 +1,6 @@
 package com.teamjadugar.apk
 
+import android.app.Activity
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -102,7 +103,6 @@ class FloatingService : Service() {
             windowManager.addView(bubbleView, paramsBubble)
         }
 
-        // Bubble Drag Logic
         setupBubbleDrag()
         
         bubbleView.setOnClickListener {
@@ -119,16 +119,22 @@ class FloatingService : Service() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
+        // YAHAN HAI VPN PERMISSION KA SCENE
         btnGetIp.setOnClickListener {
-            tvLog.text = "> SNIFFING VPN..."
-            btnGetIp.text = "SNIFFING..."
-            btnGetIp.isEnabled = false
+            tvLog.text = "> REQUESTING VPN..."
+            btnGetIp.text = "WAIT..."
+            
+            // Check VPN Permission
             val intent = VpnService.prepare(this)
             if (intent != null) {
+                // Permission nahi hai, popup dikhao
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
+                tvLog.text = "> ALLOW VPN IN POPUP"
+                btnGetIp.text = "ALLOW VPN!"
             } else {
-                startService(Intent(this, VpnService::class.java))
+                // Permission pehle se hai
+                startVpnService()
             }
         }
 
@@ -155,6 +161,13 @@ class FloatingService : Service() {
         }
 
         setupPanelDragAndResize()
+    }
+
+    fun startVpnService() {
+        tvLog.text = "> SNIFFING BGMI..."
+        btnGetIp.text = "SNIFFING..."
+        btnGetIp.isEnabled = false
+        startService(Intent(this, VpnService::class.java))
     }
 
     private var initialX = 0
