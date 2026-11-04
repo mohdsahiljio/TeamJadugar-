@@ -1,16 +1,24 @@
 package com.teamjadugar.apk
 
+import android.app.AlertDialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Environment
 import android.provider.Settings
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import org.json.JSONObject
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -24,6 +32,10 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
         private const val SECRET_SIGNATURE_KEY = "SPECTRE_SECURE_2026"
+        
+        // 🩸 APNA GITHUB USERNAME AUR REPO NAME YAHAN DAAL
+        private const val GITHUB_USER = "mohdsahiljio"
+        private const val GITHUB_REPO = "TeamJadugar-"
     }
 
     private lateinit var prefs: SharedPreferences
@@ -33,13 +45,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
 
+    private var downloadID: Long = 0
+    private var updateUrl: String = ""
+
+    // 🩸 Download Complete Receiver
+    private val onDownloadComplete = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (id == downloadID) {
+                installAPK()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 🛡️ ROOT/EMULATOR CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             setContentView(TextView(this).apply {
-                text = "SECURITY VIOLATION DETECTED.\nApp cannot run on Rooted/Emulator devices."
+                text = "SECURITY VIOLATION DETECTED."
                 textSize = 18f
                 setTextColor(android.graphics.Color.RED)
                 gravity = android.view.Gravity.CENTER
@@ -48,6 +72,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
+
+        // 🩸 Update Check
+        checkForUpdates()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        }
 
         prefs = getSharedPreferences("JadugarPrefs", MODE_PRIVATE)
         userKey = prefs.getString("saved_key", "") ?: ""
@@ -87,7 +120,75 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🛡️ LIVE CHECK (Jab app background se wapas aaye)
+    private fun checkForUpdates() {
+        Thread {
+            try {
+                val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                val currentVersionName = packageInfo.versionName ?: "1.0" 
+
+                val url = URL("https://api.github.com/repos/$GITHUB_USER/$GITHUB_REPO/releases/latest")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+
+                if (conn.responseCode == 200) {
+                    val response = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(response)
+                    
+                    val latestVersion = json.optString("tag_name", "1.0").replace("v", "").trim()
+                    val downloadLink = json.optJSONArray("assets")?.optJSONObject(0)?.optString("browser_download_url", "")
+                    
+                    if (latestVersion != currentVersionName && latestVersion > currentVersionName && !downloadLink.isNullOrEmpty()) {
+                        updateUrl = downloadLink
+                        runOnUiThread { showUpdateDialog(latestVersion) }
+                    }
+                }
+            } catch (e: Exception) {}
+        }.start()
+    }
+
+    private fun showUpdateDialog(newVersion: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("🚀 Update Available (v$newVersion)")
+        builder.setMessage("A new version of SPECTRE API is available. Click UPDATE to download.")
+        builder.setCancelable(false)
+        builder.setPositiveButton("UPDATE NOW") { _, _ -> downloadAndInstallAPK() }
+        builder.show()
+    }
+
+    private fun downloadAndInstallAPK() {
+        val request = DownloadManager.Request(Uri.parse(updateUrl))
+            .setTitle("SPECTRE API Update")
+            .setDescription("Downloading new version...")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "update.apk")
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true)
+
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+        downloadID = downloadManager.enqueue(request)
+        Toast.makeText(this, "Downloading Update...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun installAPK() {
+        val file = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "update.apk")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!packageManager.canRequestPackageInstalls()) {
+                startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).setData(Uri.parse("package:$packageName")))
+                Toast.makeText(this, "Please allow install from unknown sources and try again.", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(FileProvider.getUriForFile(this@MainActivity, "$packageName.provider", file), "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+    }
+
     override fun onResume() {
         super.onResume()
         if (userKey.isNotEmpty() && layoutDashboard.visibility == LinearLayout.VISIBLE) {
@@ -118,8 +219,6 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 5000; conn.readTimeout = 5000
 
                 val body = JSONObject().apply { put("key", userKey); put("device_id", deviceId) }.toString()
-                
-                // 🩸 HMAC SIGNATURE
                 conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
@@ -165,8 +264,6 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                
-                // 🩸 HMAC SIGNATURE
                 conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
@@ -241,9 +338,7 @@ class MainActivity : AppCompatActivity() {
                 tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
                 tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
             }
-            override fun onFinish() {
-                logoutAndShowError("Key Expired. Please buy a new one.")
-            }
+            override fun onFinish() { logoutAndShowError("Key Expired. Please buy a new one.") }
         }.start()
     }
 
@@ -288,5 +383,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() { 
         super.onDestroy()
         timer?.cancel()
+        try { unregisterReceiver(onDownloadComplete) } catch (e: Exception) {}
     }
 }
