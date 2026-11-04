@@ -16,10 +16,10 @@
         android:layout_marginBottom="12dp">
         
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/ic_launcher"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="10dp"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -32,7 +32,7 @@
                 android:text="TEAM JADUGAR"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textSize="16sp"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,15 +43,18 @@
                     android:layout_height="wrap_content"
                     android:text="SLOTS: 0/10"
                     android:textColor="#00E5FF"
-                    android:textSize="10sp"/>
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+                
+                <!-- TIMER BADA KAR DIYA HAI YAHAN -->
                 <TextView
                     android:id="@+id/tvLog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="12dp"
                     android:text=""
                     android:textColor="#EF4444"
-                    android:textSize="10sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
