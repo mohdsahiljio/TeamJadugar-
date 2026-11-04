@@ -4,7 +4,8 @@ import android.animation.ObjectAnimator
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.media.MediaPlayer
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -42,6 +43,8 @@ class FloatingService : Service() {
     private var pulseAnimator: ObjectAnimator? = null
     private var slotsThread: Thread? = null
     private var overlayShown = false
+
+    private var toneGenerator: ToneGenerator? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -81,15 +84,14 @@ class FloatingService : Service() {
 
     private fun playSound(type: String) {
         try {
-            val resId = when(type) {
-                "click" -> R.raw.click
-                "success" -> R.raw.success
-                "error" -> R.raw.error
-                else -> return
+            if (toneGenerator == null) {
+                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
             }
-            val mp = MediaPlayer.create(this, resId)
-            mp.start()
-            mp.setOnCompletionListener { it.release() }
+            when (type) {
+                "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
+                "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+            }
         } catch (e: Exception) {}
     }
 
@@ -471,6 +473,7 @@ class FloatingService : Service() {
         hideOverlay()
         try { if (::floatingView.isInitialized) windowManager.removeView(floatingView) } catch (_: Exception) {}
         try { if (::bubbleView.isInitialized) windowManager.removeView(bubbleView) } catch (_: Exception) {}
+        try { toneGenerator?.release() } catch (_: Exception) {}
         instance = null
     }
 
