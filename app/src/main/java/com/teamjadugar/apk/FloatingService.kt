@@ -16,6 +16,8 @@ import android.widget.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 class FloatingService : Service() {
 
@@ -47,6 +49,9 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
+        
+        // 🩸 HMAC SECRET KEY (Same as panel)
+        private const val SECRET_SIGNATURE_KEY = "SPECTRE_SECURE_2026"
 
         fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
@@ -204,6 +209,14 @@ class FloatingService : Service() {
         }.apply { isDaemon = true; start() }
     }
 
+    private fun generateHMAC(jsonString: String): String {
+        val mac = Mac.getInstance("HmacSHA256")
+        val secretKeySpec = SecretKeySpec(SECRET_SIGNATURE_KEY.toByteArray(), "HmacSHA256")
+        mac.init(secretKeySpec)
+        val signatureBytes = mac.doFinal(jsonString.toByteArray())
+        return signatureBytes.joinToString("") { String.format("%02x", it) }
+    }
+
     private fun startAttack(ip: String, port: Int, durationSec: Int) {
         Thread {
             var ok = false
@@ -233,6 +246,8 @@ class FloatingService : Service() {
                     put("time", durationSec)
                 }.toString()
 
+                // 🩸 HMAC SIGNATURE
+                conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
