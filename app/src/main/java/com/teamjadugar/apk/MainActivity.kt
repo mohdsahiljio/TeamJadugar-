@@ -37,18 +37,20 @@ class MainActivity : AppCompatActivity() {
         val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
         val etKey = findViewById<EditText>(R.id.etKey)
         val btnVerify = findViewById<Button>(R.id.btnVerify)
-        val tvTimer = findViewById<TextView>(R.id.tvTimer)
-        val tvExpiryDate = findViewById<TextView>(R.id.tvExpiryDate)
+        val tvDays = findViewById<TextView>(R.id.tvDays)
+        val tvHours = findViewById<TextView>(R.id.tvHours)
+        val tvMins = findViewById<TextView>(R.id.tvMins)
+        val tvSecs = findViewById<TextView>(R.id.tvSecs)
         val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
         val switchFloating = findViewById<Switch>(R.id.switchFloating)
 
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        tvDeviceId.text = "Device ID: $deviceId"
+        tvDeviceId.text = deviceId.take(10) + "..."
 
         if (userKey.isNotEmpty()) {
             layoutLogin.visibility = LinearLayout.GONE
             layoutDashboard.visibility = LinearLayout.VISIBLE
-            startExpiryTimer(userExpiry, tvTimer, tvExpiryDate)
+            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
 
             switchFloating.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
@@ -89,15 +91,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startExpiryTimer(expiryStr: String, tvTimer: TextView, tvDate: TextView) {
+    private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
         try {
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
-            
-            val displayFormat = SimpleDateFormat("EEEE, dd MMM yyyy", Locale.US)
-            tvDate.text = "Expires on: ${displayFormat.format(expiryDate)}"
-
             val timeLeft = expiryDate.time - System.currentTimeMillis()
 
             if (timeLeft > 0) {
@@ -107,21 +105,22 @@ class MainActivity : AppCompatActivity() {
                         val h = ((millisUntilFinished / (1000 * 60 * 60)) % 24).toInt()
                         val m = ((millisUntilFinished / (1000 * 60)) % 60).toInt()
                         val s = ((millisUntilFinished / 1000) % 60).toInt()
-                        tvTimer.text = String.format("%02dd %02dh %02dm %02ds", d, h, m, s)
+                        
+                        tvDays.text = String.format("%02d", d)
+                        tvHours.text = String.format("%02d", h)
+                        tvMins.text = String.format("%02d", m)
+                        tvSecs.text = String.format("%02d", s)
                     }
                     override fun onFinish() {
-                        tvTimer.text = "EXPIRED"
-                        tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                        tvDays.text = "00"
+                        tvHours.text = "00"
+                        tvMins.text = "00"
+                        tvSecs.text = "00"
                         prefs.edit().clear().apply()
                     }
                 }.start()
-            } else {
-                tvTimer.text = "EXPIRED"
-                tvTimer.setTextColor(android.graphics.Color.parseColor("#EF4444"))
             }
-        } catch (e: Exception) {
-            tvTimer.text = "Time Error"
-        }
+        } catch (e: Exception) {}
     }
 
     private fun verifyKey(key: String) {
@@ -168,19 +167,9 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 102) {
-            if (resultCode == RESULT_OK) {
-                checkOverlayPermission()
-            } else {
-                Toast.makeText(this, "VPN Permission Denied!", Toast.LENGTH_SHORT).show()
-                findViewById<Switch>(R.id.switchFloating).isChecked = false
-            }
+            if (resultCode == RESULT_OK) checkOverlayPermission()
         } else if (requestCode == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingService()
-            } else {
-                Toast.makeText(this, "Overlay Permission Denied!", Toast.LENGTH_SHORT).show()
-                findViewById<Switch>(R.id.switchFloating).isChecked = false
-            }
+            if (Settings.canDrawOverlays(this)) startFloatingService()
         }
     }
 
