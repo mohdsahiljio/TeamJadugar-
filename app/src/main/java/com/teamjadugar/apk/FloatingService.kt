@@ -63,10 +63,12 @@ class FloatingService : Service() {
         }
     }
 
+    // 🩸 FLAG_NOT_FOCUSABLE hata diya taaki text box pe click karne pe crash na ho
     private val paramsPanel = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
+        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, // Dono flags sahi hain
+        PixelFormat.TRANSLUCENT)
 
     private val paramsBubble = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
@@ -172,7 +174,7 @@ class FloatingService : Service() {
             startAttack(ip, portInt, selectedTime)
         }
 
-        setupPanelDragAndResize()
+        setupPanelDrag()
     }
 
     private fun startButtonPulse() {
@@ -359,8 +361,8 @@ class FloatingService : Service() {
     private var initialX = 0; private var initialY = 0
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
-    // 🩸 FIXED DRAG LOGIC (Ab crash nahi hoga)
-    private fun setupPanelDragAndResize() {
+    // 🩸 FIX: SIRF HEADER SE DRAG HOGA (Jaise tune photo mein arrows banaye hain)
+    private fun setupPanelDrag() {
         val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
         header.setOnTouchListener { _, event ->
             when (event.action) {
@@ -372,7 +374,6 @@ class FloatingService : Service() {
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    // Direct x aur y change karo
                     paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
                     paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
                     try {
