@@ -27,29 +27,13 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        
-        private fun getDecryptedHost(): String {
-            return "OTdMSUxESENMRUxNRUxN".let { enc ->
-                val raw = android.util.Base64.decode(enc, android.util.Base64.NO_WRAP)
-                raw.map { ((it.toInt() xor 0x5A) and 0xFF).toChar() }.joinToString("")
-            }
-        }
-
-        private fun generateHMAC(jsonString: String): String {
-            val key = "SPECTRE_SECURE_2026"
-            val mac = Mac.getInstance("HmacSHA256")
-            mac.init(SecretKeySpec(key.toByteArray(), "HmacSHA256"))
-            return mac.doFinal(jsonString.toByteArray()).joinToString("") { String.format("%02x", it) }
-        }
-
+        private const val TEST_URL = "http://13.211.179.172:5000/connect/init"
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -59,17 +43,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutDashboard: LinearLayout
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
-
-    private var downloadID: Long = 0
-    private var updateUrl: String = ""
-    
     private var toneGenerator: ToneGenerator? = null
 
     private fun playSound(type: String) {
         try {
-            if (toneGenerator == null) {
-                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-            }
+            if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
@@ -78,52 +56,9 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {}
     }
 
-    private fun isCompromisedEnvironment(): Boolean {
-        if (Debug.isDebuggerConnected() || Debug.waitingForDebugger()) return true
-        val mapsFile = File("/proc/self/maps")
-        try {
-            if (mapsFile.exists()) {
-                val content = mapsFile.readText()
-                if (content.contains("frida") || content.contains("xposed")) return true
-            }
-        } catch (e: Exception) {}
-        try {
-            val socket = java.net.Socket()
-            socket.connect(java.net.InetSocketAddress("127.0.0.1", 27042), 500)
-            socket.close()
-            return true
-        } catch (e: Exception) {}
-        return SecurityManager.isDeviceCompromised(this)
-    }
-
-    private val onDownloadComplete = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            if (id == downloadID) installAPK()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        if (isCompromisedEnvironment()) {
-            setContentView(TextView(this).apply {
-                text = "SECURITY VIOLATION DETECTED."
-                textSize = 18f
-                setTextColor(android.graphics.Color.RED)
-                gravity = android.view.Gravity.CENTER
-            })
-            return
-        }
-
         setContentView(R.layout.activity_main)
-        checkForUpdates()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), RECEIVER_EXPORTED)
-        } else {
-            registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        }
 
         prefs = getSharedPreferences("JadugarPrefs", MODE_PRIVATE)
         userKey = prefs.getString("saved_key", "") ?: ""
@@ -166,122 +101,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (isCompromisedEnvironment()) return
-        if (userKey.isNotEmpty() && layoutDashboard.visibility == LinearLayout.VISIBLE) {
-            silentLiveCheck(layoutLogin, layoutDashboard, 
-                findViewById(R.id.tvDays), findViewById(R.id.tvHours), 
-                findViewById(R.id.tvMins), findViewById(R.id.tvSecs), 
-                findViewById(R.id.tvSlots))
-        }
-    }
-
-    private fun checkForUpdates() {
-        Thread {
-            try {
-                val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                val currentVersionName = packageInfo.versionName ?: "1.0" 
-
-                val url = URL("https://api.github.com/repos/mohdsahiljio/TeamJadugar-/releases/latest")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "GET"
-                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-                conn.connectTimeout = 5000
-                conn.readTimeout = 5000
-
-                if (conn.responseCode == 200) {
-                    val response = conn.inputStream.bufferedReader().readText()
-                    val json = JSONObject(response)
-                    val latestVersion = json.optString("tag_name", "1.0").replace("v", "").trim()
-                    val downloadLink = json.optJSONArray("assets")?.optJSONObject(0)?.optString("browser_download_url", "")
-                    
-                    if (latestVersion != currentVersionName && latestVersion > currentVersionName && !downloadLink.isNullOrEmpty()) {
-                        updateUrl = downloadLink
-                        runOnUiThread {
-                            AlertDialog.Builder(this)
-                                .setTitle("🚀 Update Available (v$latestVersion)")
-                                .setMessage("A new version is available. Update now?")
-                                .setCancelable(false)
-                                .setPositiveButton("UPDATE") { _, _ ->
-                                    val request = DownloadManager.Request(Uri.parse(updateUrl))
-                                        .setTitle("SPECTRE API Update")
-                                        .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "update.apk")
-                                    val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-                                    downloadID = downloadManager.enqueue(request)
-                                }.show()
-                        }
-                    }
-                }
-            } catch (e: Exception) {}
-        }.start()
-    }
-
-    private fun installAPK() {
-        val file = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "update.apk")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!packageManager.canRequestPackageInstalls()) {
-                startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).setData(Uri.parse("package:$packageName")))
-                Toast.makeText(this, "Please allow install from unknown sources.", Toast.LENGTH_LONG).show()
-                return
-            }
-        }
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(FileProvider.getUriForFile(this@MainActivity, "$packageName.provider", file), "application/vnd.android.package-archive")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
-    }
-
-    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
-        networkExecutor.execute {
-            try {
-                val url = URL("http://${getDecryptedHost()}:5000/connect/init")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                conn.doOutput = true
-                conn.connectTimeout = 5000; conn.readTimeout = 5000
-
-                val body = JSONObject().apply { 
-                    put("key", userKey); 
-                    put("device_id", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)) 
-                }.toString()
-                
-                conn.setRequestProperty("X-App-Signature", generateHMAC(body))
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
-
-                if (code in 200..299) {
-                    val json = JSONObject(resp)
-                    if (json.optBoolean("valid", false)) {
-                        userExpiry = json.optString("expires_at", "")
-                        runOnUiThread {
-                            if (layoutDashboard.visibility != LinearLayout.VISIBLE) {
-                                layoutLogin.visibility = LinearLayout.GONE
-                                layoutDashboard.visibility = LinearLayout.VISIBLE
-                                startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                                startSlotsRefresh(tvSlots)
-                            }
-                        }
-                    } else {
-                        runOnUiThread { 
-                            playSound("error")
-                            logoutAndShowError(json.optString("msg", "Unauthorized Access")) 
-                        }
-                    }
-                } else {
-                    runOnUiThread { logoutAndShowError("Security Breach or Server Error") }
-                }
-            } catch (e: Exception) {
-                runOnUiThread { logoutAndShowError("Connection failed. Please login again.") }
-            }
-        }
-    }
-
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         btnVerify.isEnabled = false
@@ -289,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         networkExecutor.execute {
             try {
-                val url = URL("http://${getDecryptedHost()}:5000/connect/init")
+                val url = URL(TEST_URL)
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
@@ -297,7 +116,6 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
@@ -327,25 +145,26 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    runOnUiThread { Toast.makeText(this, "Security Error", Toast.LENGTH_SHORT).show() }
+                    runOnUiThread { Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() }
                 }
             } catch (e: Exception) {
-                runOnUiThread { Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() }
+                // 🩸 DEBUG ERROR POPUP
+                runOnUiThread { 
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("DEBUG ERROR")
+                        .setMessage(e.toString())
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
             } finally {
                 runOnUiThread { btnVerify.isEnabled = true; btnVerify.text = "🛡️ AUTHENTICATE" }
             }
         }
     }
 
-    private fun logoutAndShowError(msg: String) {
-        stopService(Intent(this, FloatingService::class.java))
-        SessionStore.clear(this)
-        prefs.edit().clear().apply()
-        userKey = ""
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-        layoutDashboard.visibility = LinearLayout.GONE
-        layoutLogin.visibility = LinearLayout.VISIBLE
-        etKey.setText("")
+    // Baaki functions same rahenge (silentLiveCheck, startExpiryTimer, etc.)
+    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+        verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
     }
 
     private fun checkVpnPermission() {
@@ -364,10 +183,8 @@ class MainActivity : AppCompatActivity() {
         timer?.cancel()
         val expiryDate = parseExpiry(expiryStr)
         if (expiryDate == null) return
-        
         val timeLeft = expiryDate.time - System.currentTimeMillis()
         if (timeLeft <= 0) return
-        
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(ms: Long) {
                 tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
@@ -375,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                 tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
                 tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
             }
-            override fun onFinish() { logoutAndShowError("Key Expired.") }
+            override fun onFinish() { Toast.makeText(this@MainActivity, "Key Expired", Toast.LENGTH_LONG).show() }
         }.start()
     }
 
@@ -396,7 +213,7 @@ class MainActivity : AppCompatActivity() {
         Thread {
             while (true) {
                 try {
-                    val url = URL("http://${getDecryptedHost()}:5000/connect/slots")
+                    val url = URL("http://13.211.179.172:5000/connect/slots")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.connectTimeout = 3000; conn.readTimeout = 3000
                     if (conn.responseCode == 200) {
@@ -420,7 +237,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() { 
         super.onDestroy()
         timer?.cancel()
-        try { unregisterReceiver(onDownloadComplete) } catch (e: Exception) {}
         try { toneGenerator?.release() } catch (e: Exception) {}
     }
 }
