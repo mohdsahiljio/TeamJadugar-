@@ -120,7 +120,8 @@ class FloatingService : Service() {
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                selectedTime = 60 + (progress * 10) 
+                // SLIDER MAX 300
+                selectedTime = 60 + (progress * 10) // 60 + (24*10) = 300
                 tvTime.text = "ATTACK DURATION: ${selectedTime}s"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -157,7 +158,7 @@ class FloatingService : Service() {
             }
 
             isAttacking = true
-            pulseAnimator?.cancel() // Stop pulse on attack
+            pulseAnimator?.cancel() 
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
             
@@ -212,11 +213,17 @@ class FloatingService : Service() {
                 var remaining = time
                 while (remaining > 0) {
                     Handler(Looper.getMainLooper()).post {
+                        // Timer Update
                         tvLog.text = "⏱ ${remaining}s"
                         tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                         
                         tvBubbleTimer.visibility = View.VISIBLE
                         tvBubbleTimer.text = "${remaining}s"
+                        
+                        // LAST 3 SECONDS BIG TEXT (3, 2, 1)
+                        if (remaining in 1..3) {
+                            Toast.makeText(this@FloatingService, "$remaining", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     Thread.sleep(1000)
                     remaining--
@@ -225,10 +232,13 @@ class FloatingService : Service() {
                     tvLog.text = ""
                     tvBubbleTimer.visibility = View.GONE
                     
+                    // ATTACK FINISHED (BIG TEXT)
+                    Toast.makeText(this@FloatingService, "ATTACK FINISHED", Toast.LENGTH_LONG).show()
+                    
                     btnAttack.text = "LAUNCH ATTACK 🚀"
                     btnAttack.isEnabled = true
                     isAttacking = false
-                    startButtonPulse() // Restart pulse when attack ends
+                    startButtonPulse() 
                     
                     updateSlotsFromPanel()
                 }
