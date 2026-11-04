@@ -121,4 +121,57 @@
         <Button
             android:id="@+id/fBtnGetIp"
             android:layout_width="0dp"
-            android:layout_height="45
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:text="GET IP"
+            android:backgroundTint="#1A102E"
+            android:textColor="#00E5FF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="4dp"/>
+            
+        <Button
+            android:id="@+id/fBtnVpnOff"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:text="VPN OFF"
+            android:backgroundTint="#1A102E"
+            android:textColor="#EF4444"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginStart="4dp"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/fBtnAttack"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="LAUNCH ATTACK 🚀"
+        android:backgroundTint="#D946EF"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="14sp"/>
+
+    <!-- LIVE TIMER LOG -->
+    <TextView
+        android:id="@+id/tvLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="> READY"
+        android:textColor="#22C55E"
+        android:fontFamily="monospace"
+        android:layout_marginTop="10dp"
+        android:textSize="11sp"
+        android:gravity="center"/>
+
+    <!-- RESIZE HANDLE -->
+    <ImageView
+        android:id="@+id/resizeHandle"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:tint="#4B5563"
+        android:scaleType="centerInside"
+        android:layout_marginTop="5dp"/>
+</LinearLayout>
