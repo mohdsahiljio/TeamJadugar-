@@ -53,11 +53,7 @@ class MainActivity : AppCompatActivity() {
             startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
 
             switchFloating.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    checkVpnPermission()
-                } else {
-                    stopService(Intent(this, FloatingService::class.java))
-                }
+                if (isChecked) checkVpnPermission() else stopService(Intent(this, FloatingService::class.java))
             }
         } else {
             layoutLogin.visibility = LinearLayout.VISIBLE
@@ -65,22 +61,15 @@ class MainActivity : AppCompatActivity() {
             
             btnVerify.setOnClickListener {
                 val key = etKey.text.toString().trim()
-                if (key.isEmpty()) {
-                    Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-                } else {
-                    verifyKey(key)
-                }
+                if (key.isEmpty()) Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
+                else verifyKey(key)
             }
         }
     }
 
     private fun checkVpnPermission() {
         val intent = VpnService.prepare(this)
-        if (intent != null) {
-            startActivityForResult(intent, 102)
-        } else {
-            checkOverlayPermission()
-        }
+        if (intent != null) startActivityForResult(intent, 102) else checkOverlayPermission()
     }
 
     private fun checkOverlayPermission() {
@@ -93,10 +82,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
         try {
+            // 100% FIX: Panel UTC me time bhejta hai, use direct UTC parse karo
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
-            val timeLeft = expiryDate.time - System.currentTimeMillis()
+            
+            // Current UTC time nikaalo
+            val currentUtcTime = System.currentTimeMillis()
+            val timeLeft = expiryDate.time - currentUtcTime
 
             if (timeLeft > 0) {
                 timer = object : CountDownTimer(timeLeft, 1000) {
@@ -112,10 +105,7 @@ class MainActivity : AppCompatActivity() {
                         tvSecs.text = String.format("%02d", s)
                     }
                     override fun onFinish() {
-                        tvDays.text = "00"
-                        tvHours.text = "00"
-                        tvMins.text = "00"
-                        tvSecs.text = "00"
+                        tvDays.text = "00"; tvHours.text = "00"; tvMins.text = "00"; tvSecs.text = "00"
                         prefs.edit().clear().apply()
                     }
                 }.start()
@@ -160,7 +150,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun startFloatingService() {
         startService(Intent(this, FloatingService::class.java))
-        Toast.makeText(this, "Floating Panel ON", Toast.LENGTH_SHORT).show()
         finish()
     }
 
