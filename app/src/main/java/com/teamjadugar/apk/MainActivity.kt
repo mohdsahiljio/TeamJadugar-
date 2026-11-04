@@ -7,7 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import android.media.MediaPlayer
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.net.Uri
 import android.net.VpnService
 import android.os.Build
@@ -61,23 +62,19 @@ class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
     private var updateUrl: String = ""
-
-    private var soundClick: MediaPlayer? = null
-    private var soundSuccess: MediaPlayer? = null
-    private var soundError: MediaPlayer? = null
+    
+    private var toneGenerator: ToneGenerator? = null
 
     private fun playSound(type: String) {
         try {
-            // Tere res/raw folder mein in sounds ka hona zaroori hai
-            val resId = when(type) {
-                "click" -> R.raw.click
-                "success" -> R.raw.success
-                "error" -> R.raw.error
-                else -> return
+            if (toneGenerator == null) {
+                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
             }
-            val mp = MediaPlayer.create(this, resId)
-            mp.start()
-            mp.setOnCompletionListener { it.release() }
+            when (type) {
+                "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
+                "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+            }
         } catch (e: Exception) {}
     }
 
@@ -181,7 +178,60 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkForUpdates() {
-        // GitHub Update checker code (same as before)
+        Thread {
+            try {
+                val packageInfo = packageManager.getPackageInfo(packageName, 0)
+                val currentVersionName = packageInfo.versionName ?: "1.0" 
+
+                val url = URL("https://api.github.com/repos/mohdsahiljio/TeamJadugar-/releases/latest")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+
+                if (conn.responseCode == 200) {
+                    val response = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(response)
+                    val latestVersion = json.optString("tag_name", "1.0").replace("v", "").trim()
+                    val downloadLink = json.optJSONArray("assets")?.optJSONObject(0)?.optString("browser_download_url", "")
+                    
+                    if (latestVersion != currentVersionName && latestVersion > currentVersionName && !downloadLink.isNullOrEmpty()) {
+                        updateUrl = downloadLink
+                        runOnUiThread {
+                            AlertDialog.Builder(this)
+                                .setTitle("🚀 Update Available (v$latestVersion)")
+                                .setMessage("A new version is available. Update now?")
+                                .setCancelable(false)
+                                .setPositiveButton("UPDATE") { _, _ ->
+                                    val request = DownloadManager.Request(Uri.parse(updateUrl))
+                                        .setTitle("SPECTRE API Update")
+                                        .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "update.apk")
+                                    val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                                    downloadID = downloadManager.enqueue(request)
+                                }.show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {}
+        }.start()
+    }
+
+    private fun installAPK() {
+        val file = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "update.apk")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!packageManager.canRequestPackageInstalls()) {
+                startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).setData(Uri.parse("package:$packageName")))
+                Toast.makeText(this, "Please allow install from unknown sources.", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(FileProvider.getUriForFile(this@MainActivity, "$packageName.provider", file), "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
     private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
@@ -371,5 +421,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         timer?.cancel()
         try { unregisterReceiver(onDownloadComplete) } catch (e: Exception) {}
+        try { toneGenerator?.release() } catch (e: Exception) {}
     }
 }
