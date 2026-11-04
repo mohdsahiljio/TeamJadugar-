@@ -8,19 +8,20 @@
         android:layout_height="65dp"
         android:background="@drawable/ic_launcher" />
 
+    <!-- TIMER BADA KAR DIYA HAI YAHAN -->
     <TextView
         android:id="@+id/tvBubbleTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         android:text=""
         android:textColor="#EF4444"
-        android:textSize="10sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:shadowColor="#000000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
         android:visibility="gone"/>
 </FrameLayout>
