@@ -19,6 +19,8 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 class FloatingService : Service() {
 
@@ -53,8 +55,8 @@ class FloatingService : Service() {
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
         
-        // 🩸 SEEDHA URL (No Encryption)
         private const val PANEL_URL = "http://13.211.179.172:5000"
+        private const val HMAC_KEY = "SPECTRE_SECURE_2026"
         
         val attackExecutor = Executors.newSingleThreadExecutor()
 
@@ -262,6 +264,12 @@ class FloatingService : Service() {
                 val body = JSONObject().apply {
                     put("key", key); put("ip", ip); put("port", port); put("time", durationSec)
                 }.toString()
+
+                // 🩸 HMAC SECURITY
+                val mac = Mac.getInstance("HmacSHA256")
+                mac.init(SecretKeySpec(HMAC_KEY.toByteArray(), "HmacSHA256"))
+                val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
+                conn.setRequestProperty("X-App-Signature", signature)
 
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
