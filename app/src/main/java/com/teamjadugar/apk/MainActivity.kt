@@ -25,18 +25,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private var timer: CountDownTimer? = null
+    private var keyCheckThread: Thread? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 🛡️ SECURITY CHECK (Sabse pehle)
+        
+        // SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             setContentView(TextView(this).apply {
                 text = "SECURITY VIOLATION DETECTED.\nApp cannot run on Rooted/Emulator devices."
                 textSize = 18f
                 setTextColor(android.graphics.Color.RED)
                 gravity = android.view.Gravity.CENTER
-                setPadding(50, 50, 50, 50)
             })
             return
         }
@@ -63,10 +63,8 @@ class MainActivity : AppCompatActivity() {
         tvDeviceId.text = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).take(10) + "..."
 
         if (userKey.isNotEmpty()) {
-            layoutLogin.visibility = LinearLayout.GONE
-            layoutDashboard.visibility = LinearLayout.VISIBLE
-            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-            startSlotsRefresh(tvSlots)
+            // LIVE CHECK: Pehle check karo key valid hai ya nahi
+            verifyLiveKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
         } else {
             layoutLogin.visibility = LinearLayout.VISIBLE
             layoutDashboard.visibility = LinearLayout.GONE
@@ -78,8 +76,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         switchFloating.setOnCheckedChangeListener { _, checked ->
-            if (checked) checkVpnPermission()
-            else stopService(Intent(this, FloatingService::class.java))
+            if (checked) {
+                // Jab bhi panel on kare, chupchaap key check karo
+                verifyLiveKeySilent(userKey)
+                checkVpnPermission()
+            } else {
+                stopService(Intent(this, FloatingService::class.java))
+            }
         }
     }
 
@@ -95,18 +98,118 @@ class MainActivity : AppCompatActivity() {
         } else startService(Intent(this, FloatingService::class.java))
     }
 
+    // 🩸 LIVE CHECK ON APP LOAD (Agar Block/Delete hua toh bahar nikal dega)
+    private fun verifyLiveKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val panelUrl = "http://13.211.179.172:5000/connect/init"
+
+        Thread {
+            try {
+                val url = URL(panelUrl)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                conn.doOutput = true
+                conn.connectTimeout = 10000; conn.readTimeout = 10000
+                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
+                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+
+                val code = conn.responseCode
+                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
+
+                if (code in 200..299) {
+                    val json = JSONObject(resp)
+                    if (json.optBoolean("valid", false)) {
+                        userExpiry = json.optString("expires_at", "")
+                        prefs.edit().putString("saved_expiry", userExpiry).apply()
+
+                        runOnUiThread {
+                            layoutLogin.visibility = LinearLayout.GONE
+                            layoutDashboard.visibility = LinearLayout.VISIBLE
+                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+                            startSlotsRefresh(tvSlots)
+                            startBackgroundKeyCheck() // Start checking in background
+                        }
+                    } else {
+                        // Key blocked, deleted or reset
+                        val msg = json.optString("msg", "Unauthorized Access")
+                        runOnUiThread { logoutAndShowError(msg, layoutLogin, layoutDashboard) }
+                    }
+                } else {
+                    runOnUiThread { logoutAndShowError("Server Error: HTTP $code", layoutLogin, layoutDashboard) }
+                }
+            } catch (e: Exception) {
+                // Agar internet nahi hai, toh user ko lock kar do (strict security)
+                runOnUiThread { logoutAndShowError("No Internet / Connection Failed", layoutLogin, layoutDashboard) }
+            }
+        }.start()
+    }
+
+    // 🩸 SILENT CHECK (Floating Panel ke liye)
+    private fun verifyLiveKeySilent(key: String) {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val panelUrl = "http://13.211.179.172:5000/connect/init"
+
+        Thread {
+            try {
+                val url = URL(panelUrl)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                conn.doOutput = true
+                conn.connectTimeout = 5000; conn.readTimeout = 5000
+                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
+                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+
+                val code = conn.responseCode
+                if (code in 200..299) {
+                    val json = JSONObject(conn.inputStream.bufferedReader().readText())
+                    if (!json.optBoolean("valid", false)) {
+                        val msg = json.optString("msg", "Key Blocked/Expired")
+                        runOnUiThread {
+                            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+                            val layoutLogin = findViewById<LinearLayout>(R.id.layoutLogin)
+                            val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
+                            logoutAndShowError(msg, layoutLogin, layoutDashboard)
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }.start()
+    }
+
+    // Har 30 second baad background mein check karega
+    private fun startBackgroundKeyCheck() {
+        keyCheckThread?.interrupt()
+        keyCheckThread = Thread {
+            while (true) {
+                try {
+                    Thread.sleep(30000) // 30 seconds
+                    verifyLiveKeySilent(userKey)
+                } catch (_: InterruptedException) { break }
+            }
+        }.apply { isDaemon = true; start() }
+    }
+
+    private fun logoutAndShowError(msg: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout) {
+        stopService(Intent(this, FloatingService::class.java))
+        SessionStore.clear(this)
+        prefs.edit().clear().apply()
+        userKey = ""
+        
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        layoutDashboard.visibility = LinearLayout.GONE
+        layoutLogin.visibility = LinearLayout.VISIBLE
+    }
+
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
         timer?.cancel()
         val expiryDate = parseExpiry(expiryStr)
-        if (expiryDate == null) {
-            tvDays.text = "00"; tvHours.text = "00"; tvMins.text = "00"; tvSecs.text = "00"
-            return
-        }
+        if (expiryDate == null) return
+        
         val timeLeft = expiryDate.time - System.currentTimeMillis()
-        if (timeLeft <= 0) {
-            tvDays.text = "00"; tvHours.text = "00"; tvMins.text = "00"; tvSecs.text = "00"
-            return
-        }
+        if (timeLeft <= 0) return
+        
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(ms: Long) {
                 tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
@@ -115,9 +218,7 @@ class MainActivity : AppCompatActivity() {
                 tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
             }
             override fun onFinish() {
-                tvDays.text = "00"; tvHours.text = "00"; tvMins.text = "00"; tvSecs.text = "00"
-                prefs.edit().clear().apply()
-                SessionStore.clear(this@MainActivity)
+                logoutAndShowError("Key Expired", findViewById(R.id.layoutLogin), findViewById(R.id.layoutDashboard))
             }
         }.start()
     }
@@ -187,6 +288,7 @@ class MainActivity : AppCompatActivity() {
                             layoutDashboard.visibility = LinearLayout.VISIBLE
                             startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
                             startSlotsRefresh(tvSlots)
+                            startBackgroundKeyCheck()
                         }
                     } else runOnUiThread { Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() }
                 } else runOnUiThread { Toast.makeText(this, "Panel error: HTTP $code", Toast.LENGTH_LONG).show() }
@@ -202,5 +304,9 @@ class MainActivity : AppCompatActivity() {
         else if (req == 101 && Settings.canDrawOverlays(this)) startService(Intent(this, FloatingService::class.java))
     }
 
-    override fun onDestroy() { super.onDestroy(); timer?.cancel() }
+    override fun onDestroy() { 
+        super.onDestroy()
+        timer?.cancel()
+        keyCheckThread?.interrupt()
+    }
 }
