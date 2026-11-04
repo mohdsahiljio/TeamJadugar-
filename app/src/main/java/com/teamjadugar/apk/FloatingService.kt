@@ -50,7 +50,6 @@ class FloatingService : Service() {
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
         
-        // 🩸 HMAC SECRET KEY (Same as panel)
         private const val SECRET_SIGNATURE_KEY = "SPECTRE_SECURE_2026"
 
         fun onIpFound(ip: String, port: String) {
@@ -67,7 +66,7 @@ class FloatingService : Service() {
     private val paramsPanel = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT)
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
 
     private val paramsBubble = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
@@ -246,7 +245,6 @@ class FloatingService : Service() {
                     put("time", durationSec)
                 }.toString()
 
-                // 🩸 HMAC SIGNATURE
                 conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
@@ -361,39 +359,25 @@ class FloatingService : Service() {
     private var initialX = 0; private var initialY = 0
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
+    // 🩸 FIXED DRAG LOGIC (Ab crash nahi hoga)
     private fun setupPanelDragAndResize() {
         val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
         header.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    initialX = paramsPanel.x; initialY = paramsPanel.y
-                    initialTouchX = event.rawX; initialTouchY = event.rawY
+                    initialX = paramsPanel.x
+                    initialY = paramsPanel.y
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    // Direct x aur y change karo
                     paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
                     paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
-                    windowManager.updateViewLayout(floatingView, paramsPanel)
-                    true
-                }
-                else -> false
-            }
-        }
-        val resizeHandle = floatingView.findViewById<ImageView>(R.id.resizeHandle)
-        var iw = 0; var ih = 0
-        resizeHandle.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    iw = floatingView.width; ih = floatingView.height
-                    initialTouchX = event.rawX; initialTouchY = event.rawY
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val nw = iw + (event.rawX - initialTouchX).toInt()
-                    val nh = ih + (event.rawY - initialTouchY).toInt()
-                    paramsPanel.width = if (nw > 300) nw else 300
-                    paramsPanel.height = if (nh > 200) nh else WindowManager.LayoutParams.WRAP_CONTENT
-                    windowManager.updateViewLayout(floatingView, paramsPanel)
+                    try {
+                        windowManager.updateViewLayout(floatingView, paramsPanel)
+                    } catch (e: Exception) {}
                     true
                 }
                 else -> false
@@ -420,7 +404,9 @@ class FloatingService : Service() {
                         isBubbleDragging = true
                         paramsBubble.x = bubbleInitialX + dx.toInt()
                         paramsBubble.y = bubbleInitialY + dy.toInt()
-                        windowManager.updateViewLayout(bubbleView, paramsBubble)
+                        try {
+                            windowManager.updateViewLayout(bubbleView, paramsBubble)
+                        } catch (e: Exception) {}
                     }
                     true
                 }
