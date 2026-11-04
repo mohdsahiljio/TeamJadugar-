@@ -113,13 +113,13 @@
         android:textStyle="bold"
         android:layout_marginBottom="4dp"/>
     
-    <!-- SLIDER MAX TIME 300 -->
+    <!-- SLIDER FIXED: Max 270 + 30 base = 300s -->
     <SeekBar
         android:id="@+id/fSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="240"
-        android:progress="60"
+        android:max="270"
+        android:progress="90"
         android:progressTint="#00E5FF"
         android:thumbTint="#00E5FF"
         android:layout_marginBottom="12dp"/>
