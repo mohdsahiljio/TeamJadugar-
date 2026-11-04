@@ -137,8 +137,9 @@ class FloatingService : Service() {
             windowManager.addView(floatingView, paramsPanel)
         }
 
+        // Seekbar setup
         seekBar.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
-        seekBar.progress = 90
+        seekBar.progress = 90 
         selectedTime = MIN_ATTACK_SECONDS + seekBar.progress
         tvTime.text = "ATTACK DURATION: ${selectedTime}s"
 
@@ -174,7 +175,7 @@ class FloatingService : Service() {
             val ip = etIp.text.toString().trim()
             val portStr = etPort.text.toString().trim()
             
-            // FIX: Port number check
+            // 🩸 FIX: Port ko strictly Number banaya
             val portInt = portStr.toIntOrNull()
             if (ip.isEmpty() || portInt == null) {
                 Toast.makeText(this, "IP or Valid Port missing!",
@@ -231,6 +232,7 @@ class FloatingService : Service() {
         }.apply { isDaemon = true; start() }
     }
 
+    // 🩸 FIX: Yahan 'port' 'Int' receive kar raha hai
     private fun startAttack(ip: String, port: Int, durationSec: Int) {
         Thread {
             var ok = false
@@ -254,9 +256,11 @@ class FloatingService : Service() {
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                 conn.connectTimeout = 10000; conn.readTimeout = 15000
 
-                // Sending as numbers
+                // JSON body: time aur port dono strictly numbers hain
                 val body = JSONObject().apply {
-                    put("key", key); put("ip", ip); put("port", port)
+                    put("key", key)
+                    put("ip", ip)
+                    put("port", port)
                     put("time", durationSec)
                 }.toString()
 
