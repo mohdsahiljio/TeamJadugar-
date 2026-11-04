@@ -25,7 +25,19 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private var timer: CountDownTimer? = null
-    private var keyCheckThread: Thread? = null
+
+    // UI Elements
+    private lateinit var layoutLogin: LinearLayout
+    private lateinit var layoutDashboard: LinearLayout
+    private lateinit var etKey: EditText
+    private lateinit var btnVerify: Button
+    private lateinit var tvDays: TextView
+    private lateinit var tvHours: TextView
+    private lateinit var tvMins: TextView
+    private lateinit var tvSecs: TextView
+    private lateinit var tvDeviceId: TextView
+    private lateinit var tvSlots: TextView
+    private lateinit var switchFloating: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,42 +60,169 @@ class MainActivity : AppCompatActivity() {
         userExpiry = prefs.getString("saved_expiry", "") ?: ""
         if (userKey.isNotEmpty()) SessionStore.saveKey(this, userKey)
 
-        val layoutLogin = findViewById<LinearLayout>(R.id.layoutLogin)
-        val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
-        val etKey = findViewById<EditText>(R.id.etKey)
-        val btnVerify = findViewById<Button>(R.id.btnVerify)
-        val tvDays = findViewById<TextView>(R.id.tvDays)
-        val tvHours = findViewById<TextView>(R.id.tvHours)
-        val tvMins = findViewById<TextView>(R.id.tvMins)
-        val tvSecs = findViewById<TextView>(R.id.tvSecs)
-        val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
-        val tvSlots = findViewById<TextView>(R.id.tvSlots)
-        val switchFloating = findViewById<Switch>(R.id.switchFloating)
+        layoutLogin = findViewById(R.id.layoutLogin)
+        layoutDashboard = findViewById(R.id.layoutDashboard)
+        etKey = findViewById(R.id.etKey)
+        btnVerify = findViewById(R.id.btnVerify)
+        tvDays = findViewById(R.id.tvDays)
+        tvHours = findViewById(R.id.tvHours)
+        tvMins = findViewById(R.id.tvMins)
+        tvSecs = findViewById(R.id.tvSecs)
+        tvDeviceId = findViewById(R.id.tvDeviceId)
+        tvSlots = findViewById(R.id.tvSlots)
+        switchFloating = findViewById(R.id.switchFloating)
 
         tvDeviceId.text = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).take(10) + "..."
 
+        // Login Button
+        btnVerify.setOnClickListener {
+            val key = etKey.text.toString().trim()
+            if (key.isEmpty()) Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
+            else verifyKey(key)
+        }
+
+        // Switch
+        switchFloating.setOnCheckedChangeListener { _, checked ->
+            if (checked) checkVpnPermission()
+            else stopService(Intent(this, FloatingService::class.java))
+        }
+
+        // App open hote hi silent check karega. Agar key saved hai toh Dashboard dikha dega, warna Login.
         if (userKey.isNotEmpty()) {
-            // LIVE CHECK: Pehle check karo key valid hai ya nahi
-            verifyLiveKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+            silentLiveCheck() 
         } else {
             layoutLogin.visibility = LinearLayout.VISIBLE
             layoutDashboard.visibility = LinearLayout.GONE
-            btnVerify.setOnClickListener {
-                val key = etKey.text.toString().trim()
-                if (key.isEmpty()) Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-                else verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
-            }
         }
+    }
 
-        switchFloating.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                // Jab bhi panel on kare, chupchaap key check karo
-                verifyLiveKeySilent(userKey)
-                checkVpnPermission()
-            } else {
-                stopService(Intent(this, FloatingService::class.java))
-            }
+    // 🩸 APP BACKGROUND SE OPEN HONE PE VERIFY (The Real Check)
+    override fun onResume() {
+        super.onResume()
+        if (userKey.isNotEmpty() && layoutDashboard.visibility == LinearLayout.VISIBLE) {
+            silentLiveCheck()
         }
+    }
+
+    // 🩸 SILENT VERIFY (Jab App khule ya background se aaye)
+    private fun silentLiveCheck() {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val panelUrl = "http://13.211.179.172:5000/connect/init"
+
+        Thread {
+            try {
+                val url = URL(panelUrl)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                conn.doOutput = true
+                conn.connectTimeout = 5000; conn.readTimeout = 5000
+                
+                val body = JSONObject().apply { put("key", userKey); put("device_id", deviceId) }.toString()
+                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+
+                val code = conn.responseCode
+                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
+
+                if (code in 200..299) {
+                    val json = JSONObject(resp)
+                    if (json.optBoolean("valid", false)) {
+                        // Agar valid hai, toh dashboard show karo (agar pehle se nahi hai)
+                        userExpiry = json.optString("expires_at", "")
+                        runOnUiThread {
+                            if (layoutDashboard.visibility != LinearLayout.VISIBLE) {
+                                layoutLogin.visibility = LinearLayout.GONE
+                                layoutDashboard.visibility = LinearLayout.VISIBLE
+                                startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+                                startSlotsRefresh(tvSlots)
+                            }
+                        }
+                    } else {
+                        // Key block/delete/reset ho gayi hai
+                        val msg = json.optString("msg", "Unauthorized Access")
+                        runOnUiThread { logoutAndShowError(msg) }
+                    }
+                }
+            } catch (e: Exception) {
+                // Agar internet nahi hai, toh dashboard hide kar ke login screen dikhao
+                runOnUiThread { 
+                    layoutLogin.visibility = LinearLayout.VISIBLE
+                    layoutDashboard.visibility = LinearLayout.GONE
+                    Toast.makeText(this, "Connection failed. Please login again.", Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
+    }
+
+    // 🩸 MANUAL VERIFY (Login button dabane pe)
+    private fun verifyKey(key: String) {
+        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val panelUrl = "http://13.211.179.172:5000/connect/init"
+
+        btnVerify.isEnabled = false
+        btnVerify.text = "VERIFYING..."
+
+        Thread {
+            try {
+                val url = URL(panelUrl)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                conn.doOutput = true
+                conn.connectTimeout = 10000; conn.readTimeout = 10000
+                
+                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
+                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+
+                val code = conn.responseCode
+                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
+
+                if (code in 200..299) {
+                    val json = JSONObject(resp)
+                    if (json.optBoolean("valid", false)) {
+                        userKey = key
+                        userExpiry = json.optString("expires_at", "")
+                        prefs.edit().putString("saved_key", userKey).apply()
+                        prefs.edit().putString("saved_expiry", userExpiry).apply()
+                        SessionStore.saveKey(this, userKey)
+
+                        runOnUiThread {
+                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                            layoutLogin.visibility = LinearLayout.GONE
+                            layoutDashboard.visibility = LinearLayout.VISIBLE
+                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+                            startSlotsRefresh(tvSlots)
+                        }
+                    } else {
+                        val msg = json.optString("msg", "Invalid Key")
+                        runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_LONG).show() }
+                    }
+                } else {
+                    runOnUiThread { Toast.makeText(this, "Panel error: HTTP $code", Toast.LENGTH_LONG).show() }
+                }
+            } catch (e: Exception) {
+                runOnUiThread { Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() }
+            } finally {
+                runOnUiThread { 
+                    btnVerify.isEnabled = true 
+                    btnVerify.text = "🛡️ AUTHENTICATE"
+                }
+            }
+        }.start()
+    }
+
+    // 🩸 LOGOUT AND ERROR (Jab key reset/block/expire ho)
+    private fun logoutAndShowError(msg: String) {
+        stopService(Intent(this, FloatingService::class.java))
+        SessionStore.clear(this)
+        prefs.edit().clear().apply()
+        userKey = ""
+        userExpiry = ""
+        
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        layoutDashboard.visibility = LinearLayout.GONE
+        layoutLogin.visibility = LinearLayout.VISIBLE
+        etKey.setText("")
     }
 
     private fun checkVpnPermission() {
@@ -96,110 +235,6 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else startService(Intent(this, FloatingService::class.java))
-    }
-
-    // 🩸 LIVE CHECK ON APP LOAD (Agar Block/Delete hua toh bahar nikal dega)
-    private fun verifyLiveKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
-        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val panelUrl = "http://13.211.179.172:5000/connect/init"
-
-        Thread {
-            try {
-                val url = URL(panelUrl)
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                conn.doOutput = true
-                conn.connectTimeout = 10000; conn.readTimeout = 10000
-                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
-
-                if (code in 200..299) {
-                    val json = JSONObject(resp)
-                    if (json.optBoolean("valid", false)) {
-                        userExpiry = json.optString("expires_at", "")
-                        prefs.edit().putString("saved_expiry", userExpiry).apply()
-
-                        runOnUiThread {
-                            layoutLogin.visibility = LinearLayout.GONE
-                            layoutDashboard.visibility = LinearLayout.VISIBLE
-                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                            startSlotsRefresh(tvSlots)
-                            startBackgroundKeyCheck() // Start checking in background
-                        }
-                    } else {
-                        // Key blocked, deleted or reset
-                        val msg = json.optString("msg", "Unauthorized Access")
-                        runOnUiThread { logoutAndShowError(msg, layoutLogin, layoutDashboard) }
-                    }
-                } else {
-                    runOnUiThread { logoutAndShowError("Server Error: HTTP $code", layoutLogin, layoutDashboard) }
-                }
-            } catch (e: Exception) {
-                // Agar internet nahi hai, toh user ko lock kar do (strict security)
-                runOnUiThread { logoutAndShowError("No Internet / Connection Failed", layoutLogin, layoutDashboard) }
-            }
-        }.start()
-    }
-
-    // 🩸 SILENT CHECK (Floating Panel ke liye)
-    private fun verifyLiveKeySilent(key: String) {
-        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val panelUrl = "http://13.211.179.172:5000/connect/init"
-
-        Thread {
-            try {
-                val url = URL(panelUrl)
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                conn.doOutput = true
-                conn.connectTimeout = 5000; conn.readTimeout = 5000
-                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-
-                val code = conn.responseCode
-                if (code in 200..299) {
-                    val json = JSONObject(conn.inputStream.bufferedReader().readText())
-                    if (!json.optBoolean("valid", false)) {
-                        val msg = json.optString("msg", "Key Blocked/Expired")
-                        runOnUiThread {
-                            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-                            val layoutLogin = findViewById<LinearLayout>(R.id.layoutLogin)
-                            val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
-                            logoutAndShowError(msg, layoutLogin, layoutDashboard)
-                        }
-                    }
-                }
-            } catch (_: Exception) {}
-        }.start()
-    }
-
-    // Har 30 second baad background mein check karega
-    private fun startBackgroundKeyCheck() {
-        keyCheckThread?.interrupt()
-        keyCheckThread = Thread {
-            while (true) {
-                try {
-                    Thread.sleep(30000) // 30 seconds
-                    verifyLiveKeySilent(userKey)
-                } catch (_: InterruptedException) { break }
-            }
-        }.apply { isDaemon = true; start() }
-    }
-
-    private fun logoutAndShowError(msg: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout) {
-        stopService(Intent(this, FloatingService::class.java))
-        SessionStore.clear(this)
-        prefs.edit().clear().apply()
-        userKey = ""
-        
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-        layoutDashboard.visibility = LinearLayout.GONE
-        layoutLogin.visibility = LinearLayout.VISIBLE
     }
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
@@ -218,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                 tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
             }
             override fun onFinish() {
-                logoutAndShowError("Key Expired", findViewById(R.id.layoutLogin), findViewById(R.id.layoutDashboard))
+                logoutAndShowError("Key Expired. Please buy a new one.")
             }
         }.start()
     }
@@ -255,49 +290,6 @@ class MainActivity : AppCompatActivity() {
         }.apply { isDaemon = true; start() }
     }
 
-    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
-        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val panelUrl = "http://13.211.179.172:5000/connect/init"
-
-        Thread {
-            try {
-                val url = URL(panelUrl)
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                conn.doOutput = true
-                conn.connectTimeout = 10000; conn.readTimeout = 10000
-                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
-
-                if (code in 200..299) {
-                    val json = JSONObject(resp)
-                    if (json.optBoolean("valid", false)) {
-                        userKey = key
-                        userExpiry = json.optString("expires_at", "")
-                        prefs.edit().putString("saved_key", userKey).apply()
-                        prefs.edit().putString("saved_expiry", userExpiry).apply()
-                        SessionStore.saveKey(this, userKey)
-
-                        runOnUiThread {
-                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            layoutLogin.visibility = LinearLayout.GONE
-                            layoutDashboard.visibility = LinearLayout.VISIBLE
-                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                            startSlotsRefresh(tvSlots)
-                            startBackgroundKeyCheck()
-                        }
-                    } else runOnUiThread { Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() }
-                } else runOnUiThread { Toast.makeText(this, "Panel error: HTTP $code", Toast.LENGTH_LONG).show() }
-            } catch (e: Exception) {
-                runOnUiThread { Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() }
-            }
-        }.start()
-    }
-
     override fun onActivityResult(req: Int, res: Int, data: Intent?) {
         super.onActivityResult(req, res, data)
         if (req == 102 && res == RESULT_OK) checkOverlayPermission()
@@ -307,6 +299,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() { 
         super.onDestroy()
         timer?.cancel()
-        keyCheckThread?.interrupt()
     }
 }
