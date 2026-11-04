@@ -26,8 +26,11 @@ class FloatingService : Service() {
     private lateinit var btnAttack: Button
     private lateinit var btnGetIp: Button
     private lateinit var tvLog: TextView
+    private lateinit var tvSlots: TextView
+    
     private var selectedTime = 120
-    private var attackTimer: Thread? = null
+    private var isAttacking = false
+    private var currentSlots = 3 // Shuru me 3 slots bhare hue hain (test ke liye)
 
     companion object {
         var instance: FloatingService? = null
@@ -84,6 +87,7 @@ class FloatingService : Service() {
         etPort = floatingView.findViewById(R.id.fEtPort)
         tvTime = floatingView.findViewById(R.id.fTvTime)
         tvLog = floatingView.findViewById(R.id.tvLog)
+        tvSlots = floatingView.findViewById(R.id.tvSlots)
         btnAttack = floatingView.findViewById(R.id.fBtnAttack)
         btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
         val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
@@ -92,6 +96,8 @@ class FloatingService : Service() {
         etIpRef = etIp
         etPortRef = etPort
         btnGetIpRef = btnGetIp
+
+        updateSlotsUI(currentSlots)
 
         floatingView.findViewById<TextView>(R.id.btnClose).setOnClickListener { stopSelf() }
         floatingView.findViewById<TextView>(R.id.btnMinimize).setOnClickListener {
@@ -132,29 +138,54 @@ class FloatingService : Service() {
         }
 
         btnAttack.setOnClickListener {
+            if (isAttacking) {
+                Toast.makeText(this, "Attack already in progress!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (currentSlots >= 10) {
+                Toast.makeText(this, "⚠️ Slots Full! Please wait for a slot to free up.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val ip = etIp.text.toString().trim()
             val port = etPort.text.toString().trim()
             if (ip.isEmpty() || port.isEmpty()) {
                 Toast.makeText(this, "IP or Port missing!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            isAttacking = true
             btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
+            
+            // Slot badha do
+            currentSlots++
+            updateSlotsUI(currentSlots)
+
             startAttackTimer(ip, port, selectedTime)
         }
 
         setupPanelDragAndResize()
     }
 
+    private fun updateSlotsUI(slots: Int) {
+        tvSlots.text = "SLOTS: $slots/10"
+        if (slots >= 10) {
+            tvSlots.setTextColor(android.graphics.Color.parseColor("#EF4444")) // Full = Red
+        } else {
+            tvSlots.setTextColor(android.graphics.Color.parseColor("#00E5FF")) // Available = Cyan
+        }
+    }
+
     private fun startAttackTimer(ip: String, port: String, time: Int) {
         executeAttack(ip, port, time)
         
-        attackTimer?.interrupt()
-        attackTimer = Thread {
+        Thread {
             try {
                 var remaining = time
                 while (remaining > 0) {
                     Handler(Looper.getMainLooper()).post {
+                        // Timer Launch Button ke upar chalega
                         tvLog.text = "> ATTACKING: ${remaining}s left"
                         tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                     }
@@ -166,10 +197,16 @@ class FloatingService : Service() {
                     tvLog.setTextColor(android.graphics.Color.parseColor("#22C55E"))
                     btnAttack.text = "LAUNCH ATTACK 🚀"
                     btnAttack.isEnabled = true
+                    isAttacking = false
+                    
+                    // Slot wapas kam kar do
+                    if (currentSlots > 0) {
+                        currentSlots--
+                        updateSlotsUI(currentSlots)
+                    }
                 }
             } catch (e: InterruptedException) {}
-        }
-        attackTimer?.start()
+        }.start()
     }
 
     private var initialX = 0
@@ -293,9 +330,7 @@ class FloatingService : Service() {
                 if (responseCode != 200 && responseCode != 201) {
                     try {
                         val errorBody = conn.errorStream?.bufferedReader()?.readText()
-                        if (!errorBody.isNullOrEmpty()) {
-                            responseMsg = errorBody.take(40)
-                        }
+                        if (!errorBody.isNullOrEmpty()) responseMsg = errorBody.take(40)
                     } catch (e: Exception) {}
                 }
 
@@ -303,18 +338,22 @@ class FloatingService : Service() {
                     if (responseCode in 200..201) {
                         btnAttack.text = "LAUNCHED ✅"
                         btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
-                        tvLog.text = "> SUCCESS! TARGET DOWN"
+                        // Timer chalu rahega, button disable rahega jab tak time khatam na ho
                     } else {
                         btnAttack.text = "LAUNCH ATTACK 🚀"
                         btnAttack.isEnabled = true
-                        tvLog.text = "> FAIL: $responseCode $responseMsg"
-                        Toast.makeText(this@FloatingService, "Error: $responseMsg", Toast.LENGTH_LONG).show()
+                        isAttacking = false
+                        if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
+                        tvLog.text = "> FAIL: $responseCode"
+                        Toast.makeText(this@FloatingService, "API Error: $responseMsg", Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
                     btnAttack.text = "LAUNCH ATTACK 🚀"
                     btnAttack.isEnabled = true
+                    isAttacking = false
+                    if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
                     tvLog.text = "> NETWORK FAIL"
                     Toast.makeText(this@FloatingService, "Net Err: ${e.message?.take(20)}", Toast.LENGTH_LONG).show()
                 }
@@ -329,7 +368,6 @@ class FloatingService : Service() {
         try {
             if (::floatingView.isInitialized) windowManager.removeView(floatingView)
             if (::bubbleView.isInitialized) windowManager.removeView(bubbleView)
-            attackTimer?.interrupt()
         } catch (e: Exception) {}
     }
 
