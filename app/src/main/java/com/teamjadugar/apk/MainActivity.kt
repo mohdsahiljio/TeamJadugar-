@@ -82,14 +82,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
         try {
-            // 100% FIX: Panel UTC me time bhejta hai, use direct UTC parse karo
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
             sdf.timeZone = TimeZone.getTimeZone("UTC")
             val expiryDate = sdf.parse(expiryStr) ?: return
             
-            // Current UTC time nikaalo
-            val currentUtcTime = System.currentTimeMillis()
-            val timeLeft = expiryDate.time - currentUtcTime
+            val timeLeft = expiryDate.time - System.currentTimeMillis()
 
             if (timeLeft > 0) {
                 timer = object : CountDownTimer(timeLeft, 1000) {
