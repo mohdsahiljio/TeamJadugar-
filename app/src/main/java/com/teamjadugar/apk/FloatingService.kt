@@ -394,39 +394,22 @@ class FloatingService : Service() {
     private var initialX = 0; private var initialY = 0
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
+    // 🩸 FIXED: Resize Handle hata diya, sirf Drag bacha hai
     private fun setupPanelDragAndResize() {
         val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
         header.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    initialX = paramsPanel.x; initialY = paramsPanel.y
-                    initialTouchX = event.rawX; initialTouchY = event.rawY
+                    initialX = paramsPanel.x
+                    initialY = paramsPanel.y
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
                     paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
                     paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
                     try { windowManager.updateViewLayout(floatingView, paramsPanel) } catch (_: Exception) {}
-                    true
-                }
-                else -> false
-            }
-        }
-        val resizeHandle = floatingView.findViewById<ImageView>(R.id.resizeHandle)
-        var iw = 0; var ih = 0
-        resizeHandle.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    iw = floatingView.width; ih = floatingView.height
-                    initialTouchX = event.rawX; initialTouchY = event.rawY
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val nw = iw + (event.rawX - initialTouchX).toInt()
-                    val nh = ih + (event.rawY - initialTouchY).toInt()
-                    paramsPanel.width = if (nw > 300) nw else 300
-                    paramsPanel.height = if (nh > 200) nh else WindowManager.LayoutParams.WRAP_CONTENT
-                    windowManager.updateViewLayout(floatingView, paramsPanel)
                     true
                 }
                 else -> false
