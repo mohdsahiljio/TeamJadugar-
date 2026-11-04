@@ -27,6 +27,8 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
         private const val TEST_URL = "http://13.211.179.172:5000/connect/init"
+
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -116,6 +119,13 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
+                
+                // 🩸 HMAC SECURITY
+                val mac = Mac.getInstance("HmacSHA256")
+                mac.init(SecretKeySpec("SPECTRE_SECURE_2026".toByteArray(), "HmacSHA256"))
+                val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
+                conn.setRequestProperty("X-App-Signature", signature)
+
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
@@ -148,21 +158,13 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread { Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() }
                 }
             } catch (e: Exception) {
-                // 🩸 DEBUG ERROR POPUP
-                runOnUiThread { 
-                    AlertDialog.Builder(this@MainActivity)
-                        .setTitle("DEBUG ERROR")
-                        .setMessage(e.toString())
-                        .setPositiveButton("OK", null)
-                        .show()
-                }
+                runOnUiThread { Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() }
             } finally {
                 runOnUiThread { btnVerify.isEnabled = true; btnVerify.text = "🛡️ AUTHENTICATE" }
             }
         }
     }
 
-    // Baaki functions same rahenge (silentLiveCheck, startExpiryTimer, etc.)
     private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
     }
