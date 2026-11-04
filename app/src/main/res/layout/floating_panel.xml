@@ -113,6 +113,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="4dp"/>
     
+    <!-- SLIDER MAX TIME 300 -->
     <SeekBar
         android:id="@+id/fSeekBar"
         android:layout_width="match_parent"
