@@ -1,182 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="320dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:maxHeight="600dp"
     android:background="@drawable/bg_glass_card_purple"
-    android:padding="20dp"
-    android:elevation="15dp">
+    android:elevation="15dp"
+    android:scrollbars="none">
 
-    <!-- HEADER -->
     <LinearLayout
-        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="20dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_launcher"
-            android:layout_marginEnd="12dp"/>
-
+        <!-- HEADER -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/headerLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_launcher"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="SPECTRE API"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SPECTRE API"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:letterSpacing="0.05"/>
+                <TextView
+                    android:id="@+id/tvSlots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SLOTS: 0/10"
+                    android:textColor="#00E5FF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnMinimize"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:text="—"
+                android:gravity="center"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:letterSpacing="0.05"/>
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
             <TextView
-                android:id="@+id/tvSlots"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SLOTS: 0/10"
-                android:textColor="#B026FF"
-                android:textSize="12sp"
+                android:id="@+id/btnClose"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:text="✕"
+                android:gravity="center"
+                android:textColor="#FF0000"
                 android:textStyle="bold"
-                android:layout_marginTop="2dp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/btnMinimize"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:text="—"
-            android:gravity="center"
+        <!-- IP INPUT -->
+        <EditText
+            android:id="@+id/fEtIp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="🌐 TARGET IP"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input_purple"
+            android:paddingStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="14sp"/>
+
+        <!-- PORT INPUT -->
+        <EditText
+            android:id="@+id/fEtPort"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="📟 TARGET PORT"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input_purple"
+            android:paddingStart="12dp"
+            android:layout_marginBottom="12dp"
+            android:textSize="14sp"
+            android:inputType="number"/>
+
+        <!-- DURATION -->
+        <TextView
+            android:id="@+id/fTvTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ATTACK DURATION: 120s"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+        
+        <SeekBar
+            android:id="@+id/fSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="270"
+            android:progress="90"
+            android:progressTint="#B026FF"
+            android:thumbTint="#FFFFFF"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- BUTTONS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+            
+            <Button
+                android:id="@+id/fBtnGetIp"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="⚡ GET IP"
+                android:background="@drawable/bg_glass_card_purple"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="6dp"/>
+                
+            <Button
+                android:id="@+id/fBtnVpnOff"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="🛡️ VPN OFF"
+                android:background="@drawable/bg_glass_card_purple"
+                android:textColor="#FF4444"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="6dp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/fBtnAttack"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="LAUNCH ATTACK 🚀"
+            android:background="@drawable/bg_button_purple"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:letterSpacing="0.05"
+            android:elevation="10dp"/>
+
+        <!-- LOG TEXT -->
+        <TextView
+            android:id="@+id/tvLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text=""
+            android:textColor="#00FF00"
+            android:textSize="12sp"
+            android:gravity="center"
             android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/btnClose"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:text="✕"
-            android:gravity="center"
-            android:textColor="#FF0000"
-            android:textStyle="bold"
-            android:textSize="20sp"/>
     </LinearLayout>
-
-    <!-- IP INPUT -->
-    <EditText
-        android:id="@+id/fEtIp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="🌐 TARGET IP"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#888888"
-        android:background="@drawable/bg_input_purple"
-        android:paddingStart="16dp"
-        android:layout_marginBottom="10dp"
-        android:textSize="14sp"/>
-
-    <!-- PORT INPUT -->
-    <EditText
-        android:id="@+id/fEtPort"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="📟 TARGET PORT"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#888888"
-        android:background="@drawable/bg_input_purple"
-        android:paddingStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="14sp"
-        android:inputType="number"/>
-
-    <!-- DURATION -->
-    <TextView
-        android:id="@+id/fTvTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ATTACK DURATION: 120s"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-    
-    <SeekBar
-        android:id="@+id/fSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="270"
-        android:progress="90"
-        android:progressTint="#B026FF"
-        android:thumbTint="#FFFFFF"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- BUTTONS -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-        
-        <Button
-            android:id="@+id/fBtnGetIp"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="⚡ GET IP"
-            android:background="@drawable/bg_glass_card_purple"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="6dp"/>
-            
-        <Button
-            android:id="@+id/fBtnVpnOff"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="🛡️ VPN OFF"
-            android:background="@drawable/bg_glass_card_purple"
-            android:textColor="#FF4444"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginStart="6dp"/>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/fBtnAttack"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="LAUNCH ATTACK 🚀"
-        android:background="@drawable/bg_button_purple"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:letterSpacing="0.05"
-        android:elevation="10dp"/>
-
-    <!-- LOG TEXT -->
-    <TextView
-        android:id="@+id/tvLog"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text=""
-        android:textColor="#00FF00"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:textStyle="bold"/>
-
-    <ImageView
-        android:id="@+id/resizeHandle"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:src="@android:drawable/ic_menu_more"
-        android:tint="#888888"
-        android:scaleType="centerInside"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+</ScrollView>
