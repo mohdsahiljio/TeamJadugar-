@@ -27,10 +27,11 @@ class FloatingService : Service() {
     private lateinit var btnGetIp: Button
     private lateinit var tvLog: TextView
     private lateinit var tvSlots: TextView
+    private lateinit var tvBubbleTimer: TextView
     
     private var selectedTime = 120
     private var isAttacking = false
-    private var currentSlots = 3 // Shuru me 3 slots bhare hue hain (test ke liye)
+    private var currentSlots = 0 
 
     companion object {
         var instance: FloatingService? = null
@@ -90,6 +91,8 @@ class FloatingService : Service() {
         tvSlots = floatingView.findViewById(R.id.tvSlots)
         btnAttack = floatingView.findViewById(R.id.fBtnAttack)
         btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
+        tvBubbleTimer = bubbleView.findViewById(R.id.tvBubbleTimer)
+        
         val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
         val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
         
@@ -122,15 +125,15 @@ class FloatingService : Service() {
         })
 
         btnGetIp.setOnClickListener {
-            tvLog.text = "> SNIFFING BGMI..."
-            btnGetIp.text = "SNIFFING..."
+            tvLog.text = "SNIFFING..."
+            btnGetIp.text = "WAIT..."
             btnGetIp.isEnabled = false
             startService(Intent(this, VpnService::class.java))
         }
 
         btnVpnOff.setOnClickListener {
             stopService(Intent(this, VpnService::class.java))
-            tvLog.text = "> VPN STOPPED"
+            tvLog.text = ""
             btnGetIp.text = "GET IP"
             btnGetIp.isEnabled = true
             btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
@@ -139,11 +142,11 @@ class FloatingService : Service() {
 
         btnAttack.setOnClickListener {
             if (isAttacking) {
-                Toast.makeText(this, "Attack already in progress!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Attack already running! Wait for timer.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (currentSlots >= 10) {
-                Toast.makeText(this, "⚠️ Slots Full! Please wait for a slot to free up.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "⚠️ Slots Full! Please wait.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
@@ -155,10 +158,10 @@ class FloatingService : Service() {
             }
 
             isAttacking = true
-            btnAttack.text = "LAUNCHING..."
+            btnAttack.text = "LAUNCHED ✅"
+            btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
             btnAttack.isEnabled = false
             
-            // Slot badha do
             currentSlots++
             updateSlotsUI(currentSlots)
 
@@ -171,9 +174,9 @@ class FloatingService : Service() {
     private fun updateSlotsUI(slots: Int) {
         tvSlots.text = "SLOTS: $slots/10"
         if (slots >= 10) {
-            tvSlots.setTextColor(android.graphics.Color.parseColor("#EF4444")) // Full = Red
+            tvSlots.setTextColor(android.graphics.Color.parseColor("#EF4444"))
         } else {
-            tvSlots.setTextColor(android.graphics.Color.parseColor("#00E5FF")) // Available = Cyan
+            tvSlots.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
         }
     }
 
@@ -185,21 +188,24 @@ class FloatingService : Service() {
                 var remaining = time
                 while (remaining > 0) {
                     Handler(Looper.getMainLooper()).post {
-                        // Timer Launch Button ke upar chalega
-                        tvLog.text = "> ATTACKING: ${remaining}s left"
+                        tvLog.text = "⏱ ${remaining}s"
                         tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                        
+                        tvBubbleTimer.visibility = View.VISIBLE
+                        tvBubbleTimer.text = "${remaining}s"
                     }
                     Thread.sleep(1000)
                     remaining--
                 }
                 Handler(Looper.getMainLooper()).post {
-                    tvLog.text = "> ATTACK COMPLETED"
-                    tvLog.setTextColor(android.graphics.Color.parseColor("#22C55E"))
+                    tvLog.text = ""
+                    tvBubbleTimer.visibility = View.GONE
+                    
                     btnAttack.text = "LAUNCH ATTACK 🚀"
+                    btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                     btnAttack.isEnabled = true
                     isAttacking = false
                     
-                    // Slot wapas kam kar do
                     if (currentSlots > 0) {
                         currentSlots--
                         updateSlotsUI(currentSlots)
@@ -325,37 +331,29 @@ class FloatingService : Service() {
                 conn.outputStream.use { os -> os.write(jsonInput.toByteArray()) }
 
                 val responseCode = conn.responseCode
-                var responseMsg = conn.responseMessage
                 
-                if (responseCode != 200 && responseCode != 201) {
-                    try {
-                        val errorBody = conn.errorStream?.bufferedReader()?.readText()
-                        if (!errorBody.isNullOrEmpty()) responseMsg = errorBody.take(40)
-                    } catch (e: Exception) {}
-                }
-
                 Handler(Looper.getMainLooper()).post {
-                    if (responseCode in 200..201) {
-                        btnAttack.text = "LAUNCHED ✅"
-                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
-                        // Timer chalu rahega, button disable rahega jab tak time khatam na ho
-                    } else {
+                    if (responseCode !in 200..201) {
                         btnAttack.text = "LAUNCH ATTACK 🚀"
+                        btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                         btnAttack.isEnabled = true
                         isAttacking = false
                         if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
-                        tvLog.text = "> FAIL: $responseCode"
-                        Toast.makeText(this@FloatingService, "API Error: $responseMsg", Toast.LENGTH_LONG).show()
+                        tvLog.text = ""
+                        tvBubbleTimer.visibility = View.GONE
+                        Toast.makeText(this@FloatingService, "API Error!", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
                 Handler(Looper.getMainLooper()).post {
                     btnAttack.text = "LAUNCH ATTACK 🚀"
+                    btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#D946EF"))
                     btnAttack.isEnabled = true
                     isAttacking = false
                     if (currentSlots > 0) { currentSlots--; updateSlotsUI(currentSlots) }
-                    tvLog.text = "> NETWORK FAIL"
-                    Toast.makeText(this@FloatingService, "Net Err: ${e.message?.take(20)}", Toast.LENGTH_LONG).show()
+                    tvLog.text = ""
+                    tvBubbleTimer.visibility = View.GONE
+                    Toast.makeText(this@FloatingService, "Network Fail!", Toast.LENGTH_SHORT).show()
                 }
             } finally {
                 conn?.disconnect()
