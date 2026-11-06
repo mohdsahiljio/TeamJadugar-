@@ -34,6 +34,11 @@ class FloatingService : Service() {
     private var bubbleView: View? = null
     private var overlayView: View? = null
 
+    // 🩸 FIX 1: LayoutParams ko yahan se hata kar onCreate mein daala hai
+    private lateinit var paramsPanel: WindowManager.LayoutParams
+    private lateinit var paramsBubble: WindowManager.LayoutParams
+    private lateinit var paramsOverlay: WindowManager.LayoutParams
+
     private var etIp: EditText? = null
     private var etPort: EditText? = null
     private var tvTime: TextView? = null
@@ -74,6 +79,11 @@ class FloatingService : Service() {
         }
     }
 
+    // 🩸 FIX 2: onStartCommand add karna zaroori tha
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
+
     private fun playSound(type: String) {
         try {
             if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
@@ -84,21 +94,6 @@ class FloatingService : Service() {
             }
         } catch (e: Exception) {}
     }
-
-    private val paramsPanel = WindowManager.LayoutParams(
-        WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
-        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
-
-    private val paramsBubble = WindowManager.LayoutParams(
-        WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
-        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
-
-    private val paramsOverlay = WindowManager.LayoutParams(
-        WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
-        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
 
     override fun onCreate() {
         super.onCreate()
@@ -122,6 +117,25 @@ class FloatingService : Service() {
 
         try {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+
+            // 🩸 FIX 3: Yahan LayoutParams initialize kiye hain
+            paramsPanel = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT
+            )
+
+            paramsBubble = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT
+            )
+
+            paramsOverlay = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT
+            )
 
             paramsPanel.gravity = Gravity.TOP or Gravity.START
             paramsPanel.x = 50; paramsPanel.y = 150
@@ -188,11 +202,17 @@ class FloatingService : Service() {
                 playSound("click")
                 tvLog?.text = "> SNIFFING BGMI..."
                 btnGetIp?.text = "SNIFFING..."; btnGetIp?.isEnabled = false
-                startService(Intent(this, VpnService::class.java))
+                // 🩸 FIX 4: VPN start karte waqt try-catch
+                try {
+                    startService(Intent(this, VpnService::class.java))
+                } catch (e: Exception) {
+                    tvLog?.text = "> VPN ERROR: ${e.message}"
+                    btnGetIp?.text = "GET IP"; btnGetIp?.isEnabled = true
+                }
             }
             btnVpnOff?.setOnClickListener {
                 playSound("click")
-                stopService(Intent(this, VpnService::class.java))
+                try { stopService(Intent(this, VpnService::class.java)) } catch (_: Exception) {}
                 tvLog?.text = "> VPN STOPPED"
                 btnGetIp?.text = "GET IP"; btnGetIp?.isEnabled = true
                 btnGetIp?.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
@@ -225,11 +245,11 @@ class FloatingService : Service() {
 
             setupPanelDragAndResize()
         } catch (e: Exception) {
+            // Agar yahan crash hua, toh log me dikhega
+            e.printStackTrace()
             stopSelf()
         }
     }
-
-    // ... (Tera baaki ka code jo maine pehle diya tha) ...
 
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
