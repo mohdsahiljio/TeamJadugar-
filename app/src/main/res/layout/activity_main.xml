@@ -1,260 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#05000A"
-    android:fillViewport="true">
+    android:background="#05000A">
 
-    <RelativeLayout
+    <!-- 🩸 MATRIX EFFECT BACKGROUND -->
+    <com.teamjadugar.apk.MatrixEffectView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_launcher"
-            android:alpha="0.1"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="50dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout
-            android:id="@+id/layoutLogin"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:padding="20dp"
+            android:paddingTop="60dp">
 
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/ic_launcher"
-                android:layout_marginBottom="20dp"
-                android:elevation="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SPECTRE API"
-                android:textColor="#FFFFFF"
-                android:textSize="34sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.1"
-                android:shadowColor="#B026FF"
-                android:shadowRadius="25"
-                android:layout_marginBottom="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="— POWERED BY INNOVATION —"
-                android:textColor="#B026FF"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.2"
-                android:layout_marginBottom="30dp"/>
-
+            <!-- LOGIN SECTION -->
             <LinearLayout
+                android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:orientation="vertical"
-                android:background="@drawable/bg_glass_card_purple"
-                android:padding="24dp"
-                android:elevation="15dp">
+                android:gravity="center">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🔑 ENTER LICENSE KEY"
+                    android:text="SPECTRE API"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
+                    android:textSize="38sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp"/>
+                    android:letterSpacing="0.1"
+                    android:shadowColor="#B026FF"
+                    android:shadowRadius="50"
+                    android:layout_marginBottom="5dp"/>
 
-                <EditText
-                    android:id="@+id/etKey"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:hint="Enter License Key"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#888888"
-                    android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:background="@drawable/bg_input_purple"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="20dp"/>
-
-                <Button
-                    android:id="@+id/btnVerify"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:text="🛡️ AUTHENTICATE"
-                    android:background="@drawable/bg_button_purple"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutDashboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginTop="30dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="24dp">
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_launcher"
-                    android:layout_marginEnd="12dp"/>
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="— POWERED BY INNOVATION —"
+                    android:textColor="#D946EF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.2"
+                    android:layout_marginBottom="40dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_glass_card_purple"
+                    android:padding="24dp"
+                    android:elevation="20dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SPECTRE API"
+                        android:text="🔑 ENTER LICENSE KEY"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <EditText
+                        android:id="@+id/etKey"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:hint="Enter License Key"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#888888"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:background="@drawable/bg_input_purple"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="20dp"/>
+
+                    <Button
+                        android:id="@+id/btnVerify"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:text="🛡️ AUTHENTICATE"
+                        android:background="@drawable/bg_button_purple"
                         android:textColor="#FFFFFF"
                         android:textStyle="bold"
-                        android:textSize="20sp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="● Status: Online"
-                        android:textColor="#00FF00"
-                        android:textSize="12sp"
-                        android:layout_marginTop="4dp"/>
+                        android:textSize="16sp"/>
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- DASHBOARD SECTION -->
             <LinearLayout
+                android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card_purple"
                 android:orientation="vertical"
-                android:padding="20dp"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="👑 ACCESS EXPIRY"
-                    android:textColor="#D4AF37"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"/>
+                android:visibility="gone"
+                android:layout_marginTop="30dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:baselineAligned="false">
-                    
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginEnd="4dp">
-                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#888888" android:textSize="9sp"/>
-                    </LinearLayout>
-                    
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
-                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#888888" android:textSize="9sp"/>
-                    </LinearLayout>
-                    
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
-                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#888888" android:textSize="9sp"/>
-                    </LinearLayout>
-                    
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginStart="4dp">
-                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#888888" android:textSize="9sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_glass_card_purple"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:layout_marginEnd="8dp">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="24dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/ic_launcher"
+                        android:layout_marginEnd="12dp"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="📡 LIVE SLOTS"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:id="@+id/tvSlots"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0/10"
-                        android:textColor="#B026FF"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="5dp"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SPECTRE API"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="22sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="● Status: Online"
+                            android:textColor="#00FF00"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/bg_glass_card_purple"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:layout_marginStart="8dp">
+                    android:padding="20dp"
+                    android:layout_marginBottom="16dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📱 DEVICE ID"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:id="@+id/tvDeviceId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="None"
-                        android:textColor="#FFFFFF"
+                        android:text="👑 ACCESS EXPIRY"
+                        android:textColor="#D4AF37"
                         android:textSize="14sp"
-                        android:layout_marginTop="5dp"/>
-                </LinearLayout>
-            </LinearLayout>
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"/>
 
-            <Switch
-                android:id="@+id/switchFloating"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="🚀 LAUNCH FLOATING PANEL"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:thumbTint="#B026FF"
-                android:trackTint="#333333"
-                android:background="@drawable/bg_glass_card_purple"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"/>
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+                        
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginEnd="4dp">
+                            <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#888888" android:textSize="9sp"/>
+                        </LinearLayout>
+                        
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
+                            <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#888888" android:textSize="9sp"/>
+                        </LinearLayout>
+                        
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
+                            <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#888888" android:textSize="9sp"/>
+                        </LinearLayout>
+                        
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginStart="4dp">
+                            <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#888888" android:textSize="9sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_glass_card_purple"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📡 LIVE SLOTS"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tvSlots"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0/10"
+                            android:textColor="#B026FF"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="5dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_glass_card_purple"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginStart="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📱 DEVICE ID"
+                            android:textColor="#FFFFFF"
+                            android:textSize="12sp"
+                            android:textStyle="bold"/>
+                        <TextView
+                            android:id="@+id/tvDeviceId"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="None"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:layout_marginTop="5dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Switch
+                    android:id="@+id/switchFloating"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="🚀 LAUNCH FLOATING PANEL"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:thumbTint="#B026FF"
+                    android:trackTint="#333333"
+                    android:background="@drawable/bg_glass_card_purple"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
