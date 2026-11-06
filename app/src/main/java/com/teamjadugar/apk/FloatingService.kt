@@ -503,3 +503,19 @@ class FloatingService : Service() {
                     true
                 }
                 else -> false
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
+        hideOverlay()
+        try { floatingView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
+        try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
+        toneGenerator?.release()
+        instance = null
+    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
+}
