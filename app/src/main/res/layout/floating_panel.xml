@@ -13,64 +13,86 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <LinearLayout
+        <!-- HEADER -->
+        <RelativeLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:layout_marginBottom="20dp">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_launcher"
-                android:layout_marginEnd="12dp"/>
-
+            <!-- Logo & Title -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <TextView
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_centerVertical="true">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_launcher"
+                    android:layout_marginEnd="12dp"/>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SPECTRE API"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:textSize="18sp"/>
-                <TextView
-                    android:id="@+id/tvSlots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SLOTS: 0/10"
-                    android:textColor="#00E5FF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="2dp"/>
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SPECTRE API"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="18sp"/>
+                    <!-- Slots Badge -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_glass_card_purple"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:layout_marginTop="2dp">
+                        <TextView
+                            android:id="@+id/tvSlots"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SLOTS: 0/10"
+                            android:textColor="#00E5FF"
+                            android:textSize="10sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/btnMinimize"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="—"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+            <!-- Minimize & Close -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/btnMinimize"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:text="—"
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/btnClose"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:text="✕"
+                    android:gravity="center"
+                    android:textColor="#FF0000"
+                    android:background="@drawable/bg_glass_card_purple"
+                    android:textStyle="bold"
+                    android:textSize="20sp"/>
+            </LinearLayout>
+        </RelativeLayout>
 
-            <TextView
-                android:id="@+id/btnClose"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="✕"
-                android:gravity="center"
-                android:textColor="#FF0000"
-                android:textStyle="bold"
-                android:textSize="20sp"/>
-        </LinearLayout>
-
+        <!-- INPUTS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -122,6 +144,7 @@
                 android:inputType="number"/>
         </LinearLayout>
 
+        <!-- SLIDER -->
         <TextView
             android:id="@+id/fTvTime"
             android:layout_width="match_parent"
@@ -142,6 +165,7 @@
             android:thumbTint="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
+        <!-- BUTTONS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -185,11 +209,33 @@
             android:letterSpacing="0.05"
             android:elevation="10dp"/>
 
+        <!-- BOTTOM BANNER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_glass_card_purple"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:layout_marginTop="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● Authorized  |  Ready for Load Testing"
+                android:textColor="#00FF00"
+                android:textSize="10sp"
+                android:layout_weight="1"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/stat_sys_signal_4"/>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text=""
             android:textColor="#00FF00"
             android:textSize="12sp"
