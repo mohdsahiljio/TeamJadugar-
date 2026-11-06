@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_hacker_screen">
+    android:background="#05000A">
 
-    <!-- Hacker Background Animation (World Map + Code) -->
+    <!-- 🩸 BACKGROUND ANIMATION (Peeche) -->
     <com.teamjadugar.apk.HackerBackgroundView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <!-- 🩸 SCROLL VIEW (Aage) -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,9 +41,7 @@
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:src="@drawable/ic_launcher"
-                    android:layout_marginBottom="20dp"
-                    android:shadowColor="#00E5FF"
-                    android:shadowRadius="30"/>
+                    android:layout_marginBottom="20dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -53,8 +52,6 @@
                     android:textStyle="bold|italic"
                     android:shadowColor="#00E5FF" 
                     android:shadowRadius="40"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
                     android:letterSpacing="0.12"/>
                 
                 <TextView
@@ -113,8 +110,6 @@
                         android:textSize="15sp"
                         android:fontFamily="monospace"
                         android:letterSpacing="0.05"
-                        android:shadowColor="#00E5FF"
-                        android:shadowRadius="15"
                         android:elevation="15dp"/>
                 </LinearLayout>
             </LinearLayout>
