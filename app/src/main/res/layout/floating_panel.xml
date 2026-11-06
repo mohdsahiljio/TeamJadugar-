@@ -13,14 +13,12 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- HEADER -->
         <RelativeLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp">
 
-            <!-- Logo & Title -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +41,6 @@
                         android:textColor="#FFFFFF"
                         android:textStyle="bold"
                         android:textSize="18sp"/>
-                    <!-- Slots Badge -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -63,7 +60,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Minimize & Close -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,7 +88,6 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <!-- INPUTS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -144,7 +139,6 @@
                 android:inputType="number"/>
         </LinearLayout>
 
-        <!-- SLIDER -->
         <TextView
             android:id="@+id/fTvTime"
             android:layout_width="match_parent"
@@ -165,7 +159,6 @@
             android:thumbTint="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
-        <!-- BUTTONS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -209,7 +202,6 @@
             android:letterSpacing="0.05"
             android:elevation="10dp"/>
 
-        <!-- BOTTOM BANNER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -225,10 +217,12 @@
                 android:textColor="#00FF00"
                 android:textSize="10sp"
                 android:layout_weight="1"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/stat_sys_signal_4"/>
+            <!-- FIXED: Replaced stat_sys_signal with emoji -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📶"
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <TextView
