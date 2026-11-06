@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Switch Toggle to Start/Stop Service
         switchFloating.setOnCheckedChangeListener { _, checked ->
             playSound("click")
             if (checked) {
@@ -185,7 +184,13 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
-            startService(Intent(this, FloatingService::class.java))
+            // 🩸 Start Service with NEW_TASK flag
+            val serviceIntent = Intent(this, FloatingService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
+            }
             Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
         }
     }
@@ -245,7 +250,12 @@ class MainActivity : AppCompatActivity() {
             else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
         } else if (req == 101) {
             if (Settings.canDrawOverlays(this)) {
-                startService(Intent(this, FloatingService::class.java))
+                val serviceIntent = Intent(this, FloatingService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent)
+                } else {
+                    startService(serviceIntent)
+                }
                 Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
