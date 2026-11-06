@@ -229,6 +229,9 @@ class FloatingService : Service() {
                 pulseAnimator?.cancel()
                 btnAttack?.text = "LAUNCHING..."
                 btnAttack?.isEnabled = false
+                
+                // Test ke liye Toast
+                Toast.makeText(this, "Sending Request...", Toast.LENGTH_SHORT).show()
                 executeAttack(ip, portInt, selectedTime)
             }
             setupPanelDragAndResize()
@@ -238,7 +241,6 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 FIXED ATTACK LOGIC WITH SCREEN ERROR
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -251,6 +253,7 @@ class FloatingService : Service() {
                         resetAttackButton()
                         tvLog?.text = "> KEY EMPTY" 
                         playSound("error") 
+                        Toast.makeText(this@FloatingService, "Key Missing!", Toast.LENGTH_SHORT).show()
                     }
                     return@launch
                 }
@@ -307,7 +310,7 @@ class FloatingService : Service() {
                 errMsg = e.message ?: "Network Error"
                 Log.e("ATTACK_DEBUG", "Exception: ${e.message}")
                 
-                // 🩸 SCREEN PAR NETWORK ERROR TOAST
+                // SCREEN PAR NETWORK ERROR TOAST
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@FloatingService, "Network Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
@@ -353,7 +356,6 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 FIXED SLOTS POLLING
     private fun startSlotsPolling() {
         slotsJob?.cancel()
         slotsJob = serviceScope.launch {
@@ -364,7 +366,6 @@ class FloatingService : Service() {
                     conn.connectTimeout = 3000
                     conn.readTimeout = 3000
                     
-                    // 🩸 HEADERS ADD KIYE HAIN SLOTS KE LIYE
                     conn.setRequestProperty("Content-Type", "application/json")
                     conn.setRequestProperty("Accept", "application/json")
                     
