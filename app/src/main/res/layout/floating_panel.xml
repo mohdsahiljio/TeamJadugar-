@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- 🩸 Ye LinearLayout hai, FrameLayout nahi -->
+        <!-- HEADER -->
         <LinearLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
@@ -33,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-                
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -41,24 +40,14 @@
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="18sp"/>
-                
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvSlots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_glass_card_purple"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    android:layout_marginTop="2dp">
-                    
-                    <TextView
-                        android:id="@+id/tvSlots"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SLOTS: 0/10"
-                        android:textColor="#00E5FF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                    android:text="SLOTS: 0/10"
+                    android:textColor="#df74ff"
+                    android:textSize="10sp"
+                    android:layout_marginTop="2dp"/>
             </LinearLayout>
 
             <TextView
@@ -77,119 +66,61 @@
                 android:layout_height="30dp"
                 android:text="✕"
                 android:gravity="center"
-                android:textColor="#FF0000"
-                android:background="@drawable/bg_glass_card_purple"
+                android:textColor="#FF2454"
                 android:textStyle="bold"
                 android:textSize="20sp"/>
         </LinearLayout>
 
-        <!-- IP Input -->
+        <!-- TARGET IP -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:background="@drawable/bg_input_purple"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="12dp">
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🌐"
-                android:textSize="20sp"
-                android:layout_marginEnd="12dp"/>
-            
-            <EditText
-                android:id="@+id/fEtIp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:hint="TARGET IP"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#888888"
-                android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🌐" android:textSize="20sp" android:layout_marginEnd="12dp"/>
+            <EditText android:id="@+id/fEtIp" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@null" android:hint="TARGET IP" android:textColor="#FFFFFF" android:textColorHint="#93839f" android:textSize="14sp"/>
         </LinearLayout>
 
-        <!-- Port Input -->
+        <!-- TARGET PORT -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:background="@drawable/bg_input_purple"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="16dp">
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📟"
-                android:textSize="20sp"
-                android:layout_marginEnd="12dp"/>
-            
-            <EditText
-                android:id="@+id/fEtPort"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:hint="TARGET PORT"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#888888"
-                android:textSize="14sp"
-                android:inputType="number"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔢" android:textSize="20sp" android:layout_marginEnd="12dp"/>
+            <EditText android:id="@+id/fEtPort" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@null" android:hint="TARGET PORT" android:textColor="#FFFFFF" android:textColorHint="#93839f" android:textSize="14sp" android:inputType="number"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/fTvTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ATTACK DURATION: 120s"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-        
+        <!-- DURATION -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="8dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="ATTACK DURATION:" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/fTvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="120s" android:textColor="#e13cff" android:textSize="14sp" android:textStyle="bold"/>
+        </LinearLayout>
+
         <SeekBar
             android:id="@+id/fSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="270"
             android:progress="90"
-            android:progressTint="#B026FF"
+            android:progressTint="#c12aff"
             android:thumbTint="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Buttons -->
+        <!-- BUTTONS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="16dp">
-            
-            <Button
-                android:id="@+id/fBtnGetIp"
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:text="⚡ GET IP"
-                android:background="@drawable/bg_glass_card_purple"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="6dp"/>
-                
-            <Button
-                android:id="@+id/fBtnVpnOff"
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:text="🛡️ VPN OFF"
-                android:background="@drawable/bg_glass_card_purple"
-                android:textColor="#FF4444"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:layout_marginStart="6dp"/>
+            <Button android:id="@+id/fBtnGetIp" android:layout_width="0dp" android:layout_height="55dp" android:layout_weight="1" android:text="⚡ GET IP" android:background="@drawable/bg_glass_card_purple" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" android:layout_marginEnd="6dp"/>
+            <Button android:id="@+id/fBtnVpnOff" android:layout_width="0dp" android:layout_height="55dp" android:layout_weight="1" android:text="🛡️ VPN OFF" android:background="@drawable/bg_glass_card_purple" android:textColor="#FF2454" android:textSize="12sp" android:textStyle="bold" android:layout_marginStart="6dp"/>
         </LinearLayout>
 
         <Button
@@ -201,10 +132,9 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:letterSpacing="0.05"
             android:elevation="10dp"/>
 
-        <!-- Footer -->
+        <!-- FOOTER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -213,31 +143,10 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_marginTop="16dp">
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="● Authorized  |  Ready for Load Testing"
-                android:textColor="#00FF00"
-                android:textSize="10sp"
-                android:layout_weight="1"/>
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📶"
-                android:textSize="16sp"/>
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="● Authorized  |  Ready" android:textColor="#20ef65" android:textSize="10sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📶" android:textSize="16sp"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text=""
-            android:textColor="#00FF00"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:textStyle="bold"/>
+        <TextView android:id="@+id/tvLog" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="#20ef65" android:textSize="12sp" android:gravity="center" android:textStyle="bold"/>
     </LinearLayout>
 </ScrollView>
