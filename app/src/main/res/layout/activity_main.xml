@@ -3,32 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#05000A">
+    android:background="#07030f">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:gravity="center_horizontal">
 
             <!-- LOGIN SECTION -->
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:layout_marginTop="40dp">
 
                 <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
                     android:src="@drawable/ic_launcher"
-                    android:alpha="0.9"
+                    app:tint="#a51cff"
                     android:layout_marginBottom="20dp"/>
 
                 <TextView
@@ -36,16 +38,16 @@
                     android:layout_height="wrap_content"
                     android:text="SPECTRE API"
                     android:textColor="#FFFFFF"
-                    android:textSize="40sp"
+                    android:textSize="36sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="#B026FF"
-                    android:shadowRadius="40"
+                    android:shadowRadius="30"
                     android:letterSpacing="0.1"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="— POWERED BY INNOVATION —"
-                    android:textColor="#D946EF"
+                    android:textColor="#D18CFF"
                     android:textSize="10sp"
                     android:letterSpacing="0.2"
                     android:layout_marginBottom="40dp"/>
@@ -70,11 +72,10 @@
                         android:id="@+id/etKey"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
-                        android:hint=">_ Enter License Key..."
+                        android:hint="Enter your license key..."
                         android:textColor="#FFFFFF"
-                        android:textColorHint="#666666"
+                        android:textColorHint="#93839f"
                         android:fontFamily="monospace"
-                        android:textStyle="bold"
                         android:gravity="center_vertical"
                         android:paddingStart="16dp"
                         android:background="@drawable/bg_input_purple"
@@ -101,73 +102,6 @@
                 android:visibility="gone"
                 android:layout_marginTop="10dp">
 
-                <!-- HEADER -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:layout_marginBottom="10dp">
-                    
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:alpha="0.6"
-                        android:src="@drawable/ic_launcher"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="👑 Premium\nUser"
-                        android:textColor="#FFFFFF"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:background="@drawable/bg_glass_card_purple"
-                        android:padding="8dp"
-                        android:gravity="center"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/ic_launcher"
-                            android:layout_marginEnd="12dp"/>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="SPECTRE API"
-                                android:textColor="#FFFFFF"
-                                android:textStyle="bold"
-                                android:textSize="22sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="● Status: Online"
-                                android:textColor="#00FF00"
-                                android:textSize="12sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="— POWERED BY INNOVATION —"
-                                android:textColor="#AAAAAA"
-                                android:textSize="9sp"
-                                android:layout_marginTop="4dp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-
                 <!-- ACCESS EXPIRY -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -181,8 +115,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="4dp">
+                        android:gravity="center_vertical">
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -195,7 +128,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="✔ Active"
-                            android:textColor="#00FF00"
+                            android:textColor="#20ef65"
                             android:textSize="12sp"
                             android:background="@drawable/bg_glass_card_purple"
                             android:paddingHorizontal="8dp"
@@ -205,38 +138,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Your premium access is active"
-                        android:textColor="#AAAAAA"
-                        android:textSize="10sp"
+                        android:textColor="#a99ab9"
+                        android:textSize="12sp"
                         android:layout_marginBottom="16dp"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
-                        
+                        android:orientation="horizontal">
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginEnd="4dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📅" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#888888" android:textSize="8sp"/>
+                            <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#a99ab9" android:textSize="8sp"/>
                         </LinearLayout>
-                        
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#888888" android:textSize="8sp"/>
+                            <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#a99ab9" android:textSize="8sp"/>
                         </LinearLayout>
-                        
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏳" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#888888" android:textSize="8sp"/>
+                            <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#e13cff" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#a99ab9" android:textSize="8sp"/>
                         </LinearLayout>
-                        
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginStart="4dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#888888" android:textSize="8sp"/>
+                            <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#e13cff" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#a99ab9" android:textSize="8sp"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -259,31 +183,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="📡 LIVE SLOTS"
+                            android:text="🛰️ LIVE SLOTS"
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tvSlots"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="5dp">
-                            <TextView
-                                android:id="@+id/tvSlots"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="0/10"
-                                android:textColor="#B026FF"
-                                android:textSize="28sp"
-                                android:textStyle="bold"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🚀"
-                                android:textSize="24sp"/>
-                        </LinearLayout>
+                            android:text="0/10"
+                            android:textColor="#c64bff"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="4dp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -301,28 +213,14 @@
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tvDeviceId"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="5dp">
-                            <TextView
-                                android:id="@+id/tvDeviceId"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="436bcc11d5..."
-                                android:textColor="#FFFFFF"
-                                android:textSize="14sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="📋"
-                                android:textSize="20sp"
-                                android:background="@drawable/bg_glass_card_purple"
-                                android:padding="4dp"/>
-                        </LinearLayout>
+                            android:text="d9d417ee38..."
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -333,15 +231,7 @@
                     android:background="@drawable/bg_glass_card_purple"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="20dp"
-                    android:layout_marginBottom="16dp">
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🚀"
-                        android:textSize="28sp"
-                        android:layout_marginEnd="16dp"/>
+                    android:padding="20dp">
                     
                     <LinearLayout
                         android:layout_width="0dp"
@@ -351,7 +241,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="LAUNCH FLOATING PANEL"
+                            android:text="🚀 LAUNCH FLOATING PANEL"
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:textSize="14sp"/>
@@ -359,79 +249,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Open the floating control panel"
-                            android:textColor="#AAAAAA"
-                            android:textSize="10sp"/>
+                            android:textColor="#a99ab9"
+                            android:textSize="11sp"/>
                     </LinearLayout>
 
                     <Switch
                         android:id="@+id/switchFloating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:thumbTint="#B026FF"
-                        android:trackTint="#333333"/>
-                </LinearLayout>
-
-                <!-- BOTTOM ICONS -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_glass_card_purple"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:layout_marginBottom="16dp">
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛡️" android:textSize="20sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Secure\nConnection" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡" android:textSize="20sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ultra Fast\nAPI" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textSize="20sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium\nFeatures" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="♾️" android:textSize="20sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No\nLimits" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- SUCCESS BANNER -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_success_banner"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="✅"
-                        android:textSize="24sp"
-                        android:layout_marginEnd="10dp"/>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Login Successful!"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:textSize="14sp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Welcome Back, Hacker!"
-                            android:textColor="#AAAAAA"
-                            android:textSize="10sp"/>
-                    </LinearLayout>
+                        android:thumbTint="#FFFFFF"
+                        android:trackTint="#8e16d8"/>
                 </LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
