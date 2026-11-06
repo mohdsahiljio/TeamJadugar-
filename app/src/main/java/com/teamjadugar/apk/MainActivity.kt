@@ -1,11 +1,6 @@
 package com.teamjadugar.apk
 
-import android.app.AlertDialog
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -14,14 +9,10 @@ import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Debug
-import android.os.Environment
 import android.provider.Settings
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import org.json.JSONObject
-import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -35,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        private const val TEST_URL = "http://13.211.179.172:5000/connect/init"
-
+        private const val PANEL_URL = "http://13.211.179.172:5000"
+        private const val HMAC_KEY = "SPECTRE_SECURE_2026"
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -50,7 +41,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun playSound(type: String) {
         try {
-            if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            if (toneGenerator == null) {
+                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            }
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
@@ -111,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         networkExecutor.execute {
             try {
-                val url = URL(TEST_URL)
+                val url = URL("$PANEL_URL/connect/init")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
@@ -119,13 +112,10 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                
-                // 🩸 HMAC SECURITY
                 val mac = Mac.getInstance("HmacSHA256")
-                mac.init(SecretKeySpec("SPECTRE_SECURE_2026".toByteArray(), "HmacSHA256"))
+                mac.init(SecretKeySpec(HMAC_KEY.toByteArray(), "HmacSHA256"))
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 conn.setRequestProperty("X-App-Signature", signature)
-
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
@@ -215,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         Thread {
             while (true) {
                 try {
-                    val url = URL("http://13.211.179.172:5000/connect/slots")
+                    val url = URL("$PANEL_URL/connect/slots")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.connectTimeout = 3000; conn.readTimeout = 3000
                     if (conn.responseCode == 200) {
@@ -236,9 +226,9 @@ class MainActivity : AppCompatActivity() {
         else if (req == 101 && Settings.canDrawOverlays(this)) startService(Intent(this, FloatingService::class.java))
     }
 
-    override fun onDestroy() { 
+    override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
-        try { toneGenerator?.release() } catch (e: Exception) {}
+        toneGenerator?.release()
     }
 }
