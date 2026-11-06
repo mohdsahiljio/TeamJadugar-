@@ -11,16 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- HEADER -->
         <LinearLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="20dp">
 
             <ImageView
                 android:layout_width="40dp"
@@ -39,7 +38,7 @@
                     android:text="SPECTRE API"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:letterSpacing="0.05"/>
                 <TextView
                     android:id="@+id/tvSlots"
@@ -47,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:text="SLOTS: 0/10"
                     android:textColor="#00E5FF"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:layout_marginTop="2dp"/>
             </LinearLayout>
@@ -73,34 +72,57 @@
                 android:textSize="20sp"/>
         </LinearLayout>
 
-        <!-- IP INPUT -->
-        <EditText
-            android:id="@+id/fEtIp"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="🌐 TARGET IP"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#888888"
+            android:layout_height="60dp"
             android:background="@drawable/bg_input_purple"
-            android:paddingStart="12dp"
-            android:layout_marginBottom="8dp"
-            android:textSize="14sp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="12dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌐"
+                android:textSize="20sp"
+                android:layout_marginEnd="12dp"/>
+            <EditText
+                android:id="@+id/fEtIp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="TARGET IP"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#888888"
+                android:textSize="14sp"/>
+        </LinearLayout>
 
-        <!-- PORT INPUT -->
-        <EditText
-            android:id="@+id/fEtPort"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="📟 TARGET PORT"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#888888"
+            android:layout_height="60dp"
             android:background="@drawable/bg_input_purple"
-            android:paddingStart="12dp"
-            android:layout_marginBottom="12dp"
-            android:textSize="14sp"
-            android:inputType="number"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📟"
+                android:textSize="20sp"
+                android:layout_marginEnd="12dp"/>
+            <EditText
+                android:id="@+id/fEtPort"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="TARGET PORT"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#888888"
+                android:textSize="14sp"
+                android:inputType="number"/>
+        </LinearLayout>
 
-        <!-- DURATION -->
         <TextView
             android:id="@+id/fTvTime"
             android:layout_width="match_parent"
@@ -109,7 +131,7 @@
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="8dp"/>
         
         <SeekBar
             android:id="@+id/fSeekBar"
@@ -119,36 +141,35 @@
             android:progress="90"
             android:progressTint="#B026FF"
             android:thumbTint="#FFFFFF"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="16dp"/>
 
-        <!-- BUTTONS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="16dp">
             
             <Button
                 android:id="@+id/fBtnGetIp"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="55dp"
                 android:layout_weight="1"
                 android:text="⚡ GET IP"
                 android:background="@drawable/bg_glass_card_purple"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:layout_marginEnd="6dp"/>
                 
             <Button
                 android:id="@+id/fBtnVpnOff"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="55dp"
                 android:layout_weight="1"
                 android:text="🛡️ VPN OFF"
                 android:background="@drawable/bg_glass_card_purple"
                 android:textColor="#FF4444"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:layout_marginStart="6dp"/>
         </LinearLayout>
@@ -156,26 +177,24 @@
         <Button
             android:id="@+id/fBtnAttack"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="LAUNCH ATTACK 🚀"
+            android:layout_height="65dp"
+            android:text="🚀 LAUNCH ATTACK"
             android:background="@drawable/bg_button_purple"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:letterSpacing="0.05"
             android:elevation="10dp"/>
 
-        <!-- LOG TEXT -->
         <TextView
             android:id="@+id/tvLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:text=""
             android:textColor="#00FF00"
             android:textSize="12sp"
             android:gravity="center"
             android:textStyle="bold"/>
-
     </LinearLayout>
 </ScrollView>
