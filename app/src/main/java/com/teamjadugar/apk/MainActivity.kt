@@ -212,3 +212,67 @@ class MainActivity : AppCompatActivity() {
         val expiryDate = parseExpiry(expiryStr) ?: return
         val timeLeft = expiryDate.time - System.currentTimeMillis()
         if (timeLeft <= 0) return
+        timer = object : CountDownTimer(timeLeft, 1000) {
+            override fun onTick(ms: Long) {
+                tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
+                tvHours.text = String.format("%02d", ((ms / 3600000L) % 24).toInt())
+                tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
+                tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
+            }
+            override fun onFinish() { Toast.makeText(this@MainActivity, "Key Expired", Toast.LENGTH_LONG).show() }
+        }.start()
+    }
+
+    private fun parseExpiry(s: String): Date? {
+        if (s.isBlank()) return null
+        val patterns = listOf("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss")
+        for (p in patterns) {
+            try {
+                val sdf = SimpleDateFormat(p, Locale.US)
+                sdf.timeZone = TimeZone.getTimeZone("UTC")
+                sdf.parse(s)?.let { return it }
+            } catch (_: Exception) {}
+        }
+        return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
+    }
+
+    private fun startSlotsRefresh(tvSlots: TextView) {
+        Thread {
+            while (true) {
+                try {
+                    val url = URL("$PANEL_URL/connect/slots")
+                    val conn = url.openConnection() as HttpURLConnection
+                    conn.connectTimeout = 3000; conn.readTimeout = 3000
+                    if (conn.responseCode == 200) {
+                        val json = JSONObject(conn.inputStream.bufferedReader().readText())
+                        val u = json.optInt("slots_used", 0)
+                        val t = json.optInt("slots_total", 10)
+                        runOnUiThread { tvSlots.text = "$u/$t" }
+                    }
+                } catch (_: Exception) {}
+                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
+            }
+        }.apply { isDaemon = true; start() }
+    }
+
+    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
+        super.onActivityResult(req, res, data)
+        if (req == 102) {
+            if (res == RESULT_OK) checkOverlayPermission()
+            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
+        } else if (req == 101) {
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingServiceSafely()
+            } else {
+                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
+                switchFloating.isChecked = false
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
+        toneGenerator?.release()
+    }
+}
