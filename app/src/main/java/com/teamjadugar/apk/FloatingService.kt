@@ -238,7 +238,7 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 FIXED ATTACK LOGIC
+    // 🩸 FIXED ATTACK LOGIC WITH SCREEN ERROR
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -306,24 +306,27 @@ class FloatingService : Service() {
             } catch (e: Exception) {
                 errMsg = e.message ?: "Network Error"
                 Log.e("ATTACK_DEBUG", "Exception: ${e.message}")
+                
+                // 🩸 SCREEN PAR NETWORK ERROR TOAST
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@FloatingService, "Network Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
             }
 
             withContext(Dispatchers.Main) {
                 if (ok) {
-                    // 🩸 SUCCESS
                     playSound("success")
                     btnAttack?.text = "LAUNCHED ✅"
                     btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                     tvLog?.text = "> ATTACK STARTED"
                     runCountdown(durationSec)
                 } else {
-                    // 🩸 FAILED (Red Button)
                     playSound("error")
                     resetAttackButton()
                     btnAttack?.text = "FAILED ❌"
                     btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#EF4444"))
                     tvLog?.text = "> FAIL: $errMsg"
-                    Toast.makeText(this@FloatingService, "Attack fail: $errMsg", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@FloatingService, "Fail: $errMsg", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -350,6 +353,7 @@ class FloatingService : Service() {
         }
     }
 
+    // 🩸 FIXED SLOTS POLLING
     private fun startSlotsPolling() {
         slotsJob?.cancel()
         slotsJob = serviceScope.launch {
@@ -359,6 +363,11 @@ class FloatingService : Service() {
                     val conn = url.openConnection() as HttpURLConnection
                     conn.connectTimeout = 3000
                     conn.readTimeout = 3000
+                    
+                    // 🩸 HEADERS ADD KIYE HAIN SLOTS KE LIYE
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("Accept", "application/json")
+                    
                     if (conn.responseCode == 200) {
                         val res = conn.inputStream.bufferedReader().readText()
                         val json = JSONObject(res)
