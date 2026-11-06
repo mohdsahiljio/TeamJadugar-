@@ -173,12 +173,15 @@ class FloatingService : Service() {
             seekBar?.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
             seekBar?.progress = 90
             selectedTime = MIN_ATTACK_SECONDS + (seekBar?.progress ?: 90)
-            tvTime?.text = "ATTACK DURATION: ${selectedTime}s"
+            
+            // 🩸 FIX: Yahan bhi sirf time dikhega
+            tvTime?.text = "${selectedTime}s"
 
             seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
                     selectedTime = (MIN_ATTACK_SECONDS + progress).coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
-                    tvTime?.text = "ATTACK DURATION: ${selectedTime}s"
+                    // 🩸 FIX: Yahan bhi 'ATTACK DURATION' hata diya hai
+                    tvTime?.text = "${selectedTime}s"
                 }
                 override fun onStartTrackingTouch(sb: SeekBar?) {}
                 override fun onStopTrackingTouch(sb: SeekBar?) {}
@@ -230,7 +233,7 @@ class FloatingService : Service() {
                 btnAttack?.text = "LAUNCHING..."
                 btnAttack?.isEnabled = false
                 
-                // Test ke liye Toast
+                // 🩸 CHECK TOAST
                 Toast.makeText(this, "Sending Request...", Toast.LENGTH_SHORT).show()
                 executeAttack(ip, portInt, selectedTime)
             }
@@ -241,7 +244,7 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 THE MAIN ATTACK LOGIC (FIXED)
+    // 🩸 THE MAIN ATTACK LOGIC
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -311,7 +314,6 @@ class FloatingService : Service() {
                 errMsg = e.message ?: "Network Error"
                 Log.e("ATTACK_DEBUG", "Exception: ${e.message}")
                 
-                // SCREEN PAR NETWORK ERROR TOAST
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@FloatingService, "Network Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
