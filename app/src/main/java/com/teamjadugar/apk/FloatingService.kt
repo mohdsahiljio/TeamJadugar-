@@ -70,8 +70,7 @@ class FloatingService : Service() {
 
         fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
-                etIpRef?.setText(ip)
-                etPortRef?.setText(port)
+                etIpRef?.setText(ip); etPortRef?.setText(port)
                 btnGetIpRef?.text = "IP FOUND ✅"
                 btnGetIpRef?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                 btnGetIpRef?.setTextColor(android.graphics.Color.BLACK)
@@ -448,6 +447,7 @@ class FloatingService : Service() {
     private var initialTouchX = 0f
     private var initialTouchY = 0f
 
+    // 🩸 DRAG FIX
     private fun setupPanelDragAndResize() {
         val header = floatingView?.findViewById<LinearLayout>(R.id.headerLayout)
         header?.setOnTouchListener { _, event ->
