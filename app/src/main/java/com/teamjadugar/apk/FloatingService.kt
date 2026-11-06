@@ -241,6 +241,7 @@ class FloatingService : Service() {
         }
     }
 
+    // 🩸 THE MAIN ATTACK LOGIC (FIXED)
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
