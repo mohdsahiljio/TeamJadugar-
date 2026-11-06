@@ -1,21 +1,25 @@
 package com.teamjadugar.apk
 
 import android.animation.ObjectAnimator
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
+import androidx.core.app.NotificationCompat
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -81,12 +85,10 @@ class FloatingService : Service() {
         } catch (e: Exception) {}
     }
 
-    // 🩸 FIX: WindowManager LayoutParams (FLAG_NOT_FOCUSABLE added to panel)
     private val paramsPanel = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-        PixelFormat.TRANSLUCENT)
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
 
     private val paramsBubble = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
@@ -101,6 +103,12 @@ class FloatingService : Service() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        // 🩸 FOREGROUND NOTIFICATION START (Crash Fix)
+        createNotificationChannel()
+        val notification = createNotification()
+        startForeground(1, notification)
+
         try {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
@@ -115,7 +123,6 @@ class FloatingService : Service() {
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
             paramsOverlay.gravity = Gravity.CENTER
 
-            // 🩸 Yahan Window Add ho rahi hai
             floatingView?.let { windowManager.addView(it, paramsPanel) }
 
             etIp = floatingView?.findViewById(R.id.fEtIp)
@@ -207,12 +214,31 @@ class FloatingService : Service() {
 
             setupPanelDragAndResize()
         } catch (e: Exception) {
-            Log.e("FloatingService", "Error: ${e.message}")
             stopSelf()
         }
     }
 
-    // ... (Tera baaki code waisa hi rahega jo maine pichli baar diya tha) ...
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "floating_channel",
+                "Floating Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this, "floating_channel")
+            .setContentTitle("SPECTRE API")
+            .setContentText("Floating Panel is running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
+    }
+
+    // ... (Tera baaki code: startButtonPulse, updateSlotsFromPanel, startAttack, resetAttackButton, runCountdown, showBigOverlay, showFinishedOverlay, hideOverlay, setupPanelDragAndResize, setupBubbleDrag, onDestroy same rahega) ...
     
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
@@ -457,6 +483,7 @@ class FloatingService : Service() {
         try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
         toneGenerator?.release()
         instance = null
+        stopForeground(true)
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
