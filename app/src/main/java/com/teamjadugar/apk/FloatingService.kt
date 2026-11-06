@@ -1,7 +1,6 @@
 package com.teamjadugar.apk
 
 import android.animation.ObjectAnimator
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -96,7 +95,9 @@ class FloatingService : Service() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        android.util.Log.d("FLOATING_DEBUG", "Service onCreate started")
 
+        // 1. Notification Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "floating_channel", "Floating Service",
@@ -110,17 +111,23 @@ class FloatingService : Service() {
             .setContentText("Floating Panel is running")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
-        
-        // 🩸 FIX: Android 14+ ke liye type pass karna zaroori hai
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(1, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-        } else {
-            startForeground(1, notification)
+
+        // 2. Start Foreground (Android 14 Fix)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(1, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(1, notification)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Notification Fail: ${e.message}", Toast.LENGTH_LONG).show()
+            stopSelf()
+            return
         }
 
         try {
+            // 3. Window Manager Setup
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY 
             else 
@@ -129,28 +136,44 @@ class FloatingService : Service() {
             paramsPanel = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                 type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
-
+            paramsPanel.gravity = Gravity.TOP or Gravity.START
+            paramsPanel.x = 50; paramsPanel.y = 150
+            
             paramsBubble = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
                 type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
-
+            paramsBubble.gravity = Gravity.TOP or Gravity.START
+            paramsBubble.x = 50; paramsBubble.y = 150
+            
             paramsOverlay = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
                 type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
-
-            paramsPanel.gravity = Gravity.TOP or Gravity.START
-            paramsPanel.x = 50; paramsPanel.y = 150
-            floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
-
-            paramsBubble.gravity = Gravity.TOP or Gravity.START
-            paramsBubble.x = 50; paramsBubble.y = 150
-            bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
-
-            overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
             paramsOverlay.gravity = Gravity.CENTER
 
-            floatingView?.let { windowManager.addView(it, paramsPanel) }
+            // 4. Inflate Layouts
+            try {
+                floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
+                bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+                overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
+            } catch (e: Exception) {
+                Toast.makeText(this, "LAYOUT ERROR: XML check karein", Toast.LENGTH_LONG).show()
+                android.util.Log.e("FLOATING_DEBUG", "Layout crash: ${e.message}")
+                stopSelf()
+                return
+            }
 
+            // 5. Add View to Screen
+            try {
+                floatingView?.let { windowManager.addView(it, paramsPanel) }
+                Toast.makeText(this, "✅ Floating Panel Visible!", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this, "ADDVIEW ERROR: ${e.message}", Toast.LENGTH_LONG).show()
+                android.util.Log.e("FLOATING_DEBUG", "AddView crash: ${e.message}")
+                stopSelf()
+                return
+            }
+
+            // 6. Baaki ka code (FindViewByIds, Listeners)
             etIp = floatingView?.findViewById(R.id.fEtIp)
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
@@ -229,7 +252,6 @@ class FloatingService : Service() {
                     playSound("error"); Toast.makeText(this, "IP or Valid Port missing!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
                 }
                 if (selectedTime > MAX_ATTACK_SECONDS) selectedTime = MAX_ATTACK_SECONDS
-
                 playSound("click")
                 isAttacking = true
                 pulseAnimator?.cancel()
@@ -238,7 +260,10 @@ class FloatingService : Service() {
                 startAttack(ip, portInt, selectedTime)
             }
             setupPanelDragAndResize()
+
         } catch (e: Exception) {
+            Toast.makeText(this, "GLOBAL CRASH: ${e.message}", Toast.LENGTH_LONG).show()
+            android.util.Log.e("FLOATING_DEBUG", "Global crash: ${e.message}")
             e.printStackTrace()
             stopSelf()
         }
