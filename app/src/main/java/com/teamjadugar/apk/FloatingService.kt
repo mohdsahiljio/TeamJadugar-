@@ -95,9 +95,7 @@ class FloatingService : Service() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        android.util.Log.d("FLOATING_DEBUG", "Service onCreate started")
 
-        // 1. Notification Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "floating_channel", "Floating Service",
@@ -112,7 +110,6 @@ class FloatingService : Service() {
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
 
-        // 2. Start Foreground (Android 14 Fix)
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 startForeground(1, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
@@ -126,7 +123,6 @@ class FloatingService : Service() {
         }
 
         try {
-            // 3. Window Manager Setup
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) 
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY 
@@ -150,30 +146,24 @@ class FloatingService : Service() {
                 type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
             paramsOverlay.gravity = Gravity.CENTER
 
-            // 4. Inflate Layouts
             try {
                 floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
                 bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
                 overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
             } catch (e: Exception) {
                 Toast.makeText(this, "LAYOUT ERROR: XML check karein", Toast.LENGTH_LONG).show()
-                android.util.Log.e("FLOATING_DEBUG", "Layout crash: ${e.message}")
                 stopSelf()
                 return
             }
 
-            // 5. Add View to Screen
             try {
                 floatingView?.let { windowManager.addView(it, paramsPanel) }
-                Toast.makeText(this, "✅ Floating Panel Visible!", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(this, "ADDVIEW ERROR: ${e.message}", Toast.LENGTH_LONG).show()
-                android.util.Log.e("FLOATING_DEBUG", "AddView crash: ${e.message}")
                 stopSelf()
                 return
             }
 
-            // 6. Baaki ka code (FindViewByIds, Listeners)
             etIp = floatingView?.findViewById(R.id.fEtIp)
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
@@ -263,7 +253,6 @@ class FloatingService : Service() {
 
         } catch (e: Exception) {
             Toast.makeText(this, "GLOBAL CRASH: ${e.message}", Toast.LENGTH_LONG).show()
-            android.util.Log.e("FLOATING_DEBUG", "Global crash: ${e.message}")
             e.printStackTrace()
             stopSelf()
         }
@@ -435,6 +424,7 @@ class FloatingService : Service() {
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
     private fun setupPanelDragAndResize() {
+        // 🩸 FIX: Yahan LinearLayout use kiya hai kyunki XML me bhi wahi hai
         val header = floatingView?.findViewById<LinearLayout>(R.id.headerLayout)
         header?.setOnTouchListener { _, event ->
             when (event.action) {
