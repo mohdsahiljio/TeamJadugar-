@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnVerify: Button
     private var toneGenerator: ToneGenerator? = null
 
+    // Switch ko yahan define kiya
+    private lateinit var switchFloating: Switch
+
     private fun playSound(type: String) {
         try {
             if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
@@ -63,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
         btnVerify = findViewById(R.id.btnVerify)
+        switchFloating = findViewById(R.id.switchFloating) // Switch link kiya
         
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
@@ -70,7 +74,6 @@ class MainActivity : AppCompatActivity() {
         val tvSecs = findViewById<TextView>(R.id.tvSecs)
         val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
         val tvSlots = findViewById<TextView>(R.id.tvSlots)
-        val switchFloating = findViewById<Switch>(R.id.switchFloating)
 
         tvDeviceId.text = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).take(10) + "..."
 
@@ -85,10 +88,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // 🩸 SWITCH LISTENER YAHAN SET KIYA HAI (Har baar chalega)
         switchFloating.setOnCheckedChangeListener { _, checked ->
             playSound("click")
-            if (checked) checkVpnPermission()
-            else stopService(Intent(this, FloatingService::class.java))
+            if (checked) {
+                checkVpnPermission()
+            } else {
+                stopService(Intent(this, FloatingService::class.java))
+            }
         }
 
         if (userKey.isNotEmpty()) {
@@ -178,7 +185,11 @@ class MainActivity : AppCompatActivity() {
     private fun checkOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
-        } else startService(Intent(this, FloatingService::class.java))
+        } else {
+            // 🩸 AGAR PERMISSION HAI TOH DIRECT SERVICE START KARO
+            startService(Intent(this, FloatingService::class.java))
+            Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
@@ -231,8 +242,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(req: Int, res: Int, data: Intent?) {
         super.onActivityResult(req, res, data)
-        if (req == 102 && res == RESULT_OK) checkOverlayPermission()
-        else if (req == 101 && Settings.canDrawOverlays(this)) startService(Intent(this, FloatingService::class.java))
+        if (req == 102) {
+            if (res == RESULT_OK) checkOverlayPermission()
+            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
+        } else if (req == 101) {
+            if (Settings.canDrawOverlays(this)) {
+                startService(Intent(this, FloatingService::class.java))
+                Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
+                switchFloating.isChecked = false
+            }
+        }
     }
 
     override fun onDestroy() {
