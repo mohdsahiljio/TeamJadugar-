@@ -2,11 +2,15 @@ package com.teamjadugar.apk
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.net.Uri
 import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +39,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutDashboard: LinearLayout
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
+    private var toneGenerator: ToneGenerator? = null
+
+    private fun playSound(type: String) {
+        try {
+            if (toneGenerator == null) toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+            when (type) {
+                "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
+                "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+            }
+        } catch (e: Exception) {}
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,19 +78,17 @@ class MainActivity : AppCompatActivity() {
 
         btnVerify.setOnClickListener {
             if (!btnVerify.isEnabled) return@setOnClickListener
-            btnVerify.isEnabled = false
-            btnVerify.text = "VERIFYING..."
+            playSound("click")
             val key = etKey.text.toString().trim()
             if (key.isEmpty()) {
                 Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-                btnVerify.isEnabled = true
-                btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
             } else {
                 verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
             }
         }
 
         switchFloating.setOnCheckedChangeListener { _, checked ->
+            playSound("click")
             if (checked) checkVpnPermission()
             else stopService(Intent(this, FloatingService::class.java))
         }
@@ -89,6 +103,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        btnVerify.isEnabled = false
+        btnVerify.text = "VERIFYING..."
 
         networkExecutor.execute {
             try {
@@ -119,23 +135,19 @@ class MainActivity : AppCompatActivity() {
                         SessionStore.saveKey(this, userKey)
 
                         runOnUiThread {
-                            // 🩸 SHOW SUCCESS BANNER
-                            val layoutSuccess = findViewById<LinearLayout>(R.id.layoutSuccess)
-                            layoutSuccess.visibility = LinearLayout.VISIBLE
-                            
-                            // Wait for 1.5 sec then show dashboard
-                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                                layoutLogin.visibility = LinearLayout.GONE
-                                layoutDashboard.visibility = LinearLayout.VISIBLE
-                                startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                                startSlotsRefresh(tvSlots)
-                            }, 1500)
+                            playSound("success")
+                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                            layoutLogin.visibility = LinearLayout.GONE
+                            layoutDashboard.visibility = LinearLayout.VISIBLE
+                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+                            startSlotsRefresh(tvSlots)
                         }
                     } else {
                         runOnUiThread { 
+                            playSound("error")
+                            Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
                             btnVerify.isEnabled = true
                             btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
-                            Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
                         }
                     }
                 } else {
@@ -228,5 +240,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
+        toneGenerator?.release()
     }
 }
