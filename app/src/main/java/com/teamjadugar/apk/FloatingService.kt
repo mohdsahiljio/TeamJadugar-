@@ -104,9 +104,20 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
-        // 🩸 FOREGROUND NOTIFICATION START (Crash Fix)
-        createNotificationChannel()
-        val notification = createNotification()
+        // 🩸 NOTIFICATION CHANNEL & FOREGROUND START
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "floating_channel", "Floating Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+        val notification = NotificationCompat.Builder(this, "floating_channel")
+            .setContentTitle("SPECTRE API")
+            .setContentText("Floating Panel is running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
         startForeground(1, notification)
 
         try {
@@ -218,28 +229,8 @@ class FloatingService : Service() {
         }
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "floating_channel",
-                "Floating Service",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
-    }
+    // ... (Tera baaki ka code jo maine pehle diya tha) ...
 
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, "floating_channel")
-            .setContentTitle("SPECTRE API")
-            .setContentText("Floating Panel is running")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .build()
-    }
-
-    // ... (Tera baaki code: startButtonPulse, updateSlotsFromPanel, startAttack, resetAttackButton, runCountdown, showBigOverlay, showFinishedOverlay, hideOverlay, setupPanelDragAndResize, setupBubbleDrag, onDestroy same rahega) ...
-    
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
         btnAttack?.let { btn ->
@@ -434,57 +425,4 @@ class FloatingService : Service() {
                 MotionEvent.ACTION_MOVE -> {
                     paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
                     paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
-                    try { floatingView?.let { windowManager.updateViewLayout(it, paramsPanel) } } catch (_: Exception) {}
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    private var bubbleInitialX = 0; private var bubbleInitialY = 0
-    private var bubbleInitialTouchX = 0f; private var bubbleInitialTouchY = 0f
-    private var isBubbleDragging = false
-
-    private fun setupBubbleDrag() {
-        bubbleView?.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    bubbleInitialX = paramsBubble.x; bubbleInitialY = paramsBubble.y
-                    bubbleInitialTouchX = event.rawX; bubbleInitialTouchY = event.rawY
-                    isBubbleDragging = false; true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val dx = event.rawX - bubbleInitialTouchX
-                    val dy = event.rawY - bubbleInitialTouchY
-                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-                        isBubbleDragging = true
-                        paramsBubble.x = bubbleInitialX + dx.toInt()
-                        paramsBubble.y = bubbleInitialY + dy.toInt()
-                        bubbleView?.let { windowManager.updateViewLayout(it, paramsBubble) }
-                    }
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    if (!isBubbleDragging) bubbleView?.performClick()
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        pulseAnimator?.cancel()
-        slotsThread?.interrupt()
-        hideOverlay()
-        try { floatingView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        toneGenerator?.release()
-        instance = null
-        stopForeground(true)
-    }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-}
+                    try { floatingView?.let { windowManager.updateViewLayout(it
