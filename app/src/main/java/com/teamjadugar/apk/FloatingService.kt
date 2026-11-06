@@ -9,6 +9,7 @@ import android.media.ToneGenerator
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -80,10 +81,12 @@ class FloatingService : Service() {
         } catch (e: Exception) {}
     }
 
+    // 🩸 FIX: WindowManager LayoutParams (FLAG_NOT_FOCUSABLE added to panel)
     private val paramsPanel = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT)
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSLUCENT)
 
     private val paramsBubble = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
@@ -112,11 +115,9 @@ class FloatingService : Service() {
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
             paramsOverlay.gravity = Gravity.CENTER
 
-            if (floatingView != null) {
-                windowManager.addView(floatingView, paramsPanel)
-            }
+            // 🩸 Yahan Window Add ho rahi hai
+            floatingView?.let { windowManager.addView(it, paramsPanel) }
 
-            // 🩸 SAFE VIEW FINDING
             etIp = floatingView?.findViewById(R.id.fEtIp)
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
@@ -206,10 +207,13 @@ class FloatingService : Service() {
 
             setupPanelDragAndResize()
         } catch (e: Exception) {
+            Log.e("FloatingService", "Error: ${e.message}")
             stopSelf()
         }
     }
 
+    // ... (Tera baaki code waisa hi rahega jo maine pichli baar diya tha) ...
+    
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
         btnAttack?.let { btn ->
