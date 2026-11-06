@@ -25,18 +25,18 @@ import javax.crypto.spec.SecretKeySpec
 class FloatingService : Service() {
 
     private lateinit var windowManager: WindowManager
-    private lateinit var floatingView: View
-    private lateinit var bubbleView: View
-    private lateinit var overlayView: View
+    private var floatingView: View? = null
+    private var bubbleView: View? = null
+    private var overlayView: View? = null
 
-    private lateinit var etIp: EditText
-    private lateinit var etPort: EditText
-    private lateinit var tvTime: TextView
-    private lateinit var btnAttack: Button
-    private lateinit var btnGetIp: Button
-    private lateinit var tvLog: TextView
-    private lateinit var tvSlots: TextView
-    private lateinit var tvBubbleTimer: TextView
+    private var etIp: EditText? = null
+    private var etPort: EditText? = null
+    private var tvTime: TextView? = null
+    private var btnAttack: Button? = null
+    private var btnGetIp: Button? = null
+    private var tvLog: TextView? = null
+    private var tvSlots: TextView? = null
+    private var tvBubbleTimer: TextView? = null
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -98,115 +98,124 @@ class FloatingService : Service() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        try {
+            windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
-        paramsPanel.gravity = Gravity.TOP or Gravity.START
-        paramsPanel.x = 50; paramsPanel.y = 150
-        floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
+            paramsPanel.gravity = Gravity.TOP or Gravity.START
+            paramsPanel.x = 50; paramsPanel.y = 150
+            floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
 
-        paramsBubble.gravity = Gravity.TOP or Gravity.START
-        paramsBubble.x = 50; paramsBubble.y = 150
-        bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+            paramsBubble.gravity = Gravity.TOP or Gravity.START
+            paramsBubble.x = 50; paramsBubble.y = 150
+            bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
 
-        overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
-        paramsOverlay.gravity = Gravity.CENTER
+            overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
+            paramsOverlay.gravity = Gravity.CENTER
 
-        windowManager.addView(floatingView, paramsPanel)
-
-        etIp = floatingView.findViewById(R.id.fEtIp)
-        etPort = floatingView.findViewById(R.id.fEtPort)
-        tvTime = floatingView.findViewById(R.id.fTvTime)
-        tvLog = floatingView.findViewById(R.id.tvLog)
-        tvSlots = floatingView.findViewById(R.id.tvSlots)
-        btnAttack = floatingView.findViewById(R.id.fBtnAttack)
-        btnGetIp = floatingView.findViewById(R.id.fBtnGetIp)
-        tvBubbleTimer = bubbleView.findViewById(R.id.tvBubbleTimer)
-
-        val btnVpnOff = floatingView.findViewById<Button>(R.id.fBtnVpnOff)
-        val seekBar = floatingView.findViewById<SeekBar>(R.id.fSeekBar)
-
-        etIpRef = etIp; etPortRef = etPort; btnGetIpRef = btnGetIp
-
-        startButtonPulse()
-        updateSlotsFromPanel()
-
-        floatingView.findViewById<TextView>(R.id.btnClose).setOnClickListener { 
-            playSound("click")
-            stopSelf() 
-        }
-        floatingView.findViewById<TextView>(R.id.btnMinimize).setOnClickListener {
-            playSound("click")
-            windowManager.removeView(floatingView)
-            windowManager.addView(bubbleView, paramsBubble)
-        }
-        setupBubbleDrag()
-        bubbleView.setOnClickListener {
-            playSound("click")
-            windowManager.removeView(bubbleView)
-            windowManager.addView(floatingView, paramsPanel)
-        }
-
-        seekBar.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
-        seekBar.progress = 90
-        selectedTime = MIN_ATTACK_SECONDS + seekBar.progress
-        tvTime.text = "ATTACK DURATION: ${selectedTime}s"
-
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                val c = (MIN_ATTACK_SECONDS + progress).coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
-                selectedTime = c
-                tvTime.text = "ATTACK DURATION: ${c}s"
+            if (floatingView != null) {
+                windowManager.addView(floatingView, paramsPanel)
             }
-            override fun onStartTrackingTouch(sb: SeekBar?) {}
-            override fun onStopTrackingTouch(sb: SeekBar?) {}
-        })
 
-        btnGetIp.setOnClickListener {
-            playSound("click")
-            tvLog.text = "> SNIFFING BGMI..."
-            btnGetIp.text = "SNIFFING..."; btnGetIp.isEnabled = false
-            startService(Intent(this, VpnService::class.java))
-        }
-        btnVpnOff.setOnClickListener {
-            playSound("click")
-            stopService(Intent(this, VpnService::class.java))
-            tvLog.text = "> VPN STOPPED"
-            btnGetIp.text = "GET IP"; btnGetIp.isEnabled = true
-            btnGetIp.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
-            btnGetIp.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
-        }
+            // 🩸 SAFE VIEW FINDING
+            etIp = floatingView?.findViewById(R.id.fEtIp)
+            etPort = floatingView?.findViewById(R.id.fEtPort)
+            tvTime = floatingView?.findViewById(R.id.fTvTime)
+            tvLog = floatingView?.findViewById(R.id.tvLog)
+            tvSlots = floatingView?.findViewById(R.id.tvSlots)
+            btnAttack = floatingView?.findViewById(R.id.fBtnAttack)
+            btnGetIp = floatingView?.findViewById(R.id.fBtnGetIp)
+            tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
-        btnAttack.setOnClickListener {
-            if (isAttacking) {
-                playSound("error")
-                Toast.makeText(this, "Attack already running!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
+            val btnVpnOff = floatingView?.findViewById<Button>(R.id.fBtnVpnOff)
+            val seekBar = floatingView?.findViewById<SeekBar>(R.id.fSeekBar)
+
+            etIpRef = etIp; etPortRef = etPort; btnGetIpRef = btnGetIp
+
+            startButtonPulse()
+            updateSlotsFromPanel()
+
+            floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { 
+                playSound("click")
+                stopSelf() 
             }
-            val ip = etIp.text.toString().trim()
-            val portStr = etPort.text.toString().trim()
-            
-            val portInt = portStr.toIntOrNull()
-            if (ip.isEmpty() || portInt == null) {
-                playSound("error")
-                Toast.makeText(this, "IP or Valid Port missing!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
+            floatingView?.findViewById<TextView>(R.id.btnMinimize)?.setOnClickListener {
+                playSound("click")
+                floatingView?.let { windowManager.removeView(it) }
+                bubbleView?.let { windowManager.addView(it, paramsBubble) }
             }
-            if (selectedTime > MAX_ATTACK_SECONDS) selectedTime = MAX_ATTACK_SECONDS
+            setupBubbleDrag()
+            bubbleView?.setOnClickListener {
+                playSound("click")
+                bubbleView?.let { windowManager.removeView(it) }
+                floatingView?.let { windowManager.addView(it, paramsPanel) }
+            }
 
-            playSound("click")
-            isAttacking = true
-            pulseAnimator?.cancel()
-            btnAttack.text = "LAUNCHING..."
-            btnAttack.isEnabled = false
-            
-            startAttack(ip, portInt, selectedTime)
+            seekBar?.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
+            seekBar?.progress = 90
+            selectedTime = MIN_ATTACK_SECONDS + (seekBar?.progress ?: 90)
+            tvTime?.text = "ATTACK DURATION: ${selectedTime}s"
+
+            seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
+                    val c = (MIN_ATTACK_SECONDS + progress).coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
+                    selectedTime = c
+                    tvTime?.text = "ATTACK DURATION: ${c}s"
+                }
+                override fun onStartTrackingTouch(sb: SeekBar?) {}
+                override fun onStopTrackingTouch(sb: SeekBar?) {}
+            })
+
+            btnGetIp?.setOnClickListener {
+                playSound("click")
+                tvLog?.text = "> SNIFFING BGMI..."
+                btnGetIp?.text = "SNIFFING..."; btnGetIp?.isEnabled = false
+                startService(Intent(this, VpnService::class.java))
+            }
+            btnVpnOff?.setOnClickListener {
+                playSound("click")
+                stopService(Intent(this, VpnService::class.java))
+                tvLog?.text = "> VPN STOPPED"
+                btnGetIp?.text = "GET IP"; btnGetIp?.isEnabled = true
+                btnGetIp?.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
+                btnGetIp?.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+            }
+
+            btnAttack?.setOnClickListener {
+                if (isAttacking) {
+                    playSound("error")
+                    Toast.makeText(this, "Attack already running!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
+                }
+                val ip = etIp?.text.toString().trim()
+                val portStr = etPort?.text.toString().trim()
+                
+                val portInt = portStr.toIntOrNull()
+                if (ip.isEmpty() || portInt == null) {
+                    playSound("error")
+                    Toast.makeText(this, "IP or Valid Port missing!", Toast.LENGTH_SHORT).show(); return@setOnClickListener
+                }
+                if (selectedTime > MAX_ATTACK_SECONDS) selectedTime = MAX_ATTACK_SECONDS
+
+                playSound("click")
+                isAttacking = true
+                pulseAnimator?.cancel()
+                btnAttack?.text = "LAUNCHING..."
+                btnAttack?.isEnabled = false
+                
+                startAttack(ip, portInt, selectedTime)
+            }
+
+            setupPanelDragAndResize()
+        } catch (e: Exception) {
+            stopSelf()
         }
-
-        setupPanelDragAndResize()
     }
 
     private fun startButtonPulse() {
         pulseAnimator?.cancel()
-        pulseAnimator = ObjectAnimator.ofFloat(btnAttack, "alpha", 1f, 0.6f, 1f).apply {
-            duration = 1000; repeatCount = ObjectAnimator.INFINITE; start()
+        btnAttack?.let { btn ->
+            pulseAnimator = ObjectAnimator.ofFloat(btn, "alpha", 1f, 0.6f, 1f).apply {
+                duration = 1000; repeatCount = ObjectAnimator.INFINITE; start()
+            }
         }
     }
 
@@ -225,8 +234,8 @@ class FloatingService : Service() {
                         val used = json.optInt("slots_used", 0)
                         val total = json.optInt("slots_total", 10)
                         Handler(Looper.getMainLooper()).post {
-                            tvSlots.text = "SLOTS: $used/$total"
-                            tvSlots.setTextColor(if (used >= total) android.graphics.Color.parseColor("#EF4444") else android.graphics.Color.parseColor("#00E5FF"))
+                            tvSlots?.text = "SLOTS: $used/$total"
+                            tvSlots?.setTextColor(if (used >= total) android.graphics.Color.parseColor("#EF4444") else android.graphics.Color.parseColor("#00E5FF"))
                         }
                     }
                 } catch (_: InterruptedException) { break }
@@ -245,7 +254,7 @@ class FloatingService : Service() {
                 if (key.isEmpty()) {
                     Handler(Looper.getMainLooper()).post {
                         resetAttackButton()
-                        tvLog.text = "> KEY EMPTY"
+                        tvLog?.text = "> KEY EMPTY"
                         playSound("error")
                         Toast.makeText(this, "Key missing — login again", Toast.LENGTH_LONG).show()
                     }
@@ -290,14 +299,14 @@ class FloatingService : Service() {
             Handler(Looper.getMainLooper()).post {
                 if (ok) {
                     playSound("success")
-                    btnAttack.text = "LAUNCHED ✅"
-                    btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
-                    tvLog.text = "> ATTACK STARTED"
+                    btnAttack?.text = "LAUNCHED ✅"
+                    btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
+                    tvLog?.text = "> ATTACK STARTED"
                     runCountdown(durationSec)
                 } else {
                     playSound("error")
                     resetAttackButton()
-                    tvLog.text = "> FAIL: $errMsg"
+                    tvLog?.text = "> FAIL: $errMsg"
                     Toast.makeText(this, "Attack fail: $errMsg", Toast.LENGTH_LONG).show()
                 }
             }
@@ -306,10 +315,10 @@ class FloatingService : Service() {
 
     private fun resetAttackButton() {
         isAttacking = false
-        if (::btnAttack.isInitialized) {
-            btnAttack.text = "LAUNCH ATTACK 🚀"
-            btnAttack.isEnabled = true
-            btnAttack.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
+        btnAttack?.let {
+            it.text = "LAUNCH ATTACK"
+            it.isEnabled = true
+            it.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
             startButtonPulse()
         }
     }
@@ -321,18 +330,18 @@ class FloatingService : Service() {
                 while (remaining > 0) {
                     val r = remaining
                     Handler(Looper.getMainLooper()).post {
-                        tvLog.text = "⏱ ${r}s"
-                        tvLog.setTextColor(android.graphics.Color.parseColor("#EF4444"))
-                        tvBubbleTimer.visibility = View.VISIBLE
-                        tvBubbleTimer.text = "${r}s"
+                        tvLog?.text = "⏱ ${r}s"
+                        tvLog?.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                        tvBubbleTimer?.visibility = View.VISIBLE
+                        tvBubbleTimer?.text = "${r}s"
                         if (r <= 3) showBigOverlay(r)
                     }
                     Thread.sleep(1000)
                     remaining--
                 }
                 Handler(Looper.getMainLooper()).post {
-                    tvBubbleTimer.visibility = View.GONE
-                    tvLog.text = ""
+                    tvBubbleTimer?.visibility = View.GONE
+                    tvLog?.text = ""
                     showFinishedOverlay()
                     resetAttackButton()
                 }
@@ -342,40 +351,40 @@ class FloatingService : Service() {
 
     private fun showBigOverlay(num: Int) {
         if (!overlayShown) {
-            try { windowManager.addView(overlayView, paramsOverlay); overlayShown = true } catch (_: Exception) {}
+            try { overlayView?.let { windowManager.addView(it, paramsOverlay) }; overlayShown = true } catch (_: Exception) {}
         }
-        val tvBig = overlayView.findViewById<TextView>(R.id.tvBigTimer)
-        val tvMsg = overlayView.findViewById<TextView>(R.id.tvBigMsg)
-        tvBig.textSize = 200f
-        tvBig.text = "$num"
-        tvBig.setTextColor(android.graphics.Color.parseColor("#FF1744"))
-        tvMsg.textSize = 34f
-        tvMsg.text = "GET READY"
-        tvMsg.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
-        tvBig.scaleX = 0.6f; tvBig.scaleY = 0.6f
-        tvBig.animate().scaleX(1.2f).scaleY(1.2f).setDuration(250).withEndAction {
-            tvBig.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-        }.start()
+        val tvBig = overlayView?.findViewById<TextView>(R.id.tvBigTimer)
+        val tvMsg = overlayView?.findViewById<TextView>(R.id.tvBigMsg)
+        tvBig?.textSize = 200f
+        tvBig?.text = "$num"
+        tvBig?.setTextColor(android.graphics.Color.parseColor("#FF1744"))
+        tvMsg?.textSize = 34f
+        tvMsg?.text = "GET READY"
+        tvMsg?.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+        tvBig?.scaleX = 0.6f; tvBig?.scaleY = 0.6f
+        tvBig?.animate()?.scaleX(1.2f)?.scaleY(1.2f)?.setDuration(250)?.withEndAction {
+            tvBig?.animate()?.scaleX(1f)?.scaleY(1f)?.setDuration(150)?.start()
+        }?.start()
     }
 
     private fun showFinishedOverlay() {
         if (!overlayShown) {
-            try { windowManager.addView(overlayView, paramsOverlay); overlayShown = true } catch (_: Exception) {}
+            try { overlayView?.let { windowManager.addView(it, paramsOverlay) }; overlayShown = true } catch (_: Exception) {}
         }
-        val tvBig = overlayView.findViewById<TextView>(R.id.tvBigTimer)
-        val tvMsg = overlayView.findViewById<TextView>(R.id.tvBigMsg)
-        tvBig.textSize = 110f
-        tvBig.text = "✅"
-        tvBig.setTextColor(android.graphics.Color.parseColor("#22C55E"))
-        tvMsg.textSize = 46f
-        tvMsg.text = "ATTACK FINISHED"
-        tvMsg.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+        val tvBig = overlayView?.findViewById<TextView>(R.id.tvBigTimer)
+        val tvMsg = overlayView?.findViewById<TextView>(R.id.tvBigMsg)
+        tvBig?.textSize = 110f
+        tvBig?.text = "✅"
+        tvBig?.setTextColor(android.graphics.Color.parseColor("#22C55E"))
+        tvMsg?.textSize = 46f
+        tvMsg?.text = "ATTACK FINISHED"
+        tvMsg?.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
         Handler(Looper.getMainLooper()).postDelayed({ hideOverlay() }, 2000)
     }
 
     private fun hideOverlay() {
         if (overlayShown) {
-            try { windowManager.removeView(overlayView) } catch (_: Exception) {}
+            try { overlayView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
             overlayShown = false
         }
     }
@@ -384,8 +393,8 @@ class FloatingService : Service() {
     private var initialTouchX = 0f; private var initialTouchY = 0f
 
     private fun setupPanelDragAndResize() {
-        val header = floatingView.findViewById<LinearLayout>(R.id.headerLayout)
-        header.setOnTouchListener { _, event ->
+        val header = floatingView?.findViewById<LinearLayout>(R.id.headerLayout)
+        header?.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     initialX = paramsPanel.x; initialY = paramsPanel.y
@@ -395,7 +404,7 @@ class FloatingService : Service() {
                 MotionEvent.ACTION_MOVE -> {
                     paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
                     paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
-                    try { windowManager.updateViewLayout(floatingView, paramsPanel) } catch (_: Exception) {}
+                    try { floatingView?.let { windowManager.updateViewLayout(it, paramsPanel) } } catch (_: Exception) {}
                     true
                 }
                 else -> false
@@ -408,7 +417,7 @@ class FloatingService : Service() {
     private var isBubbleDragging = false
 
     private fun setupBubbleDrag() {
-        bubbleView.setOnTouchListener { _, event ->
+        bubbleView?.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     bubbleInitialX = paramsBubble.x; bubbleInitialY = paramsBubble.y
@@ -422,12 +431,12 @@ class FloatingService : Service() {
                         isBubbleDragging = true
                         paramsBubble.x = bubbleInitialX + dx.toInt()
                         paramsBubble.y = bubbleInitialY + dy.toInt()
-                        windowManager.updateViewLayout(bubbleView, paramsBubble)
+                        bubbleView?.let { windowManager.updateViewLayout(it, paramsBubble) }
                     }
                     true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (!isBubbleDragging) bubbleView.performClick()
+                    if (!isBubbleDragging) bubbleView?.performClick()
                     true
                 }
                 else -> false
@@ -440,8 +449,8 @@ class FloatingService : Service() {
         pulseAnimator?.cancel()
         slotsThread?.interrupt()
         hideOverlay()
-        try { if (::floatingView.isInitialized) windowManager.removeView(floatingView) } catch (_: Exception) {}
-        try { if (::bubbleView.isInitialized) windowManager.removeView(bubbleView) } catch (_: Exception) {}
+        try { floatingView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
+        try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
         toneGenerator?.release()
         instance = null
     }
