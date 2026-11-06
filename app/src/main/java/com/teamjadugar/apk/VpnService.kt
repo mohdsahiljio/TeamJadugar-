@@ -29,6 +29,7 @@ class VpnService : VpnService() {
         try {
             val builder = Builder()
             builder.addAddress("10.0.0.2", 32)
+            builder.addRoute("13.211.179.172", 32) // Panel IP Bypass
             builder.addRoute("0.0.0.0", 0)
             builder.setSession("Jadugar Sniffer")
             builder.setBlocking(true) 
