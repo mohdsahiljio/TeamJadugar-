@@ -38,8 +38,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
     private var toneGenerator: ToneGenerator? = null
-
-    // Switch ko yahan define kiya
     private lateinit var switchFloating: Switch
 
     private fun playSound(type: String) {
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
         btnVerify = findViewById(R.id.btnVerify)
-        switchFloating = findViewById(R.id.switchFloating) // Switch link kiya
+        switchFloating = findViewById(R.id.switchFloating)
         
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
@@ -88,13 +86,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 🩸 SWITCH LISTENER YAHAN SET KIYA HAI (Har baar chalega)
+        // Switch Toggle to Start/Stop Service
         switchFloating.setOnCheckedChangeListener { _, checked ->
             playSound("click")
             if (checked) {
                 checkVpnPermission()
             } else {
                 stopService(Intent(this, FloatingService::class.java))
+                Toast.makeText(this, "Floating Panel Stopped", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -186,7 +185,6 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
-            // 🩸 AGAR PERMISSION HAI TOH DIRECT SERVICE START KARO
             startService(Intent(this, FloatingService::class.java))
             Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
         }
