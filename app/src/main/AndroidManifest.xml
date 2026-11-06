@@ -4,10 +4,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- 🩸 YEH PERMISSION MISSING THI -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
-    <!-- 🩸 Ye permission APK install karne ke liye zaroori hai -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
@@ -26,9 +27,15 @@
             </intent-filter>
         </activity>
 
+        <!-- 🩸 SERVICE MEIN foregroundServiceType ADD KIYA HAI -->
         <service 
             android:name=".FloatingService" 
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Floating overlay panel for API" />
+        </service>
 
         <service 
             android:name=".VpnService" 
@@ -40,7 +47,6 @@
             </intent-filter>
         </service>
 
-        <!-- 🩸 FileProvider for Auto-Update -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
