@@ -173,14 +173,11 @@ class FloatingService : Service() {
             seekBar?.max = MAX_ATTACK_SECONDS - MIN_ATTACK_SECONDS
             seekBar?.progress = 90
             selectedTime = MIN_ATTACK_SECONDS + (seekBar?.progress ?: 90)
-            
-            // 🩸 FIX: Yahan bhi sirf time dikhega
             tvTime?.text = "${selectedTime}s"
 
             seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
                     selectedTime = (MIN_ATTACK_SECONDS + progress).coerceIn(MIN_ATTACK_SECONDS, MAX_ATTACK_SECONDS)
-                    // 🩸 FIX: Yahan bhi 'ATTACK DURATION' hata diya hai
                     tvTime?.text = "${selectedTime}s"
                 }
                 override fun onStartTrackingTouch(sb: SeekBar?) {}
@@ -233,7 +230,6 @@ class FloatingService : Service() {
                 btnAttack?.text = "LAUNCHING..."
                 btnAttack?.isEnabled = false
                 
-                // 🩸 CHECK TOAST
                 Toast.makeText(this, "Sending Request...", Toast.LENGTH_SHORT).show()
                 executeAttack(ip, portInt, selectedTime)
             }
@@ -244,7 +240,6 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 THE MAIN ATTACK LOGIC
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -331,8 +326,14 @@ class FloatingService : Service() {
                     resetAttackButton()
                     btnAttack?.text = "FAILED ❌"
                     btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#EF4444"))
-                    tvLog?.text = "> FAIL: $errMsg"
-                    Toast.makeText(this@FloatingService, "Fail: $errMsg", Toast.LENGTH_LONG).show()
+                    
+                    if (errMsg.contains("Slots Full", ignoreCase = true)) {
+                        tvLog?.text = "> SLOTS FULL! TRY LATER"
+                        Toast.makeText(this@FloatingService, "Slots Full! 10 attacks already running.", Toast.LENGTH_LONG).show()
+                    } else {
+                        tvLog?.text = "> FAIL: $errMsg"
+                        Toast.makeText(this@FloatingService, "Fail: $errMsg", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
@@ -383,7 +384,7 @@ class FloatingService : Service() {
                         }
                     }
                 } catch (_: Exception) {}
-                delay(5000)
+                delay(3000)
             }
         }
     }
@@ -502,19 +503,3 @@ class FloatingService : Service() {
                     true
                 }
                 else -> false
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
-        hideOverlay()
-        try { floatingView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        toneGenerator?.release()
-        instance = null
-    }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-}
