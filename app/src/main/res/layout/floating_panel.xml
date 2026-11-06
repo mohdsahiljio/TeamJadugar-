@@ -38,8 +38,7 @@
                     android:text="SPECTRE API"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:letterSpacing="0.05"/>
+                    android:textSize="18sp"/>
                 <TextView
                     android:id="@+id/tvSlots"
                     android:layout_width="wrap_content"
