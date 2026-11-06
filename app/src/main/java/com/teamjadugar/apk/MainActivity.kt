@@ -184,13 +184,8 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
-            // 🩸 Start Service with NEW_TASK flag
-            val serviceIntent = Intent(this, FloatingService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent)
-            } else {
-                startService(serviceIntent)
-            }
+            // 🩸 Yahan startService use kiya hai, startForegroundService nahi
+            startService(Intent(this, FloatingService::class.java))
             Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
         }
     }
@@ -250,12 +245,7 @@ class MainActivity : AppCompatActivity() {
             else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
         } else if (req == 101) {
             if (Settings.canDrawOverlays(this)) {
-                val serviceIntent = Intent(this, FloatingService::class.java)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(serviceIntent)
-                } else {
-                    startService(serviceIntent)
-                }
+                startService(Intent(this, FloatingService::class.java))
                 Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
