@@ -13,27 +13,32 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <RelativeLayout
+        <!-- 🩸 HEADER FIX: RelativeLayout hata kar FrameLayout use kiya hai -->
+        <FrameLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp">
 
+            <!-- Left Side: Logo aur Title -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_centerVertical="true">
+                android:layout_gravity="start|center_vertical">
+                
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/ic_launcher"
                     android:layout_marginEnd="12dp"/>
+                
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+                    
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -41,6 +46,7 @@
                         android:textColor="#FFFFFF"
                         android:textStyle="bold"
                         android:textSize="18sp"/>
+                    
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -48,6 +54,7 @@
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="2dp"
                         android:layout_marginTop="2dp">
+                        
                         <TextView
                             android:id="@+id/tvSlots"
                             android:layout_width="wrap_content"
@@ -60,12 +67,13 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Right Side: Minimize aur Close Buttons -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="end|center_vertical"
                 android:orientation="horizontal">
+                
                 <TextView
                     android:id="@+id/btnMinimize"
                     android:layout_width="30dp"
@@ -75,6 +83,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
+                
                 <TextView
                     android:id="@+id/btnClose"
                     android:layout_width="30dp"
@@ -86,8 +95,10 @@
                     android:textStyle="bold"
                     android:textSize="20sp"/>
             </LinearLayout>
-        </RelativeLayout>
+        </FrameLayout>
+        <!-- 🩸 HEADER FIX END -->
 
+        <!-- IP Input -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -96,12 +107,14 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="12dp">
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🌐"
                 android:textSize="20sp"
                 android:layout_marginEnd="12dp"/>
+            
             <EditText
                 android:id="@+id/fEtIp"
                 android:layout_width="match_parent"
@@ -113,6 +126,7 @@
                 android:textSize="14sp"/>
         </LinearLayout>
 
+        <!-- Port Input -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -121,12 +135,14 @@
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="16dp">
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="📟"
                 android:textSize="20sp"
                 android:layout_marginEnd="12dp"/>
+            
             <EditText
                 android:id="@+id/fEtPort"
                 android:layout_width="match_parent"
@@ -159,6 +175,7 @@
             android:thumbTint="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -202,6 +219,7 @@
             android:letterSpacing="0.05"
             android:elevation="10dp"/>
 
+        <!-- Footer -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -210,6 +228,7 @@
             android:gravity="center_vertical"
             android:padding="10dp"
             android:layout_marginTop="16dp">
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,6 +236,7 @@
                 android:textColor="#00FF00"
                 android:textSize="10sp"
                 android:layout_weight="1"/>
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
