@@ -10,16 +10,15 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
-        <!-- BACKGROUND IMAGE (Watermark/Smoke) -->
-        <!-- Agar tera background photo hai toh @drawable/bg_main kar dena, warna aise hi rehne de -->
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="400dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_launcher"
+            android:alpha="0.1"
             android:scaleType="centerCrop"
-            android:alpha="0.3"
-            android:src="@drawable/ic_launcher" />
+            android:layout_marginTop="50dp"/>
 
-        <!-- LOGIN SECTION -->
         <LinearLayout
             android:id="@+id/layoutLogin"
             android:layout_width="match_parent"
@@ -29,10 +28,11 @@
             android:gravity="center">
 
             <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:src="@drawable/ic_launcher"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="20dp"
+                android:elevation="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,9 +54,8 @@
                 android:textSize="10sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.2"
-                android:layout_marginBottom="40dp"/>
+                android:layout_marginBottom="30dp"/>
 
-            <!-- Login Glass Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,12 +94,10 @@
                     android:background="@drawable/bg_button_purple"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:letterSpacing="0.05"/>
+                    android:textSize="16sp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- DASHBOARD SECTION -->
         <LinearLayout
             android:id="@+id/layoutDashboard"
             android:layout_width="match_parent"
@@ -109,7 +106,6 @@
             android:visibility="gone"
             android:layout_marginTop="30dp">
 
-            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,7 +139,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Main Timer Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,7 +184,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Info Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -261,17 +255,6 @@
                 android:background="@drawable/bg_glass_card_purple"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SPECTRE API\n— STAY CONNECTED • STAY SECURE —"
-                android:textColor="#555555"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginTop="40dp"
-                android:lineSpacingExtra="4dp"/>
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>
