@@ -43,7 +43,6 @@ class FloatingService : Service() {
     private var pulseAnimator: ObjectAnimator? = null
     private var slotsThread: Thread? = null
     private var overlayShown = false
-
     private var toneGenerator: ToneGenerator? = null
 
     companion object {
@@ -54,7 +53,6 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
-        
         private const val PANEL_URL = "http://13.211.179.172:5000"
         private const val HMAC_KEY = "SPECTRE_SECURE_2026"
         
@@ -265,7 +263,6 @@ class FloatingService : Service() {
                     put("key", key); put("ip", ip); put("port", port); put("time", durationSec)
                 }.toString()
 
-                // 🩸 HMAC SECURITY
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(HMAC_KEY.toByteArray(), "HmacSHA256"))
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
@@ -445,7 +442,7 @@ class FloatingService : Service() {
         hideOverlay()
         try { if (::floatingView.isInitialized) windowManager.removeView(floatingView) } catch (_: Exception) {}
         try { if (::bubbleView.isInitialized) windowManager.removeView(bubbleView) } catch (_: Exception) {}
-        try { toneGenerator?.release() } catch (_: Exception) {}
+        toneGenerator?.release()
         instance = null
     }
 
