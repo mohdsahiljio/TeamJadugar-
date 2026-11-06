@@ -55,7 +55,6 @@ class FloatingService : Service() {
     private var overlayShown = false
     private var toneGenerator: ToneGenerator? = null
 
-    // 🩸 Background Network ke liye Coroutines
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
@@ -98,16 +97,13 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
-        // Notification Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("floating_channel", "Floating Service", NotificationManager.IMPORTANCE_LOW)
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
         val notification = NotificationCompat.Builder(this, "floating_channel")
-            .setContentTitle("SPECTRE API")
-            .setContentText("Floating Panel is running")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .build()
+            .setContentTitle("SPECTRE API").setContentText("Floating Panel is running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info).build()
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -117,8 +113,7 @@ class FloatingService : Service() {
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Notification Fail: ${e.message}", Toast.LENGTH_LONG).show()
-            stopSelf()
-            return
+            stopSelf(); return
         }
 
         try {
@@ -243,7 +238,7 @@ class FloatingService : Service() {
         }
     }
 
-    // 🩸 MAIN ATTACK FUNCTION (Coroutines & Logging)
+    // 🩸 FIXED ATTACK LOGIC
     private fun executeAttack(ip: String, port: Int, durationSec: Int) {
         serviceScope.launch {
             var ok = false
@@ -281,13 +276,11 @@ class FloatingService : Service() {
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 
                 conn.setRequestProperty("X-App-Signature", signature)
-
                 OutputStreamWriter(conn.outputStream).use { it.write(body) }
 
                 val code = conn.responseCode
                 val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
-                // 🩸 LOG FOR DEBUGGING
                 Log.d("ATTACK_DEBUG", "HTTP Code: $code | Response: $resp")
 
                 withContext(Dispatchers.Main) {
@@ -317,16 +310,20 @@ class FloatingService : Service() {
 
             withContext(Dispatchers.Main) {
                 if (ok) {
+                    // 🩸 SUCCESS
                     playSound("success")
                     btnAttack?.text = "LAUNCHED ✅"
                     btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#22C55E"))
                     tvLog?.text = "> ATTACK STARTED"
                     runCountdown(durationSec)
                 } else {
+                    // 🩸 FAILED (Red Button)
                     playSound("error")
                     resetAttackButton()
+                    btnAttack?.text = "FAILED ❌"
+                    btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#EF4444"))
                     tvLog?.text = "> FAIL: $errMsg"
-                    Toast.makeText(this@FloatingService, "Fail: $errMsg", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@FloatingService, "Attack fail: $errMsg", Toast.LENGTH_LONG).show()
                 }
             }
         }
