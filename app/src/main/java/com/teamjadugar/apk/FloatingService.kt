@@ -119,7 +119,14 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            paramsPanel = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
+            // 🩸 KEYBOARD FIX: FLAG_NOT_FOCUSABLE hata diya taaki keyboard khule
+            paramsPanel = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                type,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, // 🩸 Yeh zaroori hai
+                PixelFormat.TRANSLUCENT
+            )
             paramsPanel.gravity = Gravity.TOP or Gravity.START
             paramsPanel.x = 50; paramsPanel.y = 150
             
@@ -447,7 +454,6 @@ class FloatingService : Service() {
     private var initialTouchX = 0f
     private var initialTouchY = 0f
 
-    // 🩸 DRAG FIX
     private fun setupPanelDragAndResize() {
         val header = floatingView?.findViewById<LinearLayout>(R.id.headerLayout)
         header?.setOnTouchListener { _, event ->
