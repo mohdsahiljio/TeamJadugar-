@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:padding="20dp">
 
-            <!-- 🩸 LOGIN SECTION -->
+            <!-- 🩸 PAGE 1: LOGIN SECTION -->
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -24,14 +24,13 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <!-- HACKER IMAGE -->
                 <ImageView
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:src="@drawable/ic_launcher"
+                    android:alpha="0.9"
                     android:layout_marginBottom="20dp"/>
 
-                <!-- TITLE -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,7 +50,6 @@
                     android:letterSpacing="0.2"
                     android:layout_marginBottom="40dp"/>
 
-                <!-- LOGIN CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,6 +75,7 @@
                         android:textColorHint="#666666"
                         android:fontFamily="monospace"
                         android:textStyle="bold"
+                        android:gravity="center_vertical"
                         android:paddingStart="16dp"
                         android:background="@drawable/bg_input_purple"
                         android:layout_marginBottom="20dp"/>
@@ -93,7 +92,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 🩸 DASHBOARD SECTION -->
+            <!-- 🩸 PAGE 2: DASHBOARD SECTION -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -103,37 +102,74 @@
                 android:layout_marginTop="10dp">
 
                 <!-- HEADER -->
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="24dp">
+                    android:layout_height="180dp"
+                    android:layout_marginBottom="10dp">
+                    
+                    <!-- Hacker Background -->
                     <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_launcher"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:alpha="0.6"
+                        android:src="@drawable/ic_launcher"/>
+
+                    <!-- Top Right Premium Badge -->
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
+                        android:layout_alignParentEnd="true"
+                        android:text="👑 Premium\nUser"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_glass_card_purple"
+                        android:padding="8dp"
+                        android:gravity="center"/>
+
+                    <!-- Title Info -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_launcher"
+                            android:layout_marginEnd="12dp"/>
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="SPECTRE API"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold"
-                            android:textSize="22sp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="● Status: Online"
-                            android:textColor="#00FF00"
-                            android:textSize="12sp"/>
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SPECTRE API"
+                                android:textColor="#FFFFFF"
+                                android:textStyle="bold"
+                                android:textSize="22sp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="● Status: Online"
+                                android:textColor="#00FF00"
+                                android:textSize="12sp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="— POWERED BY INNOVATION —"
+                                android:textColor="#AAAAAA"
+                                android:textSize="9sp"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
 
                 <!-- ACCESS EXPIRY -->
                 <LinearLayout
@@ -149,25 +185,32 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="4dp">
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="👑 ACCESS EXPIRY"
                             android:textColor="#D4AF37"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="✔ Active"
                             android:textColor="#00FF00"
-                            android:textSize="10sp"
+                            android:textSize="12sp"
                             android:background="@drawable/bg_glass_card_purple"
-                            android:paddingHorizontal="6dp"
-                            android:paddingVertical="2dp"/>
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp"/>
                     </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your premium access is active"
+                        android:textColor="#AAAAAA"
+                        android:textSize="10sp"
+                        android:layout_marginBottom="16dp"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -175,31 +218,27 @@
                         android:orientation="horizontal"
                         android:baselineAligned="false">
                         
-                        <!-- DAYS -->
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginEnd="4dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📅" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                         
-                        <!-- HRS -->
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                         
-                        <!-- MIN -->
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginHorizontal="4dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏳" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                         
-                        <!-- SEC -->
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_timer_box" android:padding="8dp" android:layout_marginStart="4dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡" android:textSize="12sp"/>
-                            <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="24sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#B026FF" android:textSize="26sp" android:textStyle="bold"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -211,6 +250,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginBottom="16dp">
+                    
+                    <!-- Slots -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -226,17 +267,30 @@
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold"/>
-                        <TextView
-                            android:id="@+id/tvSlots"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="0/10"
-                            android:textColor="#B026FF"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="5dp"/>
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="5dp">
+                            <TextView
+                                android:id="@+id/tvSlots"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="0/10"
+                                android:textColor="#B026FF"
+                                android:textSize="28sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🚀"
+                                android:textSize="24sp"/>
+                        </LinearLayout>
                     </LinearLayout>
 
+                    <!-- Device ID -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -252,30 +306,137 @@
                             android:textColor="#FFFFFF"
                             android:textSize="12sp"
                             android:textStyle="bold"/>
-                        <TextView
-                            android:id="@+id/tvDeviceId"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="None"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            android:layout_marginTop="5dp"/>
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="5dp">
+                            <TextView
+                                android:id="@+id/tvDeviceId"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="436bcc11d5..."
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📋"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_glass_card_purple"
+                                android:padding="4dp"/>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
-                <Switch
-                    android:id="@+id/switchFloating"
+                <!-- LAUNCH PANEL -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:text="🚀 LAUNCH FLOATING PANEL"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:thumbTint="#B026FF"
-                    android:trackTint="#333333"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/bg_glass_card_purple"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:layout_marginBottom="16dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🚀"
+                        android:textSize="28sp"
+                        android:layout_marginEnd="16dp"/>
+                    
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LAUNCH FLOATING PANEL"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="14sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Open the floating control panel"
+                            android:textColor="#AAAAAA"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
+
+                    <Switch
+                        android:id="@+id/switchFloating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:thumbTint="#B026FF"
+                        android:trackTint="#333333"/>
+                </LinearLayout>
+
+                <!-- BOTTOM ICONS (Secure, Ultra Fast, Premium, No Limits) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_glass_card_purple"
+                    android:orientation="horizontal"
+                    android:gravity="space_evenly"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛡️" android:textSize="20sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Secure\nConnection" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡" android:textSize="20sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ultra Fast\nAPI" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textSize="20sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium\nFeatures" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="♾️" android:textSize="20sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No\nLimits" android:textColor="#FFFFFF" android:textSize="8sp" android:gravity="center"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- SUCCESS BANNER -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_success_banner"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✅"
+                        android:textSize="24sp"
+                        android:layout_marginEnd="10dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Login Successful!"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="14sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Welcome Back, Hacker!"
+                            android:textColor="#AAAAAA"
+                            android:textSize="10sp"/>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
