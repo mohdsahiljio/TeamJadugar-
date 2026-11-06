@@ -2,8 +2,6 @@ package com.teamjadugar.apk
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.media.AudioManager
-import android.media.ToneGenerator
 import android.net.Uri
 import android.net.VpnService
 import android.os.Build
@@ -37,20 +35,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutDashboard: LinearLayout
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
-    private var toneGenerator: ToneGenerator? = null
-
-    private fun playSound(type: String) {
-        try {
-            if (toneGenerator == null) {
-                toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-            }
-            when (type) {
-                "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
-                "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
-                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
-            }
-        } catch (e: Exception) {}
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
         btnVerify = findViewById(R.id.btnVerify)
+        
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
         val tvMins = findViewById<TextView>(R.id.tvMins)
@@ -77,14 +62,19 @@ class MainActivity : AppCompatActivity() {
 
         btnVerify.setOnClickListener {
             if (!btnVerify.isEnabled) return@setOnClickListener
-            playSound("click")
+            btnVerify.isEnabled = false
+            btnVerify.text = "VERIFYING..."
             val key = etKey.text.toString().trim()
-            if (key.isEmpty()) Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-            else verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+            if (key.isEmpty()) {
+                Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
+                btnVerify.isEnabled = true
+                btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
+            } else {
+                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+            }
         }
 
         switchFloating.setOnCheckedChangeListener { _, checked ->
-            playSound("click")
             if (checked) checkVpnPermission()
             else stopService(Intent(this, FloatingService::class.java))
         }
@@ -99,8 +89,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        btnVerify.isEnabled = false
-        btnVerify.text = "VERIFYING..."
 
         networkExecutor.execute {
             try {
@@ -131,26 +119,38 @@ class MainActivity : AppCompatActivity() {
                         SessionStore.saveKey(this, userKey)
 
                         runOnUiThread {
-                            playSound("success")
-                            Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            layoutLogin.visibility = LinearLayout.GONE
-                            layoutDashboard.visibility = LinearLayout.VISIBLE
-                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                            startSlotsRefresh(tvSlots)
+                            // 🩸 SHOW SUCCESS BANNER
+                            val layoutSuccess = findViewById<LinearLayout>(R.id.layoutSuccess)
+                            layoutSuccess.visibility = LinearLayout.VISIBLE
+                            
+                            // Wait for 1.5 sec then show dashboard
+                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                layoutLogin.visibility = LinearLayout.GONE
+                                layoutDashboard.visibility = LinearLayout.VISIBLE
+                                startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+                                startSlotsRefresh(tvSlots)
+                            }, 1500)
                         }
                     } else {
                         runOnUiThread { 
-                            playSound("error")
+                            btnVerify.isEnabled = true
+                            btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
                             Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
                         }
                     }
                 } else {
-                    runOnUiThread { Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() }
+                    runOnUiThread { 
+                        btnVerify.isEnabled = true
+                        btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
+                        Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() 
+                    }
                 }
             } catch (e: Exception) {
-                runOnUiThread { Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() }
-            } finally {
-                runOnUiThread { btnVerify.isEnabled = true; btnVerify.text = "🛡️ AUTHENTICATE" }
+                runOnUiThread { 
+                    btnVerify.isEnabled = true
+                    btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
+                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() 
+                }
             }
         }
     }
@@ -173,8 +173,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
         timer?.cancel()
-        val expiryDate = parseExpiry(expiryStr)
-        if (expiryDate == null) return
+        val expiryDate = parseExpiry(expiryStr) ?: return
         val timeLeft = expiryDate.time - System.currentTimeMillis()
         if (timeLeft <= 0) return
         timer = object : CountDownTimer(timeLeft, 1000) {
@@ -229,6 +228,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
-        toneGenerator?.release()
     }
 }
