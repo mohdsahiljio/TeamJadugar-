@@ -1,7 +1,9 @@
 package com.teamjadugar.apk
 
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
@@ -54,6 +56,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // 🩸 FIX 1: Android 13+ ke liye Notification Permission maangna zaroori hai
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
+            }
+        }
 
         prefs = getSharedPreferences("JadugarPrefs", MODE_PRIVATE)
         userKey = prefs.getString("saved_key", "") ?: ""
@@ -184,10 +193,19 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
         } else {
-            // 🩸 Yahan startService use kiya hai, startForegroundService nahi
-            startService(Intent(this, FloatingService::class.java))
-            Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
+            startFloatingServiceSafely()
         }
+    }
+
+    // 🩸 FIX 2: Ye naya function banaya hai jo Android 8+ pe crash nahi hone dega
+    private fun startFloatingServiceSafely() {
+        val intent = Intent(this, FloatingService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+        Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
     }
 
     private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
@@ -245,8 +263,7 @@ class MainActivity : AppCompatActivity() {
             else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
         } else if (req == 101) {
             if (Settings.canDrawOverlays(this)) {
-                startService(Intent(this, FloatingService::class.java))
-                Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
+                startFloatingServiceSafely() // 🩸 Yahan bhi fix laga diya
             } else {
                 Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
                 switchFloating.isChecked = false
