@@ -65,8 +65,9 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
-        // 🩸 YAHAN PORT 5001 SET KIYA HAI
+        // 🩸 PORT 5001 SET HAI
         private const val PANEL_URL = "http://13.211.179.172:5001"
+        // 🩸 HMAC KEY (Panel se match)
         private const val HMAC_KEY = "SPECTRE_SECURE_2026"
 
         fun onIpFound(ip: String, port: String) {
