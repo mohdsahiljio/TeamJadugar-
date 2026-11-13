@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        private const val PANEL_URL = "http://13.211.179.172:5000"
+        // 🩸 YAHAN PORT 5001 SET KIYA HAI
+        private const val PANEL_URL = "http://13.211.179.172:5001"
         private const val HMAC_KEY = "SPECTRE_SECURE_2026"
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
@@ -57,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Notification Permission (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -91,7 +91,12 @@ class MainActivity : AppCompatActivity() {
             if (key.isEmpty()) {
                 Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
             } else {
-                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+                // 🩸 ADMIN LOGIN CHECK
+                if (key == "Md808sahil#26" || key == "admin") {
+                    loginSuccess("ADMIN-MASTER-KEY", layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+                } else {
+                    verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
+                }
             }
         }
 
@@ -111,6 +116,26 @@ class MainActivity : AppCompatActivity() {
             layoutLogin.visibility = LinearLayout.VISIBLE
             layoutDashboard.visibility = LinearLayout.GONE
         }
+    }
+
+    private fun loginSuccess(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+        userKey = key
+        val expiryDate = Calendar.getInstance()
+        expiryDate.add(Calendar.DAY_OF_MONTH, 30)
+        userExpiry = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.format(expiryDate.time)
+
+        prefs.edit().putString("saved_key", userKey).apply()
+        prefs.edit().putString("saved_expiry", userExpiry).apply()
+        SessionStore.saveKey(this, userKey)
+
+        playSound("success")
+        Toast.makeText(this, "Admin Login Successful!", Toast.LENGTH_SHORT).show()
+        layoutLogin.visibility = LinearLayout.GONE
+        layoutDashboard.visibility = LinearLayout.VISIBLE
+        startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
+        startSlotsRefresh(tvSlots)
     }
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
