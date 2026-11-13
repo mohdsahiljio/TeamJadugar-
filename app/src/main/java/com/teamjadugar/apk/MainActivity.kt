@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
         // 🩸 PORT 5001 SET HAI
-        private const val PANEL_URL = "http://13.211.179.172:5001"
+        private const val PANEL_URL = "http://85.190.107.160:5001"
         // 🩸 HMAC KEY (Panel se match karti hai)
         private const val HMAC_KEY = "SPECTRE_SECURE_2026"
         val networkExecutor = Executors.newFixedThreadPool(4)
