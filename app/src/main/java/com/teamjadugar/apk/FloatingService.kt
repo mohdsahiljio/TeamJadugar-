@@ -46,7 +46,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlots: TextView? = null
-    private var tvBubbleTimer: TextView? = null
+    private var tvBubbleTimer: TextView? = null // 🩸 Yeh variable zaroori hai
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -65,7 +65,6 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
-        // 🩸 URL KeyVault se aa raha hai
         private val PANEL_URL = KeyVault.getPanelUrl()
 
         fun onIpFound(ip: String, port: String) {
@@ -136,11 +135,12 @@ class FloatingService : Service() {
             paramsOverlay = WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
             paramsOverlay.gravity = Gravity.CENTER
 
+            // 🩸 Yahan Layouts inflate ho rahe hain
             floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
-            // 🩸 YEH LINE ADD KI GAYI HAI (Build Fail Fix)
+            // 🩸 YEH LINE MISSING THI: Bubble ke andar timer dhondhne ke liye
             tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             floatingView?.let { windowManager.addView(it, paramsPanel) }
