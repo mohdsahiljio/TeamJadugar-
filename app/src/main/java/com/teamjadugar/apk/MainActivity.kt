@@ -28,10 +28,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        // 🩸 PORT 5001 SET HAI
-        private const val PANEL_URL = "https://panel.spectreapi.net"
-        // 🩸 HMAC KEY (Panel se match karti hai)
-        private const val HMAC_KEY = "SPECTRE_SECURE_2026"
+        // 🩸 Yahan hum KeyVault se URL utha rahe hain (Security)
+        private val PANEL_URL = KeyVault.getPanelUrl()
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -59,6 +57,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 🩸 SECURITY CHECK: Sabse pehle Anti-Tamper chalega
+        if (SecurityManager.isDeviceCompromised(this)) {
+            Toast.makeText(this, "❌ SECURITY ALERT: Device or APK Compromised!", Toast.LENGTH_LONG).show()
+            finishAffinity()
+            return
+        }
+
+        // Notification Permission (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -92,12 +98,7 @@ class MainActivity : AppCompatActivity() {
             if (key.isEmpty()) {
                 Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
             } else {
-                // 🩸 ADMIN BYPASS (Direct Dashboard)
-                if (key == "Md808sahil#26" || key == "admin") {
-                    loginSuccess("ADMIN-MASTER-KEY", layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
-                } else {
-                    verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
-                }
+                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
             }
         }
 
@@ -119,26 +120,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loginSuccess(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
-        userKey = key
-        val expiryDate = Calendar.getInstance()
-        expiryDate.add(Calendar.DAY_OF_MONTH, 30)
-        userExpiry = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }.format(expiryDate.time)
-
-        prefs.edit().putString("saved_key", userKey).apply()
-        prefs.edit().putString("saved_expiry", userExpiry).apply()
-        SessionStore.saveKey(this, userKey)
-
-        playSound("success")
-        Toast.makeText(this, "Admin Login Successful!", Toast.LENGTH_SHORT).show()
-        layoutLogin.visibility = LinearLayout.GONE
-        layoutDashboard.visibility = LinearLayout.VISIBLE
-        startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-        startSlotsRefresh(tvSlots)
-    }
-
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         btnVerify.isEnabled = false
@@ -155,7 +136,8 @@ class MainActivity : AppCompatActivity() {
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
                 val mac = Mac.getInstance("HmacSHA256")
-                mac.init(SecretKeySpec(HMAC_KEY.toByteArray(), "HmacSHA256"))
+                // 🩸 HMAC Key KeyVault se aa rahi hai
+                mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 conn.setRequestProperty("X-App-Signature", signature)
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
@@ -185,21 +167,21 @@ class MainActivity : AppCompatActivity() {
                             playSound("error")
                             Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
                             btnVerify.isEnabled = true
-                            btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
+                            btnVerify.text = "⚡ VERIFY LICENSE"
                         }
                     }
                 } else {
                     runOnUiThread { 
                         btnVerify.isEnabled = true
-                        btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
+                        btnVerify.text = "⚡ VERIFY LICENSE"
                         Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() 
                     }
                 }
             } catch (e: Exception) {
                 runOnUiThread { 
                     btnVerify.isEnabled = true
-                    btnVerify.text = "⚡ VERIFY LICENSE  ❯❯❯"
-                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show() 
+                    btnVerify.text = "⚡ VERIFY LICENSE"
+                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() 
                 }
             }
         }
