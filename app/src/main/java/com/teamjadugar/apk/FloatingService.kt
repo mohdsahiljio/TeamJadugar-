@@ -46,8 +46,8 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlots: TextView? = null
-    
-    // 🩸 Yahan tvBubbleTimer ko class level pe declare kiya
+
+    // 🩸 Yahan dhyan se dekho, class level pe declare kiya hai
     private var tvBubbleTimer: TextView? = null 
 
     private var selectedTime = 120
@@ -97,7 +97,6 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
-        // Notification Setup
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("floating_channel", "Floating Service", NotificationManager.IMPORTANCE_LOW)
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
@@ -138,17 +137,15 @@ class FloatingService : Service() {
             paramsOverlay = WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
             paramsOverlay.gravity = Gravity.CENTER
 
-            // 🩸 1. Layouts Inflate karo
             floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
-            // 🩸 2. Yahan class variable me timer set kar rahe hain
+            // 🩸 Yahan dhyan se initialize kiya hai
             tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             floatingView?.let { windowManager.addView(it, paramsPanel) }
 
-            // 🩸 3. Main Panel ke elements
             etIp = floatingView?.findViewById(R.id.fEtIp)
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
@@ -406,7 +403,6 @@ class FloatingService : Service() {
                 tvLog?.text = "⏱ ${remaining}s"
                 tvLog?.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                 
-                // 🩸 Ab yahan bhi direct variable use ho raha hai
                 tvBubbleTimer?.visibility = View.VISIBLE
                 tvBubbleTimer?.text = "${remaining}s"
                 
