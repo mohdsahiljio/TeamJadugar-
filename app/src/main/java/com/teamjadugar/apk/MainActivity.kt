@@ -260,4 +260,24 @@ class MainActivity : AppCompatActivity() {
         }.apply { isDaemon = true; start() }
     }
 
-    override fun onActivityResult(req: Int, res: Int, data: Intent
+    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
+        super.onActivityResult(req, res, data)
+        if (req == 102) {
+            if (res == RESULT_OK) checkOverlayPermission()
+            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
+        } else if (req == 101) {
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingServiceSafely()
+            } else {
+                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
+                switchFloating.isChecked = false
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
+        toneGenerator?.release()
+    }
+}
