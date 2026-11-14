@@ -46,7 +46,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlots: TextView? = null
-    private var tvBubbleTimer: TextView? = null // 🩸 Class level pe declare kiya
+    private var tvBubbleTimer: TextView? = null
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -133,7 +133,6 @@ class FloatingService : Service() {
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
-            // 🩸 Yahan bubble timer ID set ho rahi hai
             tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             floatingView?.let { windowManager.addView(it, paramsPanel) }
@@ -156,11 +155,8 @@ class FloatingService : Service() {
 
             floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { playSound("click"); stopSelf() }
             
-            floatingView?.findViewById<TextView>(R.id.btnMinimize)?.setOnClickListener {
-                playSound("click")
-                floatingView?.let { windowManager.removeView(it) }
-                bubbleView?.let { windowManager.addView(it, paramsBubble) }
-            }
+            // NOTE: Minimize button hata diya gaya hai kyunki naye UI me nahi hai.
+            // Agar tu chota bubble wapas chahta hai toh isko naye layout me add karke yahan listener laga lena.
             
             setupBubbleDrag()
             
@@ -341,7 +337,7 @@ class FloatingService : Service() {
     private fun resetAttackButton() {
         isAttacking = false
         btnAttack?.let {
-            it.text = "LAUNCH ATTACK"
+            it.text = "🚀 LAUNCH ATTACK"
             it.isEnabled = true
             it.setBackgroundColor(android.graphics.Color.parseColor("#B026FF"))
             startButtonPulse()
