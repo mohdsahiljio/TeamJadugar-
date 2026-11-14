@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        // 🩸 Yahan hum KeyVault se URL utha rahe hain (Security)
+        // 🩸 URL KeyVault se aa raha hai
         private val PANEL_URL = KeyVault.getPanelUrl()
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
@@ -57,14 +57,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 🩸 SECURITY CHECK: Sabse pehle Anti-Tamper chalega
+        // 🩸 SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
-            Toast.makeText(this, "❌ SECURITY ALERT: Device or APK Compromised!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
             return
         }
 
-        // Notification Permission (Android 13+)
+        // Notification Permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -136,7 +136,6 @@ class MainActivity : AppCompatActivity() {
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
                 val mac = Mac.getInstance("HmacSHA256")
-                // 🩸 HMAC Key KeyVault se aa rahi hai
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 conn.setRequestProperty("X-App-Signature", signature)
@@ -167,21 +166,22 @@ class MainActivity : AppCompatActivity() {
                             playSound("error")
                             Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
                             btnVerify.isEnabled = true
-                            btnVerify.text = "⚡ VERIFY LICENSE"
+                            btnVerify.text = "LAUNCH"
                         }
                     }
                 } else {
                     runOnUiThread { 
                         btnVerify.isEnabled = true
-                        btnVerify.text = "⚡ VERIFY LICENSE"
+                        btnVerify.text = "LAUNCH"
                         Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() 
                     }
                 }
             } catch (e: Exception) {
                 runOnUiThread { 
                     btnVerify.isEnabled = true
-                    btnVerify.text = "⚡ VERIFY LICENSE"
-                    Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show() 
+                    btnVerify.text = "LAUNCH"
+                    // 🩸 Yahan exact error dikhega
+                    Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() 
                 }
             }
         }
