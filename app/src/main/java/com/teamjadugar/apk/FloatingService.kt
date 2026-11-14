@@ -118,10 +118,9 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            // 🩸 FLOATING WINDOW SIZE FIXED HERE 🩸
-            // 340dp width aur 520dp height fix ki hai taaki na stretch ho, na chota dikhe
-            val widthPx = (340 * resources.displayMetrics.density).toInt()
-            val heightPx = (520 * resources.displayMetrics.density).toInt()
+            // 🩸 FLOATING WINDOW SIZE COMPACT FIX 🩸
+            val widthPx = (320 * resources.displayMetrics.density).toInt() 
+            val heightPx = (480 * resources.displayMetrics.density).toInt()
 
             paramsPanel = WindowManager.LayoutParams(
                 widthPx, 
@@ -152,7 +151,7 @@ class FloatingService : Service() {
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
             tvLog = floatingView?.findViewById(R.id.tvLog)
-            // tvSlots = floatingView?.findViewById(R.id.tvSlots) // Commented out, not in new layout
+            // tvSlots = floatingView?.findViewById(R.id.tvSlots) // Not in compact panel
             btnAttack = floatingView?.findViewById(R.id.fBtnAttack)
             btnGetIp = floatingView?.findViewById(R.id.fBtnGetIp)
 
@@ -382,7 +381,7 @@ class FloatingService : Service() {
                         val used = json.optInt("slots_used", 0)
                         val total = json.optInt("slots_total", 10)
                         withContext(Dispatchers.Main) {
-                            // tvSlots?.text = "SLOTS: $used/$total" // Commented out for new layout
+                            // tvSlots?.text = "SLOTS: $used/$total" // Not in compact panel
                         }
                     }
                 } catch (_: Exception) {}
