@@ -37,12 +37,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private var timer: CountDownTimer? = null
-    private lateinit var layoutLogin: View
-    private lateinit var layoutDashboard: View
+    private lateinit var layoutLogin: LinearLayout
+    private lateinit var layoutDashboard: LinearLayout
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
     private var toneGenerator: ToneGenerator? = null
     private lateinit var switchFloating: Switch
+    private lateinit var imgLoginBg: ImageView
+    private lateinit var imgDashBg: ImageView
 
     private fun playSound(type: String) {
         try {
@@ -78,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         userExpiry = prefs.getString("saved_expiry", "") ?: ""
         if (userKey.isNotEmpty()) SessionStore.saveKey(this, userKey)
 
+        imgLoginBg = findViewById(R.id.imgLoginBg)
+        imgDashBg = findViewById(R.id.imgDashBg)
         layoutLogin = findViewById(R.id.layoutLogin)
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
@@ -118,12 +122,14 @@ class MainActivity : AppCompatActivity() {
         if (userKey.isNotEmpty()) {
             silentLiveCheck(layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
         } else {
+            imgLoginBg.visibility = View.VISIBLE
+            imgDashBg.visibility = View.GONE
             layoutLogin.visibility = View.VISIBLE
             layoutDashboard.visibility = View.GONE
         }
     }
 
-    private fun verifyKey(key: String, layoutLogin: View, layoutDashboard: View, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         btnVerify.isEnabled = false
         btnVerify.text = "VERIFYING..."
@@ -160,12 +166,15 @@ class MainActivity : AppCompatActivity() {
                             playSound("success")
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
                             
-                            // 🩸 KEYBOARD FIX 🩸
+                            // KEYBOARD FIX
                             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(etKey.windowToken, 0)
                             etKey.clearFocus()
                             findViewById<View>(android.R.id.content).requestFocus()
-                            // 🩸 KEYBOARD FIX END 🩸
+
+                            // SWITCH BACKGROUNDS
+                            imgLoginBg.visibility = View.GONE
+                            imgDashBg.visibility = View.VISIBLE
 
                             layoutLogin.visibility = View.GONE
                             layoutDashboard.visibility = View.VISIBLE
@@ -197,7 +206,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun silentLiveCheck(layoutLogin: View, layoutDashboard: View, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
     }
 
