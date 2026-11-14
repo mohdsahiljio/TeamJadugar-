@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        // 🩸 URL KeyVault se aa raha hai
         private val PANEL_URL = KeyVault.getPanelUrl()
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 🩸 SECURITY CHECK
+        // SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
@@ -89,7 +88,9 @@ class MainActivity : AppCompatActivity() {
         val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
         val tvSlots = findViewById<TextView>(R.id.tvSlots)
 
-        tvDeviceId.text = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).take(10) + "..."
+        // New Device ID Format for Dashboard
+        val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
         btnVerify.setOnClickListener {
             if (!btnVerify.isEnabled) return@setOnClickListener
@@ -180,7 +181,6 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { 
                     btnVerify.isEnabled = true
                     btnVerify.text = "LAUNCH"
-                    // 🩸 Yahan exact error dikhega
                     Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() 
                 }
             }
