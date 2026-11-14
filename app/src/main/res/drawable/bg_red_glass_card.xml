@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Thoda transparent black background -->
-    <solid android:color="#B3050000" />
-    <!-- Neon Red Border -->
-    <stroke android:width="2dp" android:color="#FF0000" />
-    <corners android:radius="16dp" />
-</shape>
