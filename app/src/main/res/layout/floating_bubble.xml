@@ -1,160 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="330dp"
-    android:layout_height="wrap_content"
-    android:maxHeight="600dp"
-    android:scrollbars="none"
-    android:background="@drawable/bg_floating_panel">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@drawable/ic_launcher" />
+
+    <!-- 🩸 YEH ID ZAROORI HAI (Iske bina build fail hoga) -->
+    <TextView
+        android:id="@+id/tvBubbleTimer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <!-- Header (Buttons Transparent hain taaki teri image ka X aur - dikhe) -->
-        <LinearLayout
-            android:id="@+id/headerLayout"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:gravity="end|center_vertical">
-            
-            <TextView
-                android:id="@+id/btnMinimize"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="—"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/btnClose"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="✕"
-                android:gravity="center"
-                android:textColor="#FF0000"
-                android:textStyle="bold"
-                android:textSize="22sp"/>
-        </LinearLayout>
-
-        <!-- IP Input (Transparent) -->
-        <EditText
-            android:id="@+id/fEtIp"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="TARGET IP"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#777777"
-            android:background="#00000000" 
-            android:paddingHorizontal="40dp"
-            android:layout_marginTop="10dp"/>
-
-        <!-- Port Input (Transparent) -->
-        <EditText
-            android:id="@+id/fEtPort"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="TARGET PORT"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#777777"
-            android:background="#00000000"
-            android:paddingHorizontal="40dp"
-            android:inputType="number"
-            android:layout_marginTop="10dp"/>
-
-        <!-- Slots (Chhota text) -->
-        <TextView
-            android:id="@+id/tvSlots"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SLOTS: 0/10"
-            android:textColor="#FF0000"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
-            android:layout_marginTop="10dp"/>
-
-        <!-- Duration Slider -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:paddingHorizontal="10dp">
-            <TextView
-                android:id="@+id/fTvTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="120s"
-                android:textColor="#FF0000"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:fontFamily="monospace"/>
-        </LinearLayout>
-
-        <SeekBar
-            android:id="@+id/fSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="270"
-            android:progress="90"
-            android:progressTint="#FF0000"
-            android:thumbTint="#FF0000"
-            android:layout_marginTop="10dp"/>
-
-        <!-- GET IP aur VPN OFF (Transparent) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp">
-            <Button
-                android:id="@+id/fBtnGetIp"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="GET IP"
-                android:background="#00000000"
-                android:textColor="#FF0000"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="5dp"/>
-            <Button
-                android:id="@+id/fBtnVpnOff"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="VPN OFF"
-                android:background="#00000000"
-                android:textColor="#FF0000"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginStart="5dp"/>
-        </LinearLayout>
-
-        <!-- Launch Attack Button (Transparent taaki image ka button dikhe) -->
-        <Button
-            android:id="@+id/fBtnAttack"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:text="LAUNCH ATTACK"
-            android:background="#00000000"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
-
-        <!-- Log (Status) -->
-        <TextView
-            android:id="@+id/tvLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="> STATUS: AUTHORIZED"
-            android:textColor="#00FF00"
-            android:textSize="10sp"
-            android:layout_marginTop="10dp"
-            android:paddingHorizontal="10dp"/>
-    </LinearLayout>
-</ScrollView>
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="6dp"
+        android:text=""
+        android:textColor="#EF4444"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:visibility="gone"/>
+</FrameLayout>
