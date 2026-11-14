@@ -26,12 +26,12 @@
                 android:gravity="center_horizontal"
                 android:padding="20dp">
 
-                <!-- Top Badges (FIXED) -->
+                <!-- Top Badges -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="40dp"
                     android:layout_marginBottom="40dp"
                     android:gravity="center_vertical">
 
@@ -68,6 +68,8 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <Space android:layout_width="match_parent" android:layout_height="120dp"/>
+
                 <!-- Title -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -77,8 +79,7 @@
                     android:textSize="45sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="@color/neon_red"
-                    android:shadowRadius="40"
-                    android:layout_marginTop="200dp"/>
+                    android:shadowRadius="40"/>
                 
                 <TextView
                     android:layout_width="wrap_content"
@@ -136,53 +137,21 @@
                         android:textSize="20sp"/>
                 </LinearLayout>
 
-                <!-- Bottom Features -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center">
-                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="⚡\nUltra Fast" android:textColor="@color/text_white" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="🛡️\nMilitary Grade" android:textColor="@color/text_white" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="🌐\nGlobal Access" android:textColor="@color/text_white" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑\nPremium Tool" android:textColor="@color/text_white" android:textSize="10sp" android:gravity="center"/>
-                </LinearLayout>
+                <Space android:layout_width="match_parent" android:layout_height="30dp"/>
             </LinearLayout>
 
             <!-- ================= DASHBOARD SECTION ================= -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_dashboard"
                 android:visibility="gone"
                 android:padding="20dp">
 
-                <!-- Top Bar -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:layout_marginBottom="30dp">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_red_glass_card"
-                        android:padding="8dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FFD700"/>
-                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium User" android:textColor="@color/neon_green" android:textSize="10sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lifetime Access ✅" android:textColor="@color/text_white" android:textSize="8sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
+                <Space android:layout_width="match_parent" android:layout_height="40dp"/>
 
-                <!-- Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -215,13 +184,13 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="@color/neon_green" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
                     
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
-                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="45sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
                     </LinearLayout>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="@color/text_white" android:textSize="12sp"/>
                 </LinearLayout>
@@ -242,7 +211,7 @@
                         android:gravity="center"
                         android:layout_marginEnd="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👥" android:textSize="20sp"/>
-                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12,842" android:textColor="@color/text_white" android:textSize="24sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="@color/text_white" android:textSize="24sp" android:textStyle="bold"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="@color/neon_red" android:textSize="12sp"/>
                     </LinearLayout>
                     <LinearLayout
@@ -286,7 +255,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_red_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:layout_marginBottom="30dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Info" android:textColor="@color/neon_red" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="8dp"/>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="4dp">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑 Plan Type" android:textColor="@color/text_white" android:textSize="12sp"/>
