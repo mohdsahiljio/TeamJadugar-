@@ -1,6 +1,7 @@
 package com.teamjadugar.apk
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -12,6 +13,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
@@ -56,12 +59,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
             return
         }
 
+        // Notification Permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -154,6 +159,14 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             playSound("success")
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                            
+                            // 🩸 KEYBOARD FIX 🩸
+                            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                            imm.hideSoftInputFromWindow(etKey.windowToken, 0)
+                            etKey.clearFocus()
+                            findViewById<View>(android.R.id.content).requestFocus()
+                            // 🩸 KEYBOARD FIX END 🩸
+
                             layoutLogin.visibility = LinearLayout.GONE
                             layoutDashboard.visibility = LinearLayout.VISIBLE
                             startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
