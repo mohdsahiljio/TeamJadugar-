@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="#050505">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,10 +44,10 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginEnd="8dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="@color/neon_red"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FF0000"/>
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="@color/text_white" android:textSize="10sp"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Version v3.0.0" android:textColor="@color/text_grey" android:textSize="8sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="#FFFFFF" android:textSize="10sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Version v3.0.0" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -60,10 +60,10 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginStart="8dp">
-                        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/neon_green" android:layout_marginEnd="8dp"/>
+                        <View android:layout_width="8dp" android:layout_height="8dp" android:background="#00FF00" android:layout_marginEnd="8dp"/>
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server Status" android:textColor="@color/text_white" android:textSize="10sp"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ONLINE" android:textColor="@color/neon_green" android:textSize="10sp" android:textStyle="bold"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server Status" android:textColor="#FFFFFF" android:textSize="10sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ONLINE" android:textColor="#00FF00" android:textSize="10sp" android:textStyle="bold"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:layout_marginTop="180dp"
+                    android:layout_marginTop="150dp"
                     app:layout_constraintTop_toBottomOf="@id/topBadges"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -84,17 +84,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="SPECTRE API"
-                        android:textColor="@color/neon_red"
+                        android:textColor="#FF0000"
                         android:textSize="42sp"
                         android:textStyle="bold|italic"
-                        android:shadowColor="@color/neon_red"
+                        android:shadowColor="#FF0000"
                         android:shadowRadius="40"/>
                     
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="U N L O C K  •  A C C E S S  •  C O N T R O L"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFFFFF"
                         android:textSize="10sp"
                         android:fontFamily="monospace"
                         android:layout_marginBottom="30dp"/>
@@ -116,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="License Verification"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFFFFF"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:layout_marginBottom="4dp"/>
@@ -124,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Enter your valid license to continue"
-                        android:textColor="@color/text_grey"
+                        android:textColor="#888888"
                         android:textSize="12sp"
                         android:layout_marginBottom="20dp"/>
 
@@ -133,8 +133,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:hint="🔑 Enter License Key..."
-                        android:textColor="@color/text_white"
-                        android:textColorHint="@color/text_grey"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#888888"
                         android:paddingStart="16dp"
                         android:background="@drawable/bg_red_input"
                         android:layout_marginBottom="20dp"
@@ -146,7 +146,7 @@
                         android:layout_height="55dp"
                         android:text="🚀 LAUNCH"
                         android:background="@drawable/bg_red_button"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFFFFF"
                         android:textStyle="bold"
                         android:textSize="18sp"/>
                 </LinearLayout>
@@ -169,17 +169,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SPECTRE API"
-                    android:textColor="@color/neon_red"
+                    android:textColor="#FF0000"
                     android:textSize="36sp"
                     android:textStyle="bold|italic"
-                    android:shadowColor="@color/neon_red"
+                    android:shadowColor="#FF0000"
                     android:shadowRadius="30"
                     android:layout_gravity="center"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="H a c k  •  A c c e s s  •  C o n t r o l"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFFFFF"
                     android:textSize="12sp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"/>
@@ -194,18 +194,18 @@
                     android:gravity="center"
                     android:layout_marginBottom="16dp">
                     
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="@color/neon_green" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="#00FF00" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
                     
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
-                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
                     </LinearLayout>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="@color/text_white" android:textSize="12sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="#FFFFFF" android:textSize="12sp"/>
                 </LinearLayout>
 
                 <!-- Info Boxes -->
@@ -224,8 +224,8 @@
                         android:gravity="center"
                         android:layout_marginEnd="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👥" android:textSize="20sp"/>
-                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="@color/text_white" android:textSize="20sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="@color/neon_red" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="#FF0000" android:textSize="12sp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
@@ -237,8 +237,8 @@
                         android:gravity="center"
                         android:layout_marginStart="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📱" android:textSize="20sp"/>
-                        <TextView android:id="@+id/tvDeviceId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SM-7492" android:textColor="@color/text_white" android:textSize="18sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Device ID" android:textColor="@color/neon_red" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvDeviceId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SM-7492" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Device ID" android:textColor="#FF0000" android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -256,10 +256,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="@color/text_white" android:textStyle="bold" android:textSize="14sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Click to Start Your Panel" android:textColor="@color/text_grey" android:textSize="12sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Click to Start Your Panel" android:textColor="#888888" android:textSize="12sp"/>
                     </LinearLayout>
-                    <Switch android:id="@+id/switchFloating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:thumbTint="@color/text_white" android:trackTint="@color/neon_red"/>
+                    <Switch android:id="@+id/switchFloating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:thumbTint="#FFFFFF" android:trackTint="#FF0000"/>
                 </LinearLayout>
 
                 <!-- System Info -->
@@ -270,18 +270,20 @@
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="30dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Info" android:textColor="@color/neon_red" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Info" android:textColor="#FF0000" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="8dp"/>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="4dp">
-                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑 Plan Type" android:textColor="@color/text_white" android:textSize="12sp"/>
+                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑 Plan Type" android:textColor="#FFFFFF" android:textSize="12sp"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Premium" android:textColor="#FFD700" android:textSize="12sp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="4dp">
-                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="📅 Expiry Date" android:textColor="@color/text_white" android:textSize="12sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Lifetime" android:textColor="@color/neon_green" android:textSize="12sp"/>
+                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="📅 Expiry Date" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Lifetime" android:textColor="#00FF00" android:textSize="12sp"/>
                     </LinearLayout>
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="⚡ Status" android:textColor="@color/text_white" android:textSize="12sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Active ✅" android:textColor="@color/neon_green" android:textSize="12sp"/>
+                    <LinearLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="⚡ Status" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Active ✅" android:textColor="#00FF00" android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
