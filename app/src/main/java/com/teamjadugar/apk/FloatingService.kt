@@ -65,7 +65,7 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
-        // 🩸 URL aur Key ab KeyVault se aa rahi hai
+        // 🩸 URL KeyVault se aa raha hai
         private val PANEL_URL = KeyVault.getPanelUrl()
 
         fun onIpFound(ip: String, port: String) {
@@ -140,6 +140,9 @@ class FloatingService : Service() {
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
+            // 🩸 YEH LINE ADD KI GAYI HAI (Build Fail Fix)
+            tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
+
             floatingView?.let { windowManager.addView(it, paramsPanel) }
 
             etIp = floatingView?.findViewById(R.id.fEtIp)
@@ -149,7 +152,6 @@ class FloatingService : Service() {
             tvSlots = floatingView?.findViewById(R.id.tvSlots)
             btnAttack = floatingView?.findViewById(R.id.fBtnAttack)
             btnGetIp = floatingView?.findViewById(R.id.fBtnGetIp)
-            tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             val btnVpnOff = floatingView?.findViewById<Button>(R.id.fBtnVpnOff)
             val seekBar = floatingView?.findViewById<SeekBar>(R.id.fSeekBar)
