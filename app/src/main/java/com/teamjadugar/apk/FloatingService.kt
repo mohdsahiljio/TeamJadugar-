@@ -46,9 +46,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlots: TextView? = null
-
-    // 🩸 Yahan dhyan se dekho, class level pe declare kiya hai
-    private var tvBubbleTimer: TextView? = null 
+    private var tvBubbleTimer: TextView? = null // 🩸 Class level pe declare kiya
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -120,13 +118,7 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            paramsPanel = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                type,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSLUCENT
-            )
+            paramsPanel = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, type, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT)
             paramsPanel.gravity = Gravity.TOP or Gravity.START
             paramsPanel.x = 50; paramsPanel.y = 150
             
@@ -141,7 +133,7 @@ class FloatingService : Service() {
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
-            // 🩸 Yahan dhyan se initialize kiya hai
+            // 🩸 Yahan bubble timer ID set ho rahi hai
             tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             floatingView?.let { windowManager.addView(it, paramsPanel) }
