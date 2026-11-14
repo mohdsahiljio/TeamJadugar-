@@ -65,8 +65,8 @@ class FloatingService : Service() {
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
-        private const val PANEL_URL = "https://panel.spectreapi.net"
-        private const val HMAC_KEY = "SPECTRE_SECURE_2026"
+        // 🩸 URL aur Key ab KeyVault se aa rahi hai
+        private val PANEL_URL = KeyVault.getPanelUrl()
 
         fun onIpFound(ip: String, port: String) {
             Handler(Looper.getMainLooper()).post {
@@ -235,7 +235,6 @@ class FloatingService : Service() {
                 btnAttack?.text = "LAUNCHING..."
                 btnAttack?.isEnabled = false
                 
-                Toast.makeText(this, "Sending Request...", Toast.LENGTH_SHORT).show()
                 executeAttack(ip, portInt, selectedTime)
             }
             setupPanelDragAndResize()
@@ -279,7 +278,7 @@ class FloatingService : Service() {
                 val body = bodyObj.toString()
 
                 val mac = Mac.getInstance("HmacSHA256")
-                mac.init(SecretKeySpec(HMAC_KEY.toByteArray(), "HmacSHA256"))
+                mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
                 
                 conn.setRequestProperty("X-App-Signature", signature)
@@ -347,7 +346,7 @@ class FloatingService : Service() {
     private fun resetAttackButton() {
         isAttacking = false
         btnAttack?.let {
-            it.text = "🚀 LAUNCH ATTACK"
+            it.text = "LAUNCH ATTACK"
             it.isEnabled = true
             it.setBackgroundColor(android.graphics.Color.parseColor("#B026FF"))
             startButtonPulse()
@@ -433,94 +432,4 @@ class FloatingService : Service() {
         if (!overlayShown) {
             try { overlayView?.let { windowManager.addView(it, paramsOverlay) }; overlayShown = true } catch (_: Exception) {}
         }
-        val tvBig = overlayView?.findViewById<TextView>(R.id.tvBigTimer)
-        val tvMsg = overlayView?.findViewById<TextView>(R.id.tvBigMsg)
-        tvBig?.textSize = 110f
-        tvBig?.text = "✅"
-        tvMsg?.text = "ATTACK FINISHED"
-        Handler(Looper.getMainLooper()).postDelayed({ hideOverlay() }, 2000)
-    }
-
-    private fun hideOverlay() {
-        if (overlayShown) {
-            try { overlayView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-            overlayShown = false
-        }
-    }
-
-    private var initialX = 0
-    private var initialY = 0
-    private var initialTouchX = 0f
-    private var initialTouchY = 0f
-
-    private fun setupPanelDragAndResize() {
-        val header = floatingView?.findViewById<LinearLayout>(R.id.headerLayout)
-        header?.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    initialX = paramsPanel.x
-                    initialY = paramsPanel.y
-                    initialTouchX = event.rawX
-                    initialTouchY = event.rawY
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    paramsPanel.x = initialX + (event.rawX - initialTouchX).toInt()
-                    paramsPanel.y = initialY + (event.rawY - initialTouchY).toInt()
-                    try { floatingView?.let { windowManager.updateViewLayout(it, paramsPanel) } } catch (_: Exception) {}
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    private var bubbleInitialX = 0
-    private var bubbleInitialY = 0
-    private var bubbleInitialTouchX = 0f
-    private var bubbleInitialTouchY = 0f
-    private var isBubbleDragging = false
-
-    private fun setupBubbleDrag() {
-        bubbleView?.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    bubbleInitialX = paramsBubble.x
-                    bubbleInitialY = paramsBubble.y
-                    bubbleInitialTouchX = event.rawX
-                    bubbleInitialTouchY = event.rawY
-                    isBubbleDragging = false
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val dx = event.rawX - bubbleInitialTouchX
-                    val dy = event.rawY - bubbleInitialTouchY
-                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-                        isBubbleDragging = true
-                        paramsBubble.x = bubbleInitialX + dx.toInt()
-                        paramsBubble.y = bubbleInitialY + dy.toInt()
-                        bubbleView?.let { windowManager.updateViewLayout(it, paramsBubble) }
-                    }
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    if (!isBubbleDragging) bubbleView?.performClick()
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
-        hideOverlay()
-        try { floatingView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        try { bubbleView?.let { windowManager.removeView(it) } } catch (_: Exception) {}
-        toneGenerator?.release()
-        instance = null
-    }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-}
+        val tvBig = overlayView?.findViewById
