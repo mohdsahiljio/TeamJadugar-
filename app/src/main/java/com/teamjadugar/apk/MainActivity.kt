@@ -56,14 +56,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
             return
         }
 
-        // Notification Permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -88,7 +86,6 @@ class MainActivity : AppCompatActivity() {
         val tvDeviceId = findViewById<TextView>(R.id.tvDeviceId)
         val tvSlots = findViewById<TextView>(R.id.tvSlots)
 
-        // New Device ID Format for Dashboard
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
@@ -263,24 +260,4 @@ class MainActivity : AppCompatActivity() {
         }.apply { isDaemon = true; start() }
     }
 
-    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
-        super.onActivityResult(req, res, data)
-        if (req == 102) {
-            if (res == RESULT_OK) checkOverlayPermission()
-            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
-        } else if (req == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingServiceSafely()
-            } else {
-                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
-                switchFloating.isChecked = false
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        timer?.cancel()
-        toneGenerator?.release()
-    }
-}
+    override fun onActivityResult(req: Int, res: Int, data: Intent
