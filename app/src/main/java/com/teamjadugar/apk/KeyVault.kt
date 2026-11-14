@@ -1,20 +1,14 @@
 package com.teamjadugar.apk
 
 object KeyVault {
-    // 🩸 XOR ENCRYPTED VALUES (Hacker isko direct nahi padh sakta)
+    // 🩸 Humne filhal seedha URL daal diya hai taaki connection fix ho jaye
     // Original: "https://panel.spectreapi.net"
-    private val encUrl = byteArrayOf(0x38, 0x22, 0x22, 0x26, 0x2D, 0x2D, 0x7A, 0x3A, 0x3A, 0x2F, 0x22, 0x3D, 0x2F, 0x33, 0x2F, 0x3B, 0x2D, 0x38, 0x3F, 0x24, 0x3F, 0x2D, 0x7A, 0x31, 0x3F, 0x2C)
-    
-    // Original: "SPECTRE_SECURE_2026"
-    private val encKey = byteArrayOf(0x38, 0x27, 0x3C, 0x3F, 0x28, 0x3B, 0x3F, 0x6E, 0x38, 0x3F, 0x28, 0x2C, 0x28, 0x3F, 0x6E, 0x33, 0x31, 0x33, 0x37)
-    
-    private const val XOR_VAL = 0x5A
-
     fun getPanelUrl(): String {
-        return String(ByteArray(encUrl.size) { i -> (encUrl[i].toInt() xor XOR_VAL).toByte() })
+        return "https://panel.spectreapi.net"
     }
 
+    // 🩸 HMAC Secret Key
     fun getHmacKey(): ByteArray {
-        return ByteArray(encKey.size) { i -> (encKey[i].toInt() xor XOR_VAL).toByte() }
+        return "SPECTRE_SECURE_2026".toByteArray()
     }
 }
