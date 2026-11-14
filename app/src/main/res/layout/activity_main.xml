@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:windowSoftInputMode="adjustResize">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,23 +18,22 @@
             android:orientation="vertical">
 
             <!-- ================= LOGIN SECTION ================= -->
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_login_screen"
-                android:gravity="center_horizontal"
                 android:padding="20dp">
 
                 <!-- Top Badges -->
                 <LinearLayout
+                    android:id="@+id/topBadges"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginBottom="40dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginTop="30dp"
+                    android:gravity="center_vertical"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -68,36 +68,49 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <Space android:layout_width="match_parent" android:layout_height="120dp"/>
+                <!-- Title Box -->
+                <LinearLayout
+                    android:id="@+id/titleBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginTop="180dp"
+                    app:layout_constraintTop_toBottomOf="@id/topBadges"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Title -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SPECTRE API"
-                    android:textColor="@color/neon_red"
-                    android:textSize="45sp"
-                    android:textStyle="bold|italic"
-                    android:shadowColor="@color/neon_red"
-                    android:shadowRadius="40"/>
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="U N L O C K  •  A C C E S S  •  C O N T R O L"
-                    android:textColor="@color/text_white"
-                    android:textSize="10sp"
-                    android:fontFamily="monospace"
-                    android:layout_marginBottom="30dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SPECTRE API"
+                        android:textColor="@color/neon_red"
+                        android:textSize="42sp"
+                        android:textStyle="bold|italic"
+                        android:shadowColor="@color/neon_red"
+                        android:shadowRadius="40"/>
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="U N L O C K  •  A C C E S S  •  C O N T R O L"
+                        android:textColor="@color/text_white"
+                        android:textSize="10sp"
+                        android:fontFamily="monospace"
+                        android:layout_marginBottom="30dp"/>
+                </LinearLayout>
 
                 <!-- License Box -->
                 <LinearLayout
+                    android:id="@+id/licenseBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_red_glass_card"
                     android:orientation="vertical"
                     android:padding="20dp"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintTop_toBottomOf="@id/titleBox">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -105,7 +118,7 @@
                         android:text="License Verification"
                         android:textColor="@color/text_white"
                         android:textStyle="bold"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:layout_marginBottom="4dp"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -118,27 +131,27 @@
                     <EditText
                         android:id="@+id/etKey"
                         android:layout_width="match_parent"
-                        android:layout_height="55dp"
+                        android:layout_height="50dp"
                         android:hint="🔑 Enter License Key..."
                         android:textColor="@color/text_white"
                         android:textColorHint="@color/text_grey"
                         android:paddingStart="16dp"
                         android:background="@drawable/bg_red_input"
-                        android:layout_marginBottom="20dp"/>
+                        android:layout_marginBottom="20dp"
+                        android:imeOptions="actionDone"/>
 
                     <Button
                         android:id="@+id/btnVerify"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="55dp"
                         android:text="🚀 LAUNCH"
                         android:background="@drawable/bg_red_button"
                         android:textColor="@color/text_white"
                         android:textStyle="bold"
-                        android:textSize="20sp"/>
+                        android:textSize="18sp"/>
                 </LinearLayout>
 
-                <Space android:layout_width="match_parent" android:layout_height="30dp"/>
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- ================= DASHBOARD SECTION ================= -->
             <LinearLayout
@@ -150,14 +163,14 @@
                 android:visibility="gone"
                 android:padding="20dp">
 
-                <Space android:layout_width="match_parent" android:layout_height="40dp"/>
+                <Space android:layout_width="match_parent" android:layout_height="30dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SPECTRE API"
                     android:textColor="@color/neon_red"
-                    android:textSize="40sp"
+                    android:textSize="36sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="@color/neon_red"
                     android:shadowRadius="30"
@@ -184,13 +197,13 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="@color/neon_green" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
                     
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
-                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="@color/neon_red" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace"/>
                     </LinearLayout>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="@color/text_white" android:textSize="12sp"/>
                 </LinearLayout>
@@ -211,7 +224,7 @@
                         android:gravity="center"
                         android:layout_marginEnd="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👥" android:textSize="20sp"/>
-                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="@color/text_white" android:textSize="24sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="@color/text_white" android:textSize="20sp" android:textStyle="bold"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="@color/neon_red" android:textSize="12sp"/>
                     </LinearLayout>
                     <LinearLayout
@@ -224,7 +237,7 @@
                         android:gravity="center"
                         android:layout_marginStart="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📱" android:textSize="20sp"/>
-                        <TextView android:id="@+id/tvDeviceId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SM-7492" android:textColor="@color/text_white" android:textSize="20sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvDeviceId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SM-7492" android:textColor="@color/text_white" android:textSize="18sp" android:textStyle="bold"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Device ID" android:textColor="@color/neon_red" android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -243,7 +256,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="@color/text_white" android:textStyle="bold" android:textSize="16sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="@color/text_white" android:textStyle="bold" android:textSize="14sp"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Click to Start Your Panel" android:textColor="@color/text_grey" android:textSize="12sp"/>
                     </LinearLayout>
                     <Switch android:id="@+id/switchFloating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:thumbTint="@color/text_white" android:trackTint="@color/neon_red"/>
