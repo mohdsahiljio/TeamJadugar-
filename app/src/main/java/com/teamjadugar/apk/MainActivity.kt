@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private var timer: CountDownTimer? = null
-    private lateinit var layoutLogin: LinearLayout
-    private lateinit var layoutDashboard: LinearLayout
+    private lateinit var layoutLogin: View
+    private lateinit var layoutDashboard: View
     private lateinit var etKey: EditText
     private lateinit var btnVerify: Button
     private var toneGenerator: ToneGenerator? = null
@@ -118,12 +118,12 @@ class MainActivity : AppCompatActivity() {
         if (userKey.isNotEmpty()) {
             silentLiveCheck(layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
         } else {
-            layoutLogin.visibility = LinearLayout.VISIBLE
-            layoutDashboard.visibility = LinearLayout.GONE
+            layoutLogin.visibility = View.VISIBLE
+            layoutDashboard.visibility = View.GONE
         }
     }
 
-    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+    private fun verifyKey(key: String, layoutLogin: View, layoutDashboard: View, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         btnVerify.isEnabled = false
         btnVerify.text = "VERIFYING..."
@@ -167,8 +167,8 @@ class MainActivity : AppCompatActivity() {
                             findViewById<View>(android.R.id.content).requestFocus()
                             // 🩸 KEYBOARD FIX END 🩸
 
-                            layoutLogin.visibility = LinearLayout.GONE
-                            layoutDashboard.visibility = LinearLayout.VISIBLE
+                            layoutLogin.visibility = View.GONE
+                            layoutDashboard.visibility = View.VISIBLE
                             startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
                             startSlotsRefresh(tvSlots)
                         }
@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
+    private fun silentLiveCheck(layoutLogin: View, layoutDashboard: View, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView) {
         verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots)
     }
 
