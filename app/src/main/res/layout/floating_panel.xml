@@ -1,70 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="330dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:maxHeight="600dp"
+    android:maxHeight="550dp"
     android:scrollbars="none"
-    android:background="@drawable/bg_floating_panel">
+    android:background="@drawable/bg_red_glass_card">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
         <!-- Header -->
         <LinearLayout
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="45dp"
             android:orientation="horizontal"
-            android:gravity="end|center_vertical">
-            
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
             <TextView
-                android:id="@+id/btnMinimize"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="—"
-                android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/btnClose"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:text="✕"
-                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SPECTRE API"
                 android:textColor="#FF0000"
                 android:textStyle="bold"
-                android:textSize="22sp"/>
+                android:textSize="16sp"
+                android:fontFamily="monospace"/>
+            <TextView android:id="@+id/btnMinimize" android:layout_width="30dp" android:layout_height="30dp" android:text="—" android:gravity="center" android:textColor="#FFFFFF" android:textSize="20sp"/>
+            <TextView android:id="@+id/btnClose" android:layout_width="30dp" android:layout_height="30dp" android:text="✕" android:gravity="center" android:textColor="#FF0000" android:textSize="20sp"/>
         </LinearLayout>
 
-        <!-- TARGET IP -->
+        <!-- IP -->
         <EditText
             android:id="@+id/fEtIp"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:background="@drawable/bg_red_input"
             android:hint="TARGET IP"
             android:textColor="#FFFFFF"
-            android:textColorHint="#777777"
-            android:background="#00000000" 
-            android:paddingHorizontal="40dp"
-            android:layout_marginTop="10dp"/>
+            android:textColorHint="#666666"
+            android:paddingHorizontal="12dp"
+            android:layout_marginBottom="10dp"/>
 
-        <!-- TARGET PORT -->
+        <!-- Port -->
         <EditText
             android:id="@+id/fEtPort"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:background="@drawable/bg_red_input"
             android:hint="TARGET PORT"
             android:textColor="#FFFFFF"
-            android:textColorHint="#777777"
-            android:background="#00000000"
-            android:paddingHorizontal="40dp"
+            android:textColorHint="#666666"
+            android:paddingHorizontal="12dp"
             android:inputType="number"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginBottom="16dp"/>
 
-        <!-- SLOTS -->
+        <!-- Slots -->
         <TextView
             android:id="@+id/tvSlots"
             android:layout_width="match_parent"
@@ -73,24 +67,30 @@
             android:textColor="#FF0000"
             android:textSize="12sp"
             android:fontFamily="monospace"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginBottom="16dp"/>
 
-        <!-- DURATION SLIDER -->
+        <!-- Slider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:paddingHorizontal="10dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DURATION:"
+                android:textColor="#AAAAAA"
+                android:textSize="11sp"
+                android:fontFamily="monospace"/>
             <TextView
                 android:id="@+id/fTvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="120s"
                 android:textColor="#FF0000"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:textSize="13sp"
                 android:fontFamily="monospace"/>
         </LinearLayout>
 
@@ -102,52 +102,49 @@
             android:progress="90"
             android:progressTint="#FF0000"
             android:thumbTint="#FF0000"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginBottom="16dp"/>
 
-        <!-- BUTTONS -->
+        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp">
+            android:layout_marginBottom="12dp">
             <Button
                 android:id="@+id/fBtnGetIp"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="45dp"
                 android:layout_weight="1"
                 android:text="GET IP"
-                android:background="#22FF0000"
+                android:background="@drawable/bg_red_input"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_marginEnd="5dp"/>
             <Button
                 android:id="@+id/fBtnVpnOff"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="45dp"
                 android:layout_weight="1"
                 android:text="VPN OFF"
-                android:background="#22FF0000"
-                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_red_input"
+                android:textColor="#FF4444"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 android:layout_marginStart="5dp"/>
         </LinearLayout>
 
-        <!-- LAUNCH ATTACK BUTTON -->
+        <!-- Launch Button -->
         <Button
             android:id="@+id/fBtnAttack"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:text="LAUNCH ATTACK"
-            android:background="#00000000"
+            android:layout_height="55dp"
+            android:text="🚀 LAUNCH ATTACK"
+            android:background="@drawable/bg_red_button"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="15sp"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="12dp"/>
 
-        <!-- LOG AREA -->
         <TextView
             android:id="@+id/tvLog"
             android:layout_width="match_parent"
@@ -155,7 +152,6 @@
             android:text="> STATUS: AUTHORIZED"
             android:textColor="#00FF00"
             android:textSize="10sp"
-            android:layout_marginTop="10dp"
-            android:paddingHorizontal="10dp"/>
+            android:fontFamily="monospace"/>
     </LinearLayout>
 </ScrollView>
