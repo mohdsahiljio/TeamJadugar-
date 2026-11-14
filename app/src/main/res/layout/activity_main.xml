@@ -1,157 +1,214 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- ================= DASHBOARD SECTION ================= -->
+<LinearLayout
+    android:id="@+id/layoutDashboard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#050000">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone"
+    android:layout_marginTop="20dp">
 
-    <!-- 🩸 BACKGROUND GLOW (Peeche ka Red Effect) -->
-    <View
+    <!-- 🩸 TOP HEADER (Premium Badge & Status) -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:background="@drawable/bg_red_glow"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="👑 Premium\nUser"
+            android:textColor="#FF0000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="monospace"/>
 
-    <ScrollView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="● Server Status\nONLINE"
+            android:textColor="#00FF00"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="end"
+            android:fontFamily="monospace"/>
+    </LinearLayout>
+
+    <!-- 🩸 EXPIRY TIMER CARD -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_red_glass_card"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_marginBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:gravity="center_horizontal">
-
-            <!-- ================= LOGIN SECTION ================= -->
-            <LinearLayout
-                android:id="@+id/layoutLogin"
-                android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginTop="40dp">
+                android:layout_weight="1"
+                android:text="ACCESS EXPIRY"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:shadowColor="#FF0000"
+                android:shadowRadius="10"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✔ Active"
+                android:textColor="#00FF00"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_red_input"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"/>
+        </LinearLayout>
 
-                <!-- Hacker Image (Agar tera paas koi image hai toh yahan daal) -->
-                <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:src="@drawable/ic_launcher"
-                    app:tint="#FF0000"
-                    android:layout_marginBottom="20dp"
-                    android:shadowColor="#FF0000"
-                    android:shadowRadius="30"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SPECTRE API"
-                    android:textColor="#FFFFFF"
-                    android:textSize="42sp"
-                    android:textStyle="bold|italic"
-                    android:shadowColor="#FF0000"
-                    android:shadowRadius="40"
-                    android:letterSpacing="0.1"/>
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="UNLOCK • ACCESS • CONTROL"
-                    android:textColor="#FF4444"
-                    android:textSize="11sp"
-                    android:fontFamily="monospace"
-                    android:letterSpacing="0.3"
-                    android:layout_marginBottom="40dp"/>
-
-                <!-- Premium Glass Card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_red_glass_card"
-                    android:orientation="vertical"
-                    android:padding="24dp"
-                    android:elevation="25dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🛡️ LICENSE VERIFICATION"
-                        android:textColor="#FF0000"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:fontFamily="monospace"
-                        android:shadowColor="#FF0000"
-                        android:shadowRadius="10"
-                        android:layout_marginBottom="10dp"/>
-                        
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Enter your valid license to continue"
-                        android:textColor="#AAAAAA"
-                        android:textSize="12sp"
-                        android:layout_marginBottom="20dp"/>
-
-                    <EditText
-                        android:id="@+id/etKey"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:hint=">_ Enter License Key..."
-                        android:textColor="#FFFFFF"
-                        android:textColorHint="#666666"
-                        android:fontFamily="monospace"
-                        android:textStyle="bold"
-                        android:gravity="center_vertical"
-                        android:paddingStart="16dp"
-                        android:background="@drawable/bg_red_input"
-                        android:layout_marginBottom="24dp"/>
-
-                    <Button
-                        android:id="@+id/btnVerify"
-                        android:layout_width="match_parent"
-                        android:layout_height="65dp"
-                        android:text="🚀 LAUNCH"
-                        android:background="@drawable/bg_red_button"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:fontFamily="monospace"
-                        android:letterSpacing="0.1"
-                        android:shadowColor="#FF0000"
-                        android:shadowRadius="15"
-                        android:elevation="15dp"/>
-                </LinearLayout>
-                
-                <!-- Bottom Features (Icons) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="space_evenly"
-                    android:layout_marginTop="30dp">
-                    
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡\nUltra Fast" android:textColor="#AAAAAA" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛡️\nMilitary Grade" android:textColor="#AAAAAA" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🌐\nGlobal Access" android:textColor="#AAAAAA" android:textSize="10sp" android:gravity="center"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑\nPremium Tool" android:textColor="#AAAAAA" android:textSize="10sp" android:gravity="center"/>
-                </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
+            <!-- Days -->
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_red_input" android:paddingVertical="12dp" android:layout_marginEnd="4dp">
+                <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="24sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DAYS" android:textColor="#888888" android:textSize="8sp"/>
             </LinearLayout>
-
-            <!-- ================= DASHBOARD SECTION ================= -->
-            <!-- (Ye waisa hi rahega, bas colors red ho jayenge) -->
-            <LinearLayout
-                android:id="@+id/layoutDashboard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_marginTop="20dp">
-                
-                <!-- Yahan tera dashboard ka code aayega (Jo hum agle step me red theme me banayenge) -->
-                
+            
+            <!-- Hours -->
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_red_input" android:paddingVertical="12dp" android:layout_marginHorizontal="4dp">
+                <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HRS" android:textColor="#888888" android:textSize="8sp"/>
+            </LinearLayout>
+            
+            <!-- Mins -->
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_red_input" android:paddingVertical="12dp" android:layout_marginHorizontal="4dp">
+                <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="24sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MIN" android:textColor="#888888" android:textSize="8sp"/>
+            </LinearLayout>
+            
+            <!-- Secs -->
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:background="@drawable/bg_red_input" android:paddingVertical="12dp" android:layout_marginStart="4dp">
+                <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="24sp" android:textStyle="bold" android:fontFamily="monospace"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SEC" android:textColor="#888888" android:textSize="8sp"/>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <!-- 🩸 SLOTS & DEVICE CARDS -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+        
+        <!-- Live Slots -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_red_glass_card"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginEnd="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚀 LIVE SLOTS"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"/>
+            <TextView
+                android:id="@+id/tvSlots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/10"
+                android:textColor="#FF0000"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:shadowColor="#FF0000"
+                android:shadowRadius="10"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Device ID -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_red_glass_card"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginStart="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📱 DEVICE ID"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace"/>
+            <TextView
+                android:id="@+id/tvDeviceId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="d9d417ee38..."
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:fontFamily="monospace"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 🩸 LAUNCH PANEL SWITCH -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_red_glass_card"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="20dp">
+        
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LAUNCH FLOATING PANEL"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:fontFamily="monospace"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Open the floating control panel"
+                android:textColor="#AAAAAA"
+                android:textSize="11sp"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switchFloating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumbTint="#FFFFFF"
+            android:trackTint="#FF0000"/>
+    </LinearLayout>
+
+</LinearLayout>
