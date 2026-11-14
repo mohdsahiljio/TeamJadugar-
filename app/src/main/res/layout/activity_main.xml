@@ -26,22 +26,24 @@
                 android:gravity="center_horizontal"
                 android:padding="20dp">
 
-                <!-- Top Badges -->
+                <!-- Top Badges (FIXED) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="40dp"
-                    android:gravity="space_between">
+                    android:gravity="center_vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/bg_red_glass_card"
                         android:padding="8dp"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginEnd="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="@color/neon_red"/>
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="@color/text_white" android:textSize="10sp"/>
@@ -50,12 +52,14 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/bg_red_glass_card"
                         android:padding="8dp"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginStart="8dp">
                         <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/neon_green" android:layout_marginEnd="8dp"/>
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server Status" android:textColor="@color/text_white" android:textSize="10sp"/>
@@ -266,7 +270,10 @@
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀" android:textSize="30sp" android:layout_marginEnd="16dp"/>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                    <LinearLayout android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="@color/text_white" android:textStyle="bold" android:textSize="16sp"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Click to Start Your Panel" android:textColor="@color/text_grey" android:textSize="12sp"/>
                     </LinearLayout>
