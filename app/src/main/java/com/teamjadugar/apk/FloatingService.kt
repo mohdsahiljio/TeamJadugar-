@@ -155,9 +155,6 @@ class FloatingService : Service() {
 
             floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { playSound("click"); stopSelf() }
             
-            // NOTE: Minimize button hata diya gaya hai kyunki naye UI me nahi hai.
-            // Agar tu chota bubble wapas chahta hai toh isko naye layout me add karke yahan listener laga lena.
-            
             setupBubbleDrag()
             
             bubbleView?.setOnClickListener {
