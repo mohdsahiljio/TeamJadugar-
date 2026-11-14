@@ -46,6 +46,9 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlots: TextView? = null
+    
+    // 🩸 Yahan tvBubbleTimer ko class level pe declare kiya
+    private var tvBubbleTimer: TextView? = null 
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -61,9 +64,6 @@ class FloatingService : Service() {
         var etIpRef: EditText? = null
         var etPortRef: EditText? = null
         var btnGetIpRef: Button? = null
-        
-        // 🩸 Yahan tvBubbleTimer ko companion object me daal diya hai
-        var tvBubbleTimerRef: TextView? = null 
 
         const val MAX_ATTACK_SECONDS = 300
         const val MIN_ATTACK_SECONDS = 30
@@ -97,6 +97,7 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
+        // Notification Setup
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("floating_channel", "Floating Service", NotificationManager.IMPORTANCE_LOW)
             getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
@@ -137,15 +138,17 @@ class FloatingService : Service() {
             paramsOverlay = WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
             paramsOverlay.gravity = Gravity.CENTER
 
+            // 🩸 1. Layouts Inflate karo
             floatingView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
             bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
             overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
 
-            // 🩸 Yahan bubbleView se timer nikaal kar companion object me save kar rahe hain
-            tvBubbleTimerRef = bubbleView?.findViewById(R.id.tvBubbleTimer)
+            // 🩸 2. Yahan class variable me timer set kar rahe hain
+            tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
 
             floatingView?.let { windowManager.addView(it, paramsPanel) }
 
+            // 🩸 3. Main Panel ke elements
             etIp = floatingView?.findViewById(R.id.fEtIp)
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
@@ -403,16 +406,15 @@ class FloatingService : Service() {
                 tvLog?.text = "⏱ ${remaining}s"
                 tvLog?.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                 
-                // 🩸 Yahan companion object wala reference use kar rahe hain
-                tvBubbleTimerRef?.visibility = View.VISIBLE
-                tvBubbleTimerRef?.text = "${remaining}s"
+                // 🩸 Ab yahan bhi direct variable use ho raha hai
+                tvBubbleTimer?.visibility = View.VISIBLE
+                tvBubbleTimer?.text = "${remaining}s"
                 
                 if (remaining <= 3) showBigOverlay(remaining)
                 delay(1000)
                 remaining--
             }
-            // 🩸 Yahan bhi reference use kar rahe hain
-            tvBubbleTimerRef?.visibility = View.GONE
+            tvBubbleTimer?.visibility = View.GONE
             tvLog?.text = ""
             showFinishedOverlay()
             resetAttackButton()
