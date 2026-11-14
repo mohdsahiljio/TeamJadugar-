@@ -10,7 +10,8 @@ import java.security.MessageDigest
 object SecurityManager {
 
     fun isDeviceCompromised(context: Context): Boolean {
-        return isRooted() || isEmulator() || isDebugged() || !isSignatureValid(context)
+        // Agar Root, Emulator ya Debugger mila toh true return karega
+        return isRooted() || isEmulator() || isDebugged()
     }
 
     private fun isRooted(): Boolean {
@@ -36,20 +37,5 @@ object SecurityManager {
 
     private fun isDebugged(): Boolean {
         return android.os.Debug.isDebuggerConnected()
-    }
-
-    private fun isSignatureValid(context: Context): Boolean {
-        try {
-            val pm = context.packageManager
-            val packageName = context.packageName
-            val signatures = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures
-            for (sig in signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(sig.toByteArray())
-                val currentSignature = Base64.encodeToString(md.digest(), Base64.DEFAULT).trim()
-                if (currentSignature.isNotEmpty()) return true
-            }
-        } catch (e: Exception) { return false }
-        return true // Return true for now taaki app na ruke
     }
 }
