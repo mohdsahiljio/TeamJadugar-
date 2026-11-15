@@ -45,7 +45,6 @@ class FloatingService : Service() {
     private var btnAttack: Button? = null
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
-    private var tvSlots: TextView? = null
     private var tvBubbleTimer: TextView? = null
 
     private var selectedTime = 120
@@ -118,9 +117,9 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            // 🩸 FLOATING WINDOW SIZE COMPACT FIX 🩸
-            val widthPx = (320 * resources.displayMetrics.density).toInt() 
-            val heightPx = (480 * resources.displayMetrics.density).toInt()
+            // 🩸 COMPACT FLOATING WINDOW SIZE 🩸
+            val widthPx = (250 * resources.displayMetrics.density).toInt() 
+            val heightPx = (380 * resources.displayMetrics.density).toInt()
 
             paramsPanel = WindowManager.LayoutParams(
                 widthPx, 
@@ -151,7 +150,6 @@ class FloatingService : Service() {
             etPort = floatingView?.findViewById(R.id.fEtPort)
             tvTime = floatingView?.findViewById(R.id.fTvTime)
             tvLog = floatingView?.findViewById(R.id.tvLog)
-            // tvSlots = floatingView?.findViewById(R.id.tvSlots) // Not in compact panel
             btnAttack = floatingView?.findViewById(R.id.fBtnAttack)
             btnGetIp = floatingView?.findViewById(R.id.fBtnGetIp)
 
@@ -163,7 +161,18 @@ class FloatingService : Service() {
             startButtonPulse()
             startSlotsPolling()
 
-            floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { playSound("click"); stopSelf() }
+            // MINIMIZE LOGIC
+            floatingView?.findViewById<TextView>(R.id.btnMinimize)?.setOnClickListener {
+                playSound("click")
+                floatingView?.let { windowManager.removeView(it) }
+                bubbleView?.let { windowManager.addView(it, paramsBubble) }
+            }
+            
+            // CLOSE LOGIC
+            floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { 
+                playSound("click")
+                stopSelf() 
+            }
             
             setupBubbleDrag()
             
@@ -380,9 +389,6 @@ class FloatingService : Service() {
                         val json = JSONObject(res)
                         val used = json.optInt("slots_used", 0)
                         val total = json.optInt("slots_total", 10)
-                        withContext(Dispatchers.Main) {
-                            // tvSlots?.text = "SLOTS: $used/$total" // Not in compact panel
-                        }
                     }
                 } catch (_: Exception) {}
                 delay(3000)
