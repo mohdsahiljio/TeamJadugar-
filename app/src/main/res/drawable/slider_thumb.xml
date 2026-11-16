@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer Red Glow -->
     <item>
         <shape android:shape="oval">
             <size android:width="50dp" android:height="50dp" />
-            <solid android:color="#55FF2020" />
+            <solid android:color="#33FF0000" />
         </shape>
     </item>
-    <item android:inset="5dp">
+    <!-- Dark Circle with Red Border -->
+    <item android:bottom="4dp" android:top="4dp" android:left="4dp" android:right="4dp">
         <shape android:shape="oval">
-            <solid android:color="#FF151515" />
-            <stroke android:width="2dp" android:color="#FFFF3030" />
+            <solid android:color="#151515" />
+            <stroke android:width="2.5dp" android:color="#FF2020" />
         </shape>
     </item>
-    <item android:inset="13dp">
+    <!-- White Arrow Shape (Using a layer-list trick) -->
+    <item android:bottom="14dp" android:top="14dp" android:left="14dp" android:right="14dp">
         <shape android:shape="oval">
-            <solid android:color="#FFFF3030" />
+            <solid android:color="#FFFFFF" />
         </shape>
     </item>
 </layer-list>
