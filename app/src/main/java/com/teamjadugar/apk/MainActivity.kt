@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
-                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150) // 🩸 FIX: TONE_PROP_NACK
             }
         } catch (e: Exception) {}
     }
@@ -251,6 +251,7 @@ class MainActivity : AppCompatActivity() {
         if (timeLeft <= 0) return
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(ms: Long) {
+                // 🩸 FIX: Live Dashboard Counter
                 tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
                 tvHours.text = String.format("%02d", ((ms / 3600000L) % 24).toInt())
                 tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
