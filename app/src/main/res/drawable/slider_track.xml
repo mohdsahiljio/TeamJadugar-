@@ -4,16 +4,16 @@
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
             <corners android:radius="25dp" />
-            <solid android:color="#1A000000" /> <!-- Transparent Dark -->
-            <stroke android:width="2dp" android:color="#55000000" />
+            <solid android:color="#1A1A1A" /> <!-- Dark Grey -->
+            <stroke android:width="1dp" android:color="#333333" />
         </shape>
     </item>
-    <!-- Progress Track (Red Glow) -->
+    <!-- Progress Track (Neon Red Gradient) -->
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
                 <corners android:radius="25dp" />
-                <gradient android:startColor="#AAFF0000" android:endColor="#FF0000" android:angle="0" />
+                <gradient android:startColor="#99000000" android:centerColor="#CCFF0000" android:endColor="#FF0000" android:angle="0" />
             </shape>
         </clip>
     </item>
