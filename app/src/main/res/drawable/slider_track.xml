@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Dark Metallic Track -->
-    <item android:id="@android:id/background">
+    <!-- Outer Metallic Border -->
+    <item>
         <shape android:shape="rectangle">
-            <corners android:radius="12dp" />
-            <solid android:color="#0A0A0A" />
-            <stroke android:width="2dp" android:color="#333333" />
+            <corners android:radius="15dp" />
+            <solid android:color="#050505" />
+            <stroke android:width="2dp" android:color="#999999" />
         </shape>
     </item>
-    <!-- Inner Dark Background -->
-    <item android:id="@android:id/secondaryProgress" android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
+    <!-- Inner Red Neon Track Background -->
+    <item android:bottom="2dp" android:top="2dp" android:left="2dp" android:right="2dp">
         <shape android:shape="rectangle">
-            <corners android:radius="10dp" />
-            <solid android:color="#111111" />
+            <corners android:radius="13dp" />
+            <solid android:color="#0A0000" />
+            <stroke android:width="1.5dp" android:color="#FF0000" />
         </shape>
     </item>
-    <!-- Red Glowing Progress -->
-    <item android:id="@android:id/progress" android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
-        <clip>
-            <shape android:shape="rectangle">
-                <corners android:radius="10dp" />
-                <gradient
-                    android:startColor="#66000000"
-                    android:centerColor="#CCFF0000"
-                    android:endColor="#FFFF0000"
-                    android:angle="0" />
-            </shape>
-        </clip>
+    <!-- The 3 Red Arrows in the middle -->
+    <item android:gravity="center">
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="80dp"
+            android:height="24dp"
+            android:viewportWidth="100"
+            android:viewportHeight="24">
+            <path android:fillColor="#FF2020" android:pathData="M0,12 L12,0 L18,0 L6,12 L18,24 L12,24 Z" />
+            <path android:fillColor="#FF2020" android:pathData="M20,12 L32,0 L38,0 L26,12 L38,24 L32,24 Z" />
+            <path android:fillColor="#FF2020" android:pathData="M40,12 L52,0 L58,0 L46,12 L58,24 L52,24 Z" />
+        </vector>
     </item>
 </layer-list>
