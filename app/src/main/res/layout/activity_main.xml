@@ -132,7 +132,7 @@
                 <!-- LOGO SPACE -->
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="220dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -236,7 +236,7 @@
                     <!-- VERIFY SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="60dp">
+                        android:layout_height="70dp">
 
                         <SeekBar
                             android:id="@+id/sliderVerify"
@@ -255,18 +255,6 @@
                             android:text="VERIFYING..."
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|end"
-                            android:layout_marginEnd="20dp"
-                            android:text="❯❯"
-                            android:textColor="#FFFFFF"
-                            android:textSize="24sp"
                             android:textStyle="bold"
                             android:shadowColor="#000000"
                             android:shadowRadius="5" />
@@ -549,7 +537,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="58dp"
+                        android:layout_height="70dp"
                         android:layout_marginTop="10dp">
 
                         <SeekBar
@@ -566,10 +554,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="❯❯❯"
-                            android:textColor="#FF2020"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                            android:text="SLIDE TO LAUNCH"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#000000"
+                            android:shadowRadius="5" />
                     </FrameLayout>
                 </LinearLayout>
 
@@ -620,7 +610,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="58dp"
+                        android:layout_height="70dp"
                         android:layout_marginTop="10dp">
 
                         <SeekBar
@@ -637,10 +627,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="❯❯❯"
-                            android:textColor="#FF2020"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                            android:text="SLIDE TO OPEN"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#000000"
+                            android:shadowRadius="5" />
                     </FrameLayout>
                 </LinearLayout>
 
