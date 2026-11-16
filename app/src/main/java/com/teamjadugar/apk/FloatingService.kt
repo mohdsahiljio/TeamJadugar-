@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.UUID
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -85,7 +86,7 @@ class FloatingService : Service() {
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
-                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.Tone_PROP_NACK, 150)
             }
         } catch (e: Exception) {}
     }
@@ -284,11 +285,21 @@ class FloatingService : Service() {
                 }
                 val body = bodyObj.toString()
 
+                // 🩸 FIX: Timestamp, Nonce, DeviceID aur naya signature logic add kiya
+                val timestamp = (System.currentTimeMillis() / 1000).toString()
+                val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
+                val deviceId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID)
+
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
+                val msgBytes = timestamp.toLong().toByteArray() + body.toByteArray() + deviceId.toByteArray()
+                val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
                 
                 conn.setRequestProperty("X-App-Signature", signature)
+                conn.setRequestProperty("X-App-Timestamp", timestamp)
+                conn.setRequestProperty("X-App-Nonce", nonce)
+                conn.setRequestProperty("X-Device-Id", deviceId)
+                
                 OutputStreamWriter(conn.outputStream).use { it.write(body) }
 
                 val code = conn.responseCode
