@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Background Track -->
+    <!-- Outer Dark Metallic Track -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <corners android:radius="25dp"/>
-            <solid android:color="#1A1A1A"/>
-            <stroke android:width="1dp" android:color="#555555"/>
+            <corners android:radius="12dp" />
+            <solid android:color="#0A0A0A" />
+            <stroke android:width="2dp" android:color="#333333" />
         </shape>
     </item>
-    <!-- Neon Red Progress -->
-    <item android:id="@android:id/progress">
+    <!-- Inner Dark Background -->
+    <item android:id="@android:id/secondaryProgress" android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp" />
+            <solid android:color="#111111" />
+        </shape>
+    </item>
+    <!-- Red Glowing Progress -->
+    <item android:id="@android:id/progress" android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
         <clip>
             <shape android:shape="rectangle">
-                <corners android:radius="25dp"/>
-                <gradient android:startColor="#99000000" android:centerColor="#CCFF0000" android:endColor="#FF0000" android:angle="0"/>
+                <corners android:radius="10dp" />
+                <gradient
+                    android:startColor="#66000000"
+                    android:centerColor="#CCFF0000"
+                    android:endColor="#FFFF0000"
+                    android:angle="0" />
             </shape>
         </clip>
     </item>
