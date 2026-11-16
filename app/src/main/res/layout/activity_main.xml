@@ -22,7 +22,6 @@
         android:alpha="0.45"
         android:visibility="gone" />
 
-    <!-- 🩸 FIXED SCROLLVIEW -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +33,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -43,10 +41,9 @@
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="center"
-                android:gravity="center">
+                android:gravity="center_horizontal">
 
                 <!-- TOP STATUS -->
                 <LinearLayout
@@ -263,7 +260,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="VERIFYING..."
+                            android:text="SLIDE TO VERIFY"
                             android:textColor="#FFFFFF"
                             android:textSize="14sp"
                             android:textStyle="bold"
@@ -289,7 +286,7 @@
             </LinearLayout>
 
             <!-- ================= DASHBOARD ================= -->
-            <!-- (Same rahega, isme koi change nahi kiya) -->
+
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -297,6 +294,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <!-- PREMIUM HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -324,6 +322,7 @@
                         android:textSize="10sp" />
                 </LinearLayout>
 
+                <!-- TIMER CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -427,6 +426,7 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
 
+                <!-- LIVE SLOTS AND DEVICE ID -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="125dp"
@@ -498,6 +498,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- FLOATING PANEL -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -579,6 +580,7 @@
                     </FrameLayout>
                 </LinearLayout>
 
+                <!-- ENTER GAME -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -660,6 +662,7 @@
                     </FrameLayout>
                 </LinearLayout>
 
+                <!-- SYSTEM INFORMATION -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
