@@ -1,31 +1,24 @@
-# 🩸 SPECTRE API - PROGUARD RULES 🩸
-
-# 1. Keep basic Android components
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
-
-# 2. Keep your custom App package (Taki network/API logic safe rahe)
--keep class com.teamjadugar.apk.** { *; }
-
-# 3. Keep JSON Parsing (org.json)
--keep class org.json.** { *; }
-
-# 4. Keep Coroutines (Kyunki network calls background thread me ho rahi hain)
--keepclassmembers class kotlinx.coroutines.** {
-    volatile <fields>;
+-optimizationpasses 7
+-allowaccessmodification
+-mergeinterfacesaggressively
+-repackageclasses ''
+-flattenpackagehierarchy ''
+-renamesourcefileattribute ''
+-keepattributes !SourceFile,!LineNumberTable,!LocalVariableTable
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-assumenosideeffects class android.util.Log {
+    public static int v(...);
+    public static int d(...);
+    public static int i(...);
+    public static int w(...);
+    public static int e(...);
 }
--keep class kotlinx.coroutines.** { *; }
-
-# 5. Keep Java Networking (HttpURLConnection)
--keep class java.net.** { *; }
-
-# 6. Keep Cryptography (HMAC SHA256 ki security ke liye)
--keep class javax.crypto.** { *; }
--keep class java.security.** { *; }
-
-# 7. Suppress warnings (Chhoti moti warnings ignore karne ke liye)
--dontwarn kotlinx.coroutines.**
--dontwarn org.json.**
--dontwarn javax.crypto.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+-keep class com.teamjadugar.apk.MainActivity { *; }
+-keep class com.teamjadugar.apk.FloatingService { *; }
+-keep class com.teamjadugar.apk.VpnService { *; }
+-keep class com.teamjadugar.apk.KeyVault { *; }
