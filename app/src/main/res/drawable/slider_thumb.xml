@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Glow Ring -->
+
     <item>
         <shape android:shape="oval">
-            <solid android:color="#55FF0000" />
-            <size android:width="50dp" android:height="50dp" />
+            <size
+                android:width="50dp"
+                android:height="50dp" />
+            <solid android:color="#55FF2020" />
         </shape>
     </item>
-    <!-- Red Thick Border -->
-    <item android:bottom="4dp" android:top="4dp" android:left="4dp" android:right="4dp">
+
+    <item android:inset="5dp">
         <shape android:shape="oval">
-            <solid android:color="#00000000" />
-            <stroke android:width="3dp" android:color="#FF0000" />
+            <solid android:color="#FF151515" />
+            <stroke
+                android:width="2dp"
+                android:color="#FFFF3030" />
         </shape>
     </item>
-    <!-- Inner Dark Circle -->
-    <item android:bottom="9dp" android:top="9dp" android:left="9dp" android:right="9dp">
+
+    <item android:inset="13dp">
         <shape android:shape="oval">
-            <solid android:color="#111111" />
+            <solid android:color="#FFFF3030" />
         </shape>
     </item>
+
 </layer-list>
