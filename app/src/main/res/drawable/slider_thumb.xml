@@ -3,21 +3,35 @@
     <!-- Outer Red Glow -->
     <item>
         <shape android:shape="oval">
-            <size android:width="50dp" android:height="50dp" />
-            <solid android:color="#33FF0000" />
+            <size android:width="65dp" android:height="65dp" />
+            <solid android:color="#44FF0000" />
         </shape>
     </item>
-    <!-- Dark Circle with Red Border -->
-    <item android:bottom="4dp" android:top="4dp" android:left="4dp" android:right="4dp">
+    <!-- Metallic Red Ring -->
+    <item android:bottom="3dp" android:top="3dp" android:left="3dp" android:right="3dp">
         <shape android:shape="oval">
-            <solid android:color="#151515" />
-            <stroke android:width="2.5dp" android:color="#FF2020" />
+            <solid android:color="#050505" />
+            <stroke android:width="3dp" android:color="#FF3030" />
         </shape>
     </item>
-    <!-- White Arrow Shape (Using a layer-list trick) -->
-    <item android:bottom="14dp" android:top="14dp" android:left="14dp" android:right="14dp">
+    <!-- Inner Dark Circle -->
+    <item android:bottom="8dp" android:top="8dp" android:left="8dp" android:right="8dp">
         <shape android:shape="oval">
-            <solid android:color="#FFFFFF" />
+            <solid android:color="#111111" />
+            <stroke android:width="1dp" android:color="#AAAAAA" />
         </shape>
+    </item>
+    <!-- White Arrows (Using a vector inside layer-list for perfect alignment) -->
+    <item android:gravity="center">
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="32dp"
+            android:height="24dp"
+            android:viewportWidth="40"
+            android:viewportHeight="24">
+            <!-- Left Arrow -->
+            <path android:fillColor="#FFFFFF" android:pathData="M5,12 L15,2 L15,22 Z" />
+            <!-- Right Arrow -->
+            <path android:fillColor="#FFFFFF" android:pathData="M20,12 L30,2 L30,22 Z" />
+        </vector>
     </item>
 </layer-list>
