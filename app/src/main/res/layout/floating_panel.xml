@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="16dp">
 
         <!-- Header -->
         <LinearLayout
@@ -19,49 +19,59 @@
             android:layout_height="40dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="16dp">
             
             <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_launcher" app:tint="@color/neon_red" android:layout_marginEnd="8dp"/>
             
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="AETH DDOS" android:textColor="@color/neon_red" android:textStyle="bold" android:textSize="14sp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONTROL > DISRUPT" android:textColor="#888888" android:textSize="7sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="AETH DDOS" android:textColor="@color/neon_red" android:textStyle="bold" android:textSize="16sp" android:shadowColor="@color/neon_red" android:shadowRadius="8"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CONTROL > DISRUPT" android:textColor="#888888" android:textSize="8sp"/>
+            </LinearLayout>
+
+            <!-- Slots Display -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="12dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SLOTS" android:textColor="#888888" android:textSize="8sp"/>
+                <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="#00FF00" android:textSize="16sp" android:textStyle="bold"/>
             </LinearLayout>
             
-            <TextView android:id="@+id/btnMinimize" android:layout_width="26dp" android:layout_height="26dp" android:text="—" android:gravity="center" android:textColor="@color/neon_red" android:textSize="16sp" android:textStyle="bold" android:background="@drawable/bg_red_input" android:layout_marginEnd="6dp"/>
+            <TextView android:id="@+id/btnMinimize" android:layout_width="28dp" android:layout_height="28dp" android:text="—" android:gravity="center" android:textColor="@color/neon_red" android:textSize="18sp" android:textStyle="bold" android:background="@drawable/bg_red_input" android:layout_marginEnd="6dp"/>
             
-            <TextView android:id="@+id/btnClose" android:layout_width="26dp" android:layout_height="26dp" android:text="✕" android:gravity="center" android:textColor="@color/neon_red" android:textSize="14sp" android:textStyle="bold" android:background="@drawable/bg_red_input"/>
+            <TextView android:id="@+id/btnClose" android:layout_width="28dp" android:layout_height="28dp" android:text="✕" android:gravity="center" android:textColor="@color/neon_red" android:textSize="14sp" android:textStyle="bold" android:background="@drawable/bg_red_input"/>
         </LinearLayout>
 
         <!-- Inputs -->
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎯 TARGET IP" android:textColor="@color/text_white" android:textSize="9sp" android:layout_marginBottom="4dp"/>
-        <EditText android:id="@+id/fEtIp" android:layout_width="match_parent" android:layout_height="36dp" android:background="@drawable/bg_red_input" android:hint="e.g. 192.168.1.1" android:textColor="#FFFFFF" android:textColorHint="#888888" android:paddingHorizontal="10dp" android:textSize="12sp" android:layout_marginBottom="10dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎯 TARGET IP" android:textColor="@color/neon_red" android:textSize="10sp" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/fEtIp" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_red_input" android:hint="e.g. 192.168.1.1" android:textColor="#FFFFFF" android:textColorHint="#555555" android:paddingHorizontal="12dp" android:textSize="12sp" android:layout_marginBottom="12dp"/>
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💾 TARGET PORT" android:textColor="@color/text_white" android:textSize="9sp" android:layout_marginBottom="4dp"/>
-        <EditText android:id="@+id/fEtPort" android:layout_width="match_parent" android:layout_height="36dp" android:background="@drawable/bg_red_input" android:hint="e.g. 80" android:textColor="#FFFFFF" android:textColorHint="#888888" android:paddingHorizontal="10dp" android:textSize="12sp" android:inputType="number" android:layout_marginBottom="10dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💾 TARGET PORT" android:textColor="@color/neon_red" android:textSize="10sp" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/fEtPort" android:layout_width="match_parent" android:layout_height="40dp" android:background="@drawable/bg_red_input" android:hint="e.g. 80" android:textColor="#FFFFFF" android:textColorHint="#555555" android:paddingHorizontal="12dp" android:textSize="12sp" android:inputType="number" android:layout_marginBottom="12dp"/>
 
         <!-- Duration -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="0dp">
-            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="⏱️ DURATION" android:textColor="@color/text_white" android:textSize="9sp"/>
-            <TextView android:id="@+id/fTvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="60 s" android:textColor="@color/neon_red" android:textSize="10sp" android:textStyle="bold"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="⏱️ DURATION" android:textColor="@color/neon_red" android:textSize="10sp"/>
+            <TextView android:id="@+id/fTvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="60 s" android:textColor="@color/neon_red" android:textSize="12sp" android:textStyle="bold"/>
         </LinearLayout>
-        <SeekBar android:id="@+id/fSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="290" android:progress="50" android:progressTint="@color/neon_red" android:thumbTint="@color/neon_red" android:layout_marginBottom="10dp"/>
+        <!-- 🩸 MAX TIME UPDATED TO 300 -->
+        <SeekBar android:id="@+id/fSeekBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="300" android:progress="60" android:progressTint="@color/neon_red" android:thumbTint="@color/neon_red" android:layout_marginBottom="16dp"/>
 
-        <!-- Get IP / VPN -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
-            <Button android:id="@+id/fBtnGetIp" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="GET IP" android:background="@drawable/bg_red_input" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" android:layout_marginEnd="4dp"/>
-            <Button android:id="@+id/fBtnVpnOff" android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:text="VPN OFF" android:background="@drawable/bg_red_input" android:textColor="@color/neon_red" android:textSize="10sp" android:textStyle="bold" android:layout_marginStart="4dp"/>
+        <!-- Buttons -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp">
+            <Button android:id="@+id/fBtnGetIp" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="GET IP" android:background="@drawable/bg_red_input" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:layout_marginEnd="6dp"/>
+            <Button android:id="@+id/fBtnVpnOff" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="VPN OFF" android:background="@drawable/bg_red_input" android:textColor="@color/neon_red" android:textSize="11sp" android:textStyle="bold" android:layout_marginStart="6dp"/>
         </LinearLayout>
 
-        <!-- Launch Btn -->
-        <Button android:id="@+id/fBtnAttack" android:layout_width="match_parent" android:layout_height="42dp" android:text="🚀 LAUNCH ATTACK" android:background="@drawable/bg_red_button" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="13sp" android:layout_marginBottom="10dp"/>
+        <!-- Glowing Launch Button -->
+        <Button android:id="@+id/fBtnAttack" android:layout_width="match_parent" android:layout_height="50dp" android:text="🚀 LAUNCH ATTACK" android:background="@drawable/bg_red_button" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" android:letterSpacing="0.1" android:shadowColor="#FF0000" android:shadowRadius="15" android:layout_marginBottom="16dp"/>
 
-        <!-- Attack Log -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_red_input" android:padding="8dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="4dp">
-                <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ATTACK LOG" android:textColor="#FFFFFF" android:textSize="9sp" android:textStyle="bold"/>
-            </LinearLayout>
-            <TextView android:id="@+id/tvLog" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="> AETH DDOS v1.0 initialized\n> Ready." android:textColor="#00FF00" android:textSize="9sp" android:fontFamily="monospace"/>
+        <!-- Log -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_red_input" android:padding="12dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ATTACK LOG" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" android:layout_marginBottom="6dp"/>
+            <TextView android:id="@+id/tvLog" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="> AETH DDOS v1.0 initialized\n> Ready." android:textColor="#00FF00" android:textSize="10sp" android:fontFamily="monospace"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
