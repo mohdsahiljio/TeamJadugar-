@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.ByteBuffer
 import java.util.UUID
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -86,7 +87,7 @@ class FloatingService : Service() {
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
-                "error" -> toneGenerator?.startTone(ToneGenerator.Tone_PROP_NACK, 150)
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
             }
         } catch (e: Exception) {}
     }
@@ -118,7 +119,6 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            // 🩸 COMPACT FLOATING WINDOW SIZE 🩸
             val widthPx = (250 * resources.displayMetrics.density).toInt() 
             val heightPx = (380 * resources.displayMetrics.density).toInt()
 
@@ -162,14 +162,12 @@ class FloatingService : Service() {
             startButtonPulse()
             startSlotsPolling()
 
-            // MINIMIZE LOGIC
             floatingView?.findViewById<TextView>(R.id.btnMinimize)?.setOnClickListener {
                 playSound("click")
                 floatingView?.let { windowManager.removeView(it) }
                 bubbleView?.let { windowManager.addView(it, paramsBubble) }
             }
             
-            // CLOSE LOGIC
             floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { 
                 playSound("click")
                 stopSelf() 
@@ -285,14 +283,16 @@ class FloatingService : Service() {
                 }
                 val body = bodyObj.toString()
 
-                // 🩸 FIX: Timestamp, Nonce, DeviceID aur naya signature logic add kiya
                 val timestamp = (System.currentTimeMillis() / 1000).toString()
                 val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
                 val deviceId = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ANDROID_ID)
 
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                val msgBytes = timestamp.toLong().toByteArray() + body.toByteArray() + deviceId.toByteArray()
+                
+                // 🩸 FIX: ByteBuffer for Long + ByteArray
+                val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
+                val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
                 
                 conn.setRequestProperty("X-App-Signature", signature)
