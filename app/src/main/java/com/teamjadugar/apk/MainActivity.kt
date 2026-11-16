@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -61,14 +62,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // SECURITY CHECK
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
             return
         }
 
-        // Notification Permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
@@ -145,18 +144,17 @@ class MainActivity : AppCompatActivity() {
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
                 
-                // 🩸 FIX: Server security ke hisaab se Timestamp aur Nonce generate kiye
                 val timestamp = (System.currentTimeMillis() / 1000).toString()
                 val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
                 
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 
-                // 🩸 FIX: Signature calculation strict mode ke hisaab se (Timestamp + Body + DeviceID)
-                val msgBytes = timestamp.toLong().toByteArray() + body.toByteArray() + deviceId.toByteArray()
+                // 🩸 FIX: ByteBuffer for Long + ByteArray
+                val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
+                val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
                 
-                // 🩸 FIX: Naye Headers set kiye taaki server 403 na de
                 conn.setRequestProperty("X-App-Signature", signature)
                 conn.setRequestProperty("X-App-Timestamp", timestamp)
                 conn.setRequestProperty("X-App-Nonce", nonce)
@@ -180,13 +178,11 @@ class MainActivity : AppCompatActivity() {
                             playSound("success")
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
                             
-                            // KEYBOARD FIX
                             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(etKey.windowToken, 0)
                             etKey.clearFocus()
                             findViewById<View>(android.R.id.content).requestFocus()
 
-                            // SWITCH BACKGROUNDS
                             imgLoginBg.visibility = View.GONE
                             imgDashBg.visibility = View.VISIBLE
 
