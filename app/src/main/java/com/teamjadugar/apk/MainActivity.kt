@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
-        private val PANEL_URL = KeyVault.getPanelUrl()
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -138,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 
         networkExecutor.execute {
             try {
-                val url = URL("$PANEL_URL/connect/init")
+                // Yahan KeyVault.getPanelUrl() use ho raha hai (Jo tera spectreapi.net hai)
+                val url = URL("${KeyVault.getPanelUrl()}/connect/init")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
@@ -191,7 +191,6 @@ class MainActivity : AppCompatActivity() {
                             layoutLogin.visibility = View.GONE
                             layoutDashboard.visibility = View.VISIBLE
                             
-                            // 🩸 DYNAMIC DATE UPDATE
                             tvExpiryDate.text = ": " + formatExpiryString(userExpiry)
                             tvPlanType.text = ": Premium"
                             tvDashboardExpiry.text = formatExpiryString(userExpiry) 
@@ -300,7 +299,7 @@ class MainActivity : AppCompatActivity() {
         Thread {
             while (true) {
                 try {
-                    val url = URL("$PANEL_URL/connect/slots")
+                    val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
                     val conn = url.openConnection() as HttpURLConnection
                     conn.connectTimeout = 3000; conn.readTimeout = 3000
                     if (conn.responseCode == 200) {
