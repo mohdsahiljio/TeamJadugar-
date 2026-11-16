@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Glow -->
+    <!-- Outer Glow Ring -->
     <item>
         <shape android:shape="oval">
             <solid android:color="#55FF0000" />
-            <size android:width="60dp" android:height="60dp" />
+            <size android:width="50dp" android:height="50dp" />
         </shape>
     </item>
-    <!-- Middle Ring -->
+    <!-- Red Thick Border -->
     <item android:bottom="4dp" android:top="4dp" android:left="4dp" android:right="4dp">
         <shape android:shape="oval">
-            <solid android:color="#11000000" />
+            <solid android:color="#00000000" />
             <stroke android:width="3dp" android:color="#FF0000" />
         </shape>
     </item>
-    <!-- Inner Core -->
-    <item android:bottom="12dp" android:top="12dp" android:left="12dp" android:right="12dp">
+    <!-- Inner Dark Circle -->
+    <item android:bottom="9dp" android:top="9dp" android:left="9dp" android:right="9dp">
         <shape android:shape="oval">
-            <solid android:color="#FFFFFF" />
+            <solid android:color="#111111" />
         </shape>
     </item>
 </layer-list>
