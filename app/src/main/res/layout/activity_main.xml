@@ -183,9 +183,12 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FFD700"/>
-                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium User" android:textColor="#00FF00" android:textSize="10sp" android:textStyle="bold"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lifetime Access ✅" android:textColor="#FFFFFF" android:textSize="8sp"/>
+                            <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="8sp"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -299,11 +302,11 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Info" android:textColor="#FF0000" android:textSize="11sp" android:textStyle="bold" android:layout_marginBottom="6dp"/>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="2dp">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑 Plan Type" android:textColor="#FFFFFF" android:textSize="11sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Premium" android:textColor="#FFD700" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvPlanType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Premium" android:textColor="#FFD700" android:textSize="11sp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="2dp">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="📅 Expiry Date" android:textColor="#FFFFFF" android:textSize="11sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Lifetime" android:textColor="#00FF00" android:textSize="11sp"/>
+                        <TextView android:id="@+id/tvExpiryDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Loading..." android:textColor="#00FF00" android:textSize="11sp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="⚡ Status" android:textColor="#FFFFFF" android:textSize="11sp"/>
