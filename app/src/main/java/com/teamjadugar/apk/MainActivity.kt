@@ -12,6 +12,8 @@ import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -46,6 +48,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var switchFloating: Switch
     private lateinit var imgLoginBg: ImageView
     private lateinit var imgDashBg: ImageView
+
+    private var slotsHandler: Handler? = null
+    private var slotsRunnable: Runnable? = null // ✅ FIX: Thread Leak
 
     private fun playSound(type: String) {
         try {
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         etKey = findViewById(R.id.etKey)
         btnVerify = findViewById(R.id.btnVerify)
         switchFloating = findViewById(R.id.switchFloating)
-        
+
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
         val tvMins = findViewById<TextView>(R.id.tvMins)
@@ -110,9 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         switchFloating.setOnCheckedChangeListener { _, checked ->
             playSound("click")
-            if (checked) {
-                checkVpnPermission()
-            } else {
+            if (checked) checkVpnPermission() else {
                 stopService(Intent(this, FloatingService::class.java))
                 Toast.makeText(this, "Floating Panel Stopped", Toast.LENGTH_SHORT).show()
             }
@@ -143,22 +146,22 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                
+
                 val timestamp = (System.currentTimeMillis() / 1000).toString()
                 val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
-                
+
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                
+
                 val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
-                
+
                 conn.setRequestProperty("X-App-Signature", signature)
                 conn.setRequestProperty("X-App-Timestamp", timestamp)
                 conn.setRequestProperty("X-App-Nonce", nonce)
                 conn.setRequestProperty("X-Device-Id", deviceId)
-                
+
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
@@ -176,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             playSound("success")
                             Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            
+
                             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(etKey.windowToken, 0)
                             etKey.clearFocus()
@@ -191,25 +194,25 @@ class MainActivity : AppCompatActivity() {
                             startSlotsRefresh(tvSlots)
                         }
                     } else {
-                        runOnUiThread { 
+                        runOnUiThread {
                             playSound("error")
-                            Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
+                            Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show()
                             btnVerify.isEnabled = true
                             btnVerify.text = "LAUNCH"
                         }
                     }
                 } else {
-                    runOnUiThread { 
+                    runOnUiThread {
                         btnVerify.isEnabled = true
                         btnVerify.text = "LAUNCH"
-                        Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() 
+                        Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
-                runOnUiThread { 
+                runOnUiThread {
                     btnVerify.isEnabled = true
                     btnVerify.text = "LAUNCH"
-                    Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() 
+                    Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -248,29 +251,35 @@ class MainActivity : AppCompatActivity() {
         val expiryDate = parseExpiry(expiryStr) ?: return
         val timeLeft = expiryDate.time - System.currentTimeMillis()
         if (timeLeft <= 0) return
+        
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(ms: Long) {
-                // 🩸 LIVE COUNTER FIX
                 tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
                 tvHours.text = String.format("%02d", ((ms / 3600000L) % 24).toInt())
                 tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
                 tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
             }
-            override fun onFinish() { Toast.makeText(this@MainActivity, "Key Expired", Toast.LENGTH_LONG).show() }
+            override fun onFinish() { 
+                Toast.makeText(this@MainActivity, "Key Expired", Toast.LENGTH_LONG).show() 
+                // ✅ FIX: Timer khatam hone par logout/logout UI wapas
+                imgLoginBg.visibility = View.VISIBLE
+                imgDashBg.visibility = View.GONE
+                layoutLogin.visibility = View.VISIBLE
+                layoutDashboard.visibility = View.GONE
+            }
         }.start()
     }
 
     private fun parseExpiry(s: String): Date? {
-        if (s.isBlank()) return null
-        
-        // 🩸 PERFECT PARSING FIX: Har format try karta hai
+        if (s.isBlank() || s == "null") return null
+
         val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", 
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", 
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", 
-            "yyyy-MM-dd'T'HH:mm:ss.SSS", 
-            "yyyy-MM-dd'T'HH:mm:ss", 
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
+            "yyyy-MM-dd'T'HH:mm:ss",
             "yyyy-MM-dd HH:mm:ss"
         )
         for (p in patterns) {
@@ -280,28 +289,43 @@ class MainActivity : AppCompatActivity() {
                 sdf.parse(s)?.let { return it }
             } catch (_: Exception) {}
         }
-        
-        // Agar string timestamp hai (e.g. "1700000000")
         return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
     }
 
+    // ✅ FIX: Yahan Thread ki jagah Handler use kiya hai, memory leak khatam
     private fun startSlotsRefresh(tvSlots: TextView) {
-        Thread {
-            while (true) {
-                try {
-                    val url = URL("$PANEL_URL/connect/slots")
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 3000; conn.readTimeout = 3000
-                    if (conn.responseCode == 200) {
-                        val json = JSONObject(conn.inputStream.bufferedReader().readText())
-                        val u = json.optInt("slots_used", 0)
-                        val t = json.optInt("slots_total", 10)
-                        runOnUiThread { tvSlots.text = "$u/$t" }
+        stopSlotsRefresh() // Purana band karo
+        
+        slotsHandler = Handler(Looper.getMainLooper())
+        slotsRunnable = object : Runnable {
+            override fun run() {
+                networkExecutor.execute {
+                    try {
+                        val url = URL("$PANEL_URL/connect/slots")
+                        val conn = url.openConnection() as HttpURLConnection
+                        conn.connectTimeout = 3000; conn.readTimeout = 3000
+                        if (conn.responseCode == 200) {
+                            val json = JSONObject(conn.inputStream.bufferedReader().readText())
+                            val u = json.optInt("slots_used", 0)
+                            val t = json.optInt("slots_total", 10)
+                            runOnUiThread { tvSlots.text = "$u/$t" }
+                        }
+                        conn.disconnect()
+                    } catch (_: Exception) {}
+                    
+                    // ✅ FIX: 5 sec baad wapas call karega (agar activity alive hai)
+                    if (!isFinishing && !isDestroyed) {
+                        slotsHandler?.postDelayed(this, 5000)
                     }
-                } catch (_: Exception) {}
-                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
+                }
             }
-        }.apply { isDaemon = true; start() }
+        }
+        slotsHandler?.post(slotsRunnable!!)
+    }
+
+    private fun stopSlotsRefresh() {
+        slotsHandler?.removeCallbacksAndMessages(null)
+        slotsRunnable = null
     }
 
     override fun onActivityResult(req: Int, res: Int, data: Intent?) {
@@ -322,6 +346,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
+        stopSlotsRefresh() // ✅ FIX: Leak stop
         toneGenerator?.release()
     }
 }
