@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        // SLIDER LOGIC FOR ENTER GAME (BGMI)
+        // SLIDER LOGIC FOR ENTER GAME
         val sliderGame = findViewById<SeekBar>(R.id.sliderGame)
         sliderGame.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -140,16 +140,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 🩸 BGMI OPEN FIX
     private fun openBGMI() {
         try {
-            val intent = packageManager.getLaunchIntentForPackage("com.pubg.imobile")
+            val packages = arrayOf("com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm")
+            var intent: Intent? = null
+            
+            for (pkg in packages) {
+                intent = packageManager.getLaunchIntentForPackage(pkg)
+                if (intent != null) break
+            }
+
             if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "BGMI is not installed!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Game is not installed!", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Cannot open BGMI!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Cannot open Game!", Toast.LENGTH_SHORT).show()
         }
     }
 
