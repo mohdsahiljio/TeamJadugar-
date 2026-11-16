@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         val tvSlots = findViewById<TextView>(R.id.tvSlots)
         val tvPlanType = findViewById<TextView>(R.id.tvPlanType)
         val tvExpiryDate = findViewById<TextView>(R.id.tvExpiryDate)
+        val tvDashboardExpiry = findViewById<TextView>(R.id.tvDashboardExpiry)
 
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             if (key.isEmpty()) {
                 Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
             } else {
-                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate)
+                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
             }
         }
 
@@ -121,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (userKey.isNotEmpty()) {
-            silentLiveCheck(layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate)
+            silentLiveCheck(layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
         } else {
             imgLoginBg.visibility = View.VISIBLE
             imgDashBg.visibility = View.GONE
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView) {
+    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         btnVerify.isEnabled = false
         btnVerify.text = "VERIFYING..."
@@ -193,6 +194,7 @@ class MainActivity : AppCompatActivity() {
                             // 🩸 DYNAMIC DATE UPDATE
                             tvExpiryDate.text = ": " + formatExpiryString(userExpiry)
                             tvPlanType.text = ": Premium"
+                            tvDashboardExpiry.text = formatExpiryString(userExpiry) 
                             
                             startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
                             startSlotsRefresh(tvSlots)
@@ -222,8 +224,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView) {
-        verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate)
+    private fun silentLiveCheck(layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
+        verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
     }
 
     private fun checkVpnPermission() {
