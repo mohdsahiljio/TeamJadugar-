@@ -329,9 +329,17 @@
                     android:padding="16dp"
                     android:layout_marginBottom="12dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide to activate" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="12dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide to activate" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="16dp"/>
                     
-                    <SeekBar android:id="@+id/sliderFloating" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="0" android:progressTint="#FF0000" android:thumbTint="#FF0000"/>
+                    <SeekBar 
+                        android:id="@+id/sliderFloating" 
+                        android:layout_width="match_parent" 
+                        android:layout_height="40dp" 
+                        android:max="100" 
+                        android:progress="0" 
+                        android:progressDrawable="@drawable/slider_track" 
+                        android:thumb="@drawable/slider_thumb"
+                        android:splitTrack="false"/>
                 </LinearLayout>
 
                 <!-- Enter Game Slider -->
@@ -343,9 +351,17 @@
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enter Game" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide right to open BGMI" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="12dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide right to open Game" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="16dp"/>
                     
-                    <SeekBar android:id="@+id/sliderGame" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="0" android:progressTint="#00FF00" android:thumbTint="#00FF00"/>
+                    <SeekBar 
+                        android:id="@+id/sliderGame" 
+                        android:layout_width="match_parent" 
+                        android:layout_height="40dp" 
+                        android:max="100" 
+                        android:progress="0" 
+                        android:progressDrawable="@drawable/slider_track" 
+                        android:thumb="@drawable/slider_thumb"
+                        android:splitTrack="false"/>
                 </LinearLayout>
 
                 <!-- System Info -->
