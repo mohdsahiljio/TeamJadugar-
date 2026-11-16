@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             when (type) {
                 "click" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
                 "success" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_ACK, 150)
-                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150) // 🩸 FIX: TONE_PROP_NACK
+                "error" -> toneGenerator?.startTone(ToneGenerator.TONE_PROP_NACK, 150)
             }
         } catch (e: Exception) {}
     }
@@ -150,7 +150,6 @@ class MainActivity : AppCompatActivity() {
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 
-                // 🩸 FIX: ByteBuffer for Long + ByteArray
                 val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
@@ -251,7 +250,7 @@ class MainActivity : AppCompatActivity() {
         if (timeLeft <= 0) return
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(ms: Long) {
-                // 🩸 FIX: Live Dashboard Counter
+                // 🩸 LIVE COUNTER FIX
                 tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
                 tvHours.text = String.format("%02d", ((ms / 3600000L) % 24).toInt())
                 tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
@@ -263,7 +262,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun parseExpiry(s: String): Date? {
         if (s.isBlank()) return null
-        val patterns = listOf("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss")
+        
+        // 🩸 PERFECT PARSING FIX: Har format try karta hai
+        val patterns = listOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", 
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", 
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", 
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS", 
+            "yyyy-MM-dd'T'HH:mm:ss.SSS", 
+            "yyyy-MM-dd'T'HH:mm:ss", 
+            "yyyy-MM-dd HH:mm:ss"
+        )
         for (p in patterns) {
             try {
                 val sdf = SimpleDateFormat(p, Locale.US)
@@ -271,6 +280,8 @@ class MainActivity : AppCompatActivity() {
                 sdf.parse(s)?.let { return it }
             } catch (_: Exception) {}
         }
+        
+        // Agar string timestamp hai (e.g. "1700000000")
         return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
     }
 
