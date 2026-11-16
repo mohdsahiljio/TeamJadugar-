@@ -40,10 +40,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutLogin: LinearLayout
     private lateinit var layoutDashboard: LinearLayout
     private lateinit var etKey: EditText
-    private lateinit var btnVerify: Button
     private var toneGenerator: ToneGenerator? = null
     private lateinit var imgLoginBg: ImageView
     private lateinit var imgDashBg: ImageView
+    private lateinit var sliderVerify: SeekBar
 
     private fun playSound(type: String) {
         try {
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         layoutLogin = findViewById(R.id.layoutLogin)
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
-        btnVerify = findViewById(R.id.btnVerify)
+        sliderVerify = findViewById(R.id.sliderVerify)
         
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
@@ -90,6 +90,25 @@ class MainActivity : AppCompatActivity() {
 
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
+
+        // 🩸 SLIDER VERIFY LOGIC
+        sliderVerify.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (progress == 100) {
+                    playSound("success")
+                    val key = etKey.text.toString().trim()
+                    if (key.isEmpty()) {
+                        Toast.makeText(this@MainActivity, "Enter Key First!", Toast.LENGTH_SHORT).show()
+                        sliderVerify.postDelayed({ sliderVerify.progress = 0 }, 500)
+                    } else {
+                        verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
+                        sliderVerify.postDelayed({ sliderVerify.progress = 0 }, 500)
+                    }
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
 
         // SLIDER LOGIC FOR FLOATING PANEL
         val sliderFloating = findViewById<SeekBar>(R.id.sliderFloating)
@@ -119,17 +138,6 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        btnVerify.setOnClickListener {
-            if (!btnVerify.isEnabled) return@setOnClickListener
-            playSound("click")
-            val key = etKey.text.toString().trim()
-            if (key.isEmpty()) {
-                Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-            } else {
-                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
-            }
-        }
-
         if (userKey.isNotEmpty()) {
             verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
         } else {
@@ -140,10 +148,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🩸 BGMI OPEN FIX
+    // 🩸 GAME OPEN FIX (Smart check)
     private fun openBGMI() {
         try {
-            val packages = arrayOf("com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm")
+            val packages = arrayOf(
+                "com.pubg.imobile",       
+                "com.tencent.ig",         
+                "com.rekoo.pubgm",        
+                "com.vng.pubgmobile",     
+                "com.pubg.krmobile"       
+            )
+            
             var intent: Intent? = null
             
             for (pkg in packages) {
@@ -151,21 +166,34 @@ class MainActivity : AppCompatActivity() {
                 if (intent != null) break
             }
 
+            if (intent == null) {
+                val allApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+                for (app in allApps) {
+                    if (app.packageName.contains("pubg", ignoreCase = true) || 
+                        app.packageName.contains("bgmi", ignoreCase = true) || 
+                        app.packageName.contains("battlegrounds", ignoreCase = true)) {
+                        intent = packageManager.getLaunchIntentForPackage(app.packageName)
+                        if (intent != null) break
+                    }
+                }
+            }
+
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Game is not installed!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Game is not installed on this device!", Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Cannot open Game!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Cannot open Game: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        btnVerify.isEnabled = false
-        btnVerify.text = "VERIFYING..."
+        
+        // Agar verify ho raha hai toh slider disable kar de
+        sliderVerify.isEnabled = false
 
         networkExecutor.execute {
             try {
@@ -232,21 +260,18 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread { 
                             playSound("error")
                             Toast.makeText(this, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show() 
-                            btnVerify.isEnabled = true
-                            btnVerify.text = "LAUNCH"
+                            sliderVerify.isEnabled = true
                         }
                     }
                 } else {
                     runOnUiThread { 
-                        btnVerify.isEnabled = true
-                        btnVerify.text = "LAUNCH"
+                        sliderVerify.isEnabled = true
                         Toast.makeText(this, "Server Error: $code", Toast.LENGTH_SHORT).show() 
                     }
                 }
             } catch (e: Exception) {
                 runOnUiThread { 
-                    btnVerify.isEnabled = true
-                    btnVerify.text = "LAUNCH"
+                    sliderVerify.isEnabled = true
                     Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show() 
                 }
             }
