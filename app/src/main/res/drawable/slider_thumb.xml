@@ -1,37 +1,58 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Red Glow -->
+
+    <!-- Premium Red Neon Outer Glow -->
     <item>
         <shape android:shape="oval">
-            <size android:width="65dp" android:height="65dp" />
-            <solid android:color="#44FF0000" />
+            <size
+                android:width="48dp"
+                android:height="48dp" />
+            <solid android:color="#33FF0000" />
         </shape>
     </item>
-    <!-- Metallic Red Ring -->
-    <item android:bottom="3dp" android:top="3dp" android:left="3dp" android:right="3dp">
+
+    <!-- Metallic Black Outer Border -->
+    <item
+        android:left="4dp"
+        android:top="4dp"
+        android:right="4dp"
+        android:bottom="4dp">
         <shape android:shape="oval">
-            <solid android:color="#050505" />
-            <stroke android:width="3dp" android:color="#FF3030" />
+            <solid android:color="#080808" />
+            <stroke
+                android:width="2dp"
+                android:color="#FF2020" />
         </shape>
     </item>
-    <!-- Inner Dark Circle -->
-    <item android:bottom="8dp" android:top="8dp" android:left="8dp" android:right="8dp">
+
+    <!-- Inner Red Neon Circle -->
+    <item
+        android:left="7dp"
+        android:top="7dp"
+        android:right="7dp"
+        android:bottom="7dp">
         <shape android:shape="oval">
-            <solid android:color="#111111" />
-            <stroke android:width="1dp" android:color="#AAAAAA" />
+            <gradient
+                android:angle="270"
+                android:startColor="#FF4545"
+                android:centerColor="#D90000"
+                android:endColor="#700000" />
+            <stroke
+                android:width="1dp"
+                android:color="#FFFF7777" />
         </shape>
     </item>
-    <!-- 🩸 RIGHT-FACING ARROWS (Fixed) -->
-    <item android:gravity="center">
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
-            android:width="32dp"
-            android:height="24dp"
-            android:viewportWidth="40"
-            android:viewportHeight="24">
-            <!-- Left Chevron (») -->
-            <path android:fillColor="#FFFFFF" android:pathData="M10,2 L20,12 L10,22 L15,22 L25,12 L15,2 Z" />
-            <!-- Right Chevron (») -->
-            <path android:fillColor="#FFFFFF" android:pathData="M20,2 L30,12 L20,22 L25,22 L35,12 L25,2 Z" />
-        </vector>
+
+    <!-- White Double Right Arrows -->
+    <item
+        android:gravity="center"
+        android:width="25dp"
+        android:height="25dp">
+        <bitmap
+            android:src="@android:drawable/ic_media_next"
+            android:gravity="center"
+            android:tint="#FFFFFFFF" />
     </item>
+
 </layer-list>
