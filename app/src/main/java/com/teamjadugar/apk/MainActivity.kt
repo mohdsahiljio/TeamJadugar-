@@ -144,10 +144,24 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
+                
+                // 🩸 FIX: Server security ke hisaab se Timestamp aur Nonce generate kiye
+                val timestamp = (System.currentTimeMillis() / 1000).toString()
+                val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
+                
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                val signature = mac.doFinal(body.toByteArray()).joinToString("") { String.format("%02x", it) }
+                
+                // 🩸 FIX: Signature calculation strict mode ke hisaab se (Timestamp + Body + DeviceID)
+                val msgBytes = timestamp.toLong().toByteArray() + body.toByteArray() + deviceId.toByteArray()
+                val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
+                
+                // 🩸 FIX: Naye Headers set kiye taaki server 403 na de
                 conn.setRequestProperty("X-App-Signature", signature)
+                conn.setRequestProperty("X-App-Timestamp", timestamp)
+                conn.setRequestProperty("X-App-Nonce", nonce)
+                conn.setRequestProperty("X-Device-Id", deviceId)
+                
                 conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
 
                 val code = conn.responseCode
