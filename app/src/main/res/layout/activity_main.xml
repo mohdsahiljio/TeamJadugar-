@@ -1,10 +1,10 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#020202">
 
+    <!-- LOGIN BACKGROUND -->
     <ImageView
         android:id="@+id/imgLoginBg"
         android:layout_width="match_parent"
@@ -12,6 +12,7 @@
         android:src="@drawable/bg_login_screen"
         android:scaleType="centerCrop" />
 
+    <!-- DASHBOARD BACKGROUND -->
     <ImageView
         android:id="@+id/imgDashBg"
         android:layout_width="match_parent"
@@ -35,7 +36,8 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- LOGIN SCREEN -->
+            <!-- ================= LOGIN SCREEN ================= -->
+
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -128,6 +130,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- LOGO SPACE -->
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="180dp" />
@@ -282,7 +285,8 @@
                     android:layout_height="35dp" />
             </LinearLayout>
 
-            <!-- DASHBOARD -->
+            <!-- ================= DASHBOARD ================= -->
+
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -539,7 +543,6 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- FLOATING SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
@@ -622,7 +625,6 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- GAME SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
