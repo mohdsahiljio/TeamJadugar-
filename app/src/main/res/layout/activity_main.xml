@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -22,7 +23,7 @@
         android:alpha="0.45"
         android:visibility="gone" />
 
-    <!-- 🩸 FIXED SCROLLVIEW (No extra bouncing) -->
+    <!-- MAIN SCROLLVIEW -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +46,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="center"
                 android:gravity="center_horizontal">
 
                 <!-- TOP STATUS -->
@@ -133,7 +133,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- LOGO SPACE (Fixed Height) -->
+                <!-- LOGO SPACE -->
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="180dp" />
@@ -240,28 +240,37 @@
                     <!-- VERIFY SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="75dp">
+                        android:layout_height="75dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderVerify"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
+                            android:thumbOffset="24dp"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="VERIFYING..."
+                            android:text="SLIDE TO VERIFY"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5" />
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="5"
+                            android:clickable="false"
+                            android:focusable="false" />
                     </FrameLayout>
 
                     <TextView
@@ -539,19 +548,27 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <!-- FLOATING SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderFloating"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
+                            android:thumbOffset="24dp"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
                         <TextView
@@ -562,8 +579,10 @@
                             android:textColor="#FFFFFF"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5" />
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="5"
+                            android:clickable="false"
+                            android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
 
@@ -612,19 +631,27 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <!-- GAME SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderGame"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
+                            android:thumbOffset="24dp"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
                         <TextView
@@ -635,8 +662,10 @@
                             android:textColor="#FFFFFF"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5" />
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="5"
+                            android:clickable="false"
+                            android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
 
