@@ -42,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <!-- Top Badges -->
                 <LinearLayout
@@ -62,9 +62,9 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginEnd="8dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FF0000"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textSize="18sp"/>
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="#FFFFFF" android:textSize="10sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="#FFD700" android:textSize="10sp" android:textStyle="bold"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Version v3.0.0" android:textColor="#888888" android:textSize="8sp"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -78,8 +78,8 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:layout_marginStart="8dp">
-                        <View android:layout_width="8dp" android:layout_height="8dp" android:background="#00FF00" android:layout_marginEnd="8dp"/>
-                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🛡️" android:textSize="18sp"/>
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server Status" android:textColor="#FFFFFF" android:textSize="10sp"/>
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ONLINE" android:textColor="#00FF00" android:textSize="10sp" android:textStyle="bold"/>
                         </LinearLayout>
@@ -88,15 +88,19 @@
 
                 <Space android:layout_width="match_parent" android:layout_height="60dp"/>
 
+                <!-- Title AETH DDOS -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="AETH DDOS"
-                    android:textColor="#FF0000"
-                    android:textSize="42sp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="45sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="#FF0000"
-                    android:shadowRadius="40"/>
+                    android:shadowRadius="20"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:letterSpacing="0.05"/>
                 
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,7 +109,8 @@
                     android:textColor="#FFFFFF"
                     android:textSize="10sp"
                     android:fontFamily="monospace"
-                    android:layout_marginBottom="30dp"/>
+                    android:letterSpacing="0.2"
+                    android:layout_marginBottom="20dp"/>
 
                 <!-- Premium Login Box -->
                 <LinearLayout
@@ -113,26 +118,33 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_cyber_panel"
                     android:orientation="vertical"
-                    android:padding="24dp"
-                    android:gravity="center"
-                    android:elevation="10dp">
+                    android:padding="20dp"
+                    android:gravity="center">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="[ SYSTEM ACCESS ]"
                         android:textColor="#FF0000"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:fontFamily="monospace"
-                        android:layout_marginBottom="12dp"/>
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔒"
+                        android:textSize="40sp"
+                        android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="License Verification"
                         android:textColor="#FFFFFF"
-                        android:textStyle="bold"
-                        android:textSize="22sp"
+                        android:textStyle="bold|italic"
+                        android:textSize="26sp"
                         android:shadowColor="#FF0000"
                         android:shadowRadius="10"
                         android:layout_marginBottom="4dp"/>
@@ -141,11 +153,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Enter your valid license to continue"
-                        android:textColor="#888888"
+                        android:textColor="#AAAAAA"
                         android:textSize="12sp"
                         android:layout_marginBottom="24dp"/>
 
-                    <!-- Input Field with Icon -->
+                    <!-- Input Field -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
@@ -153,7 +165,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="16dp"
-                        android:layout_marginBottom="20dp">
+                        android:layout_marginBottom="24dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -168,41 +180,77 @@
                             android:layout_height="match_parent"
                             android:hint="Enter License Key..."
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#555555"
+                            android:textColorHint="#666666"
                             android:background="@android:color/transparent"
                             android:textSize="14sp"
                             android:imeOptions="actionDone"
                             android:inputType="textVisiblePassword"/>
                     </LinearLayout>
 
-                    <!-- Glowing Launch Button -->
-                    <Button
-                        android:id="@+id/btnVerify"
+                    <!-- Premium Verify Slider -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:text="🚀 LAUNCH"
-                        android:background="@drawable/bg_red_button"
-                        android:textColor="#FFFFFF"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:letterSpacing="0.1"
-                        android:shadowColor="#FF0000"
-                        android:shadowRadius="15"/>
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="16dp">
+                        
+                        <SeekBar 
+                            android:id="@+id/sliderVerify" 
+                            android:layout_width="match_parent" 
+                            android:layout_height="match_parent" 
+                            android:max="100" 
+                            android:progress="0" 
+                            android:progressDrawable="@drawable/slider_track" 
+                            android:thumb="@drawable/slider_thumb"
+                            android:splitTrack="false"/>
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="VERIFYING..."
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1"/>
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical|end"
+                            android:layout_marginEnd="20dp"
+                            android:text=">>"
+                            android:textColor="#FF0000"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="10"/>
+                    </FrameLayout>
 
                     <!-- Bottom Status text -->
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="> SECURE CONNECTION ESTABLISHED"
-                        android:textColor="#00FF00"
-                        android:textSize="10sp"
-                        android:fontFamily="monospace"
-                        android:layout_marginTop="20dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="8dp">
+                        <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="#00FF00" android:layout_marginEnd="8dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✔ SECURE CONNECTION"
+                            android:textColor="#00FF00"
+                            android:textSize="10sp"
+                            android:fontFamily="monospace"
+                            android:layout_marginEnd="8dp"/>
+                        <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="#00FF00"/>
+                    </LinearLayout>
                 </LinearLayout>
                 <Space android:layout_width="match_parent" android:layout_height="40dp"/>
             </LinearLayout>
 
             <!-- ================= DASHBOARD SECTION ================= -->
+            <!-- Yahan tera pichla dashboard wala poora code aayega (jo tune pichli baar update kiya tha) -->
+            <!-- Isko same rakho, sirf upar ka login section change kiya hai -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -211,80 +259,39 @@
                 android:visibility="gone"
                 android:padding="16dp">
 
-                <!-- Premium User Badge -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="end">
-                    
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_cyber_panel"
-                        android:padding="8dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FFD700"/>
-                        <LinearLayout android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="8dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium User" android:textColor="#00FF00" android:textSize="10sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="8sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Title -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AETH DDOS"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36sp"
-                    android:textStyle="bold|italic"
-                    android:shadowColor="#FF0000"
-                    android:shadowRadius="30"
-                    android:layout_gravity="center"/>
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="H a c k  •  A c c e s s  •  C o n t r o l"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:letterSpacing="0.1"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"/>
-
-                <!-- Premium Timer Card -->
+                <!-- Timer Card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_cyber_panel"
                     android:orientation="vertical"
-                    android:padding="20dp"
+                    android:padding="16dp"
                     android:gravity="center"
                     android:layout_marginBottom="16dp">
                     
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="#00FF00" android:textSize="14sp" android:textStyle="bold" android:letterSpacing="0.1" android:layout_marginBottom="12dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="« " android:textColor="#00FF00" android:textSize="20sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🟢 PANEL ACTIVE" android:textColor="#00FF00" android:textSize="14sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=" »" android:textColor="#00FF00" android:textSize="20sp" android:textStyle="bold"/>
+                    </LinearLayout>
                     
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center">
                         <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="15"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:shadowColor="#FF0000" android:shadowRadius="15"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold"/>
                         <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="15"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:shadowColor="#FF0000" android:shadowRadius="15"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold"/>
                         <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="15"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:shadowColor="#FF0000" android:shadowRadius="15"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold"/>
                         <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF0000" android:textSize="40sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="15"/>
                     </LinearLayout>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="#AAAAAA" android:textSize="12sp" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱️ Time Remaining" android:textColor="#FFFFFF" android:textSize="12sp" android:layout_marginTop="8dp"/>
                 </LinearLayout>
 
-                <!-- Premium Info Boxes -->
+                <!-- Info Boxes -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -301,7 +308,7 @@
                         android:gravity="center"
                         android:layout_marginEnd="8dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👥" android:textSize="22sp"/>
-                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="#FFFFFF" android:textSize="22sp" android:textStyle="bold" android:shadowColor="#FFFFFF" android:shadowRadius="10"/>
+                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="#FFFFFF" android:textSize="22sp" android:textStyle="bold"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="#FF0000" android:textSize="11sp"/>
                     </LinearLayout>
 
@@ -328,18 +335,45 @@
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="12dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide to activate" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="16dp"/>
                     
-                    <SeekBar 
-                        android:id="@+id/sliderFloating" 
-                        android:layout_width="match_parent" 
-                        android:layout_height="40dp" 
-                        android:max="100" 
-                        android:progress="0" 
-                        android:progressDrawable="@drawable/slider_track" 
-                        android:thumb="@drawable/slider_thumb"
-                        android:splitTrack="false"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀" android:textSize="24sp" android:layout_marginEnd="12dp"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide to activate" android:textColor="#888888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    
+                    <!-- Premium Slider with Arrow -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="12dp">
+                        <SeekBar 
+                            android:id="@+id/sliderFloating" 
+                            android:layout_width="match_parent" 
+                            android:layout_height="match_parent" 
+                            android:max="100" 
+                            android:progress="0" 
+                            android:progressDrawable="@drawable/slider_track" 
+                            android:thumb="@drawable/slider_thumb"
+                            android:splitTrack="false"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text=">>>"
+                            android:textColor="#FF0000"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="10"
+                            android:alpha="0.7"/>
+                    </FrameLayout>
                 </LinearLayout>
 
                 <!-- Enter Game Slider -->
@@ -350,18 +384,45 @@
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enter Game" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide right to open Game" android:textColor="#888888" android:textSize="10sp" android:layout_marginBottom="16dp"/>
                     
-                    <SeekBar 
-                        android:id="@+id/sliderGame" 
-                        android:layout_width="match_parent" 
-                        android:layout_height="40dp" 
-                        android:max="100" 
-                        android:progress="0" 
-                        android:progressDrawable="@drawable/slider_track" 
-                        android:thumb="@drawable/slider_thumb"
-                        android:splitTrack="false"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮" android:textSize="24sp" android:layout_marginEnd="12dp"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enter Game" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide right to open Game" android:textColor="#888888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Premium Slider with Arrow -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="12dp">
+                        <SeekBar 
+                            android:id="@+id/sliderGame" 
+                            android:layout_width="match_parent" 
+                            android:layout_height="match_parent" 
+                            android:max="100" 
+                            android:progress="0" 
+                            android:progressDrawable="@drawable/slider_track" 
+                            android:thumb="@drawable/slider_thumb"
+                            android:splitTrack="false"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text=">>>"
+                            android:textColor="#FF0000"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="10"
+                            android:alpha="0.7"/>
+                    </FrameLayout>
                 </LinearLayout>
 
                 <!-- System Info -->
@@ -372,7 +433,11 @@
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Info" android:textColor="#FF0000" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+                    
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="||| System" android:textColor="#FF0000" android:textSize="14sp" android:textStyle="bold"/>
+                    </LinearLayout>
+
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="4dp">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="👑 Plan Type" android:textColor="#FFFFFF" android:textSize="12sp"/>
                         <TextView android:id="@+id/tvPlanType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Premium" android:textColor="#FFD700" android:textSize="12sp"/>
@@ -381,9 +446,12 @@
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="📅 Expiry Date" android:textColor="#FFFFFF" android:textSize="12sp"/>
                         <TextView android:id="@+id/tvExpiryDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Loading..." android:textColor="#00FF00" android:textSize="12sp"/>
                     </LinearLayout>
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
                         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="⚡ Status" android:textColor="#FFFFFF" android:textSize="12sp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Active ✅" android:textColor="#00FF00" android:textSize="12sp"/>
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="#00AA00" android:paddingHorizontal="8dp" android:paddingVertical="2dp" android:orientation="horizontal" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="#FFFFFF" android:textSize="10sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=" Active" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
