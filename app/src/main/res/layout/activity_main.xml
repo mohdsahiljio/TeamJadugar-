@@ -5,19 +5,12 @@
     android:layout_height="match_parent"
     android:background="#020202">
 
-    <!-- 🩸 MATRIX RAIN BACKGROUND (Naya Premium Look) -->
-    <com.teamjadugar.apk.MatrixRainView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.6"
-        app:layout_constraintTop_toTopOf="parent"/>
-
+    <!-- Backgrounds -->
     <ImageView
         android:id="@+id/imgLoginBg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:alpha="0.3"
         android:src="@drawable/bg_login_screen"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -219,12 +212,6 @@
                     android:textSize="12sp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"/>
-
-                <!-- 🩸 ECG LIVE GRAPH (Naya Premium Look) -->
-                <com.teamjadugar.apk.EcgView
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginBottom="12dp"/>
 
                 <!-- Timer Card -->
                 <LinearLayout
