@@ -22,16 +22,19 @@
         android:alpha="0.45"
         android:visibility="gone" />
 
+    <!-- 🩸 FIXED SCROLLVIEW (No extra bouncing) -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:clipToPadding="false"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -42,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal">
 
                 <!-- TOP STATUS -->
@@ -129,10 +133,10 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- LOGO SPACE -->
+                <!-- LOGO SPACE (Fixed Height) -->
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="220dp" />
+                    android:layout_height="180dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -236,7 +240,7 @@
                     <!-- VERIFY SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="70dp">
+                        android:layout_height="75dp">
 
                         <SeekBar
                             android:id="@+id/sliderVerify"
@@ -537,7 +541,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="70dp"
+                        android:layout_height="75dp"
                         android:layout_marginTop="10dp">
 
                         <SeekBar
@@ -610,7 +614,7 @@
 
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="70dp"
+                        android:layout_height="75dp"
                         android:layout_marginTop="10dp">
 
                         <SeekBar
