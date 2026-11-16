@@ -151,7 +151,7 @@ class FloatingService : Service() {
         isAttacking = true
         btnAttack?.text = "LAUNCHING..."
         btnAttack?.isEnabled = false
-        tvLog?.text = "> CONNECTING TO AETH PANEL..."
+        tvLog?.text = "> CONNECTING TO PANEL..."
 
         Thread {
             try {
@@ -176,7 +176,9 @@ class FloatingService : Service() {
 
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                val tsBytes = timestamp.toLong().toByteArray()
+                
+                // 🩸 YAHAN ERROR FIX KIYA GAYA HAI
+                val tsBytes = java.nio.ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
 
