@@ -21,17 +21,17 @@
             <stroke android:width="1dp" android:color="#AAAAAA" />
         </shape>
     </item>
-    <!-- White Arrows (Using a vector inside layer-list for perfect alignment) -->
+    <!-- 🩸 RIGHT-FACING ARROWS (Fixed) -->
     <item android:gravity="center">
         <vector xmlns:android="http://schemas.android.com/apk/res/android"
             android:width="32dp"
             android:height="24dp"
             android:viewportWidth="40"
             android:viewportHeight="24">
-            <!-- Left Arrow -->
-            <path android:fillColor="#FFFFFF" android:pathData="M5,12 L15,2 L15,22 Z" />
-            <!-- Right Arrow -->
-            <path android:fillColor="#FFFFFF" android:pathData="M20,12 L30,2 L30,22 Z" />
+            <!-- Left Chevron (») -->
+            <path android:fillColor="#FFFFFF" android:pathData="M10,2 L20,12 L10,22 L15,22 L25,12 L15,2 Z" />
+            <!-- Right Chevron (») -->
+            <path android:fillColor="#FFFFFF" android:pathData="M20,2 L30,12 L20,22 L25,22 L35,12 L25,2 Z" />
         </vector>
     </item>
 </layer-list>
