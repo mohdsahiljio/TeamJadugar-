@@ -48,6 +48,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvBubbleTimer: TextView? = null
+    private var tvSlots: TextView? = null // ✅ NAYA: Slots UI ke liye
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -119,23 +120,19 @@ class FloatingService : Service() {
             windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
 
-            val widthPx = (250 * resources.displayMetrics.density).toInt() 
+            val widthPx = (250 * resources.displayMetrics.density).toInt()
             val heightPx = (380 * resources.displayMetrics.density).toInt()
 
             paramsPanel = WindowManager.LayoutParams(
-                widthPx, 
-                heightPx, 
-                type, 
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, 
-                PixelFormat.TRANSLUCENT
+                widthPx, heightPx, type, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSLUCENT
             )
             paramsPanel.gravity = Gravity.TOP or Gravity.START
             paramsPanel.x = 50; paramsPanel.y = 150
-            
+
             paramsBubble = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT)
             paramsBubble.gravity = Gravity.TOP or Gravity.START
             paramsBubble.x = 50; paramsBubble.y = 150
-            
+
             paramsOverlay = WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, type, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT)
             paramsOverlay.gravity = Gravity.CENTER
 
@@ -153,6 +150,7 @@ class FloatingService : Service() {
             tvLog = floatingView?.findViewById(R.id.tvLog)
             btnAttack = floatingView?.findViewById(R.id.fBtnAttack)
             btnGetIp = floatingView?.findViewById(R.id.fBtnGetIp)
+            tvSlots = floatingView?.findViewById(R.id.tvSlots) // ✅ NAYA: ID check kar lena XML mein
 
             val btnVpnOff = floatingView?.findViewById<Button>(R.id.fBtnVpnOff)
             val seekBar = floatingView?.findViewById<SeekBar>(R.id.fSeekBar)
@@ -167,14 +165,14 @@ class FloatingService : Service() {
                 floatingView?.let { windowManager.removeView(it) }
                 bubbleView?.let { windowManager.addView(it, paramsBubble) }
             }
-            
-            floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener { 
+
+            floatingView?.findViewById<TextView>(R.id.btnClose)?.setOnClickListener {
                 playSound("click")
-                stopSelf() 
+                stopSelf()
             }
-            
+
             setupBubbleDrag()
-            
+
             bubbleView?.setOnClickListener {
                 playSound("click")
                 bubbleView?.let { windowManager.removeView(it) }
@@ -208,13 +206,14 @@ class FloatingService : Service() {
                     btnGetIp?.isEnabled = true
                 }
             }
-            
+
             btnVpnOff?.setOnClickListener {
                 playSound("click")
                 try { stopService(Intent(this, VpnService::class.java)) } catch (_: Exception) {}
                 tvLog?.text = "> VPN STOPPED"
                 btnGetIp?.text = "GET IP"
                 btnGetIp?.isEnabled = true
+                // ✅ FIX: Button colors reset
                 btnGetIp?.setBackgroundColor(android.graphics.Color.parseColor("#1A102E"))
                 btnGetIp?.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
             }
@@ -225,22 +224,22 @@ class FloatingService : Service() {
                     Toast.makeText(this, "Attack already running!", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                
+
                 val ip = etIp?.text.toString().trim()
                 val portInt = etPort?.text.toString().trim().toIntOrNull()
-                
+
                 if (ip.isEmpty() || portInt == null) {
                     playSound("error")
                     Toast.makeText(this, "IP or Valid Port missing!", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                
+
                 playSound("click")
                 isAttacking = true
                 pulseAnimator?.cancel()
                 btnAttack?.text = "LAUNCHING..."
                 btnAttack?.isEnabled = false
-                
+
                 executeAttack(ip, portInt, selectedTime)
             }
             setupPanelDragAndResize()
@@ -254,14 +253,14 @@ class FloatingService : Service() {
         serviceScope.launch {
             var ok = false
             var errMsg = "Unknown Error"
-            
+
             try {
                 val key = SessionStore.currentKey(this@FloatingService)
                 if (key.isEmpty()) {
-                    withContext(Dispatchers.Main) { 
+                    withContext(Dispatchers.Main) {
                         resetAttackButton()
-                        tvLog?.text = "> KEY EMPTY" 
-                        playSound("error") 
+                        tvLog?.text = "> KEY EMPTY"
+                        playSound("error")
                         Toast.makeText(this@FloatingService, "Key Missing!", Toast.LENGTH_SHORT).show()
                     }
                     return@launch
@@ -289,17 +288,18 @@ class FloatingService : Service() {
 
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                
-                // 🩸 FIX: ByteBuffer for Long + ByteArray
-                val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
+
+                // ✅ FIX: Safe Timestamp conversion
+                val tsLong = timestamp.toLongOrNull() ?: (System.currentTimeMillis() / 1000)
+                val tsBytes = ByteBuffer.allocate(8).putLong(tsLong).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
-                
+
                 conn.setRequestProperty("X-App-Signature", signature)
                 conn.setRequestProperty("X-App-Timestamp", timestamp)
                 conn.setRequestProperty("X-App-Nonce", nonce)
                 conn.setRequestProperty("X-Device-Id", deviceId)
-                
+
                 OutputStreamWriter(conn.outputStream).use { it.write(body) }
 
                 val code = conn.responseCode
@@ -314,7 +314,7 @@ class FloatingService : Service() {
                             val valid = json.optBoolean("valid", false)
                             val attackOk = json.optBoolean("attack", true)
                             val msg = json.optString("msg", "")
-                            
+
                             if (valid && attackOk) {
                                 ok = true
                             } else {
@@ -330,7 +330,7 @@ class FloatingService : Service() {
             } catch (e: Exception) {
                 errMsg = e.message ?: "Network Error"
                 Log.e("ATTACK_DEBUG", "Exception: ${e.message}")
-                
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@FloatingService, "Network Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
@@ -348,7 +348,7 @@ class FloatingService : Service() {
                     resetAttackButton()
                     btnAttack?.text = "FAILED ❌"
                     btnAttack?.setBackgroundColor(android.graphics.Color.parseColor("#EF4444"))
-                    
+
                     if (errMsg.contains("Slots Full", ignoreCase = true)) {
                         tvLog?.text = "> SLOTS FULL! TRY LATER"
                         Toast.makeText(this@FloatingService, "Slots Full! 10 attacks already running.", Toast.LENGTH_LONG).show()
@@ -386,22 +386,30 @@ class FloatingService : Service() {
         slotsJob?.cancel()
         slotsJob = serviceScope.launch {
             while (isActive) {
+                var conn: HttpURLConnection? = null
                 try {
                     val url = URL("$PANEL_URL/connect/slots")
-                    val conn = url.openConnection() as HttpURLConnection
+                    conn = url.openConnection() as HttpURLConnection
                     conn.connectTimeout = 3000
                     conn.readTimeout = 3000
-                    
                     conn.setRequestProperty("Content-Type", "application/json")
                     conn.setRequestProperty("Accept", "application/json")
-                    
+
                     if (conn.responseCode == 200) {
                         val res = conn.inputStream.bufferedReader().readText()
                         val json = JSONObject(res)
                         val used = json.optInt("slots_used", 0)
                         val total = json.optInt("slots_total", 10)
+
+                        // ✅ FIX: UI Update Main thread pe
+                        withContext(Dispatchers.Main) {
+                            tvSlots?.text = "$used/$total" // XML mein tvSlots ka ID check kar lena
+                            // Agar XML mein id alag hai toh yahan change kar dena
+                        }
                     }
-                } catch (_: Exception) {}
+                } catch (_: Exception) {} finally {
+                    conn?.disconnect() // ✅ FIX: Connection close
+                }
                 delay(3000)
             }
         }
@@ -416,7 +424,7 @@ class FloatingService : Service() {
                 
                 tvBubbleTimer?.visibility = View.VISIBLE
                 tvBubbleTimer?.text = "${remaining}s"
-                
+
                 if (remaining <= 3) showBigOverlay(remaining)
                 delay(1000)
                 remaining--
