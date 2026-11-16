@@ -57,7 +57,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_cyber_panel"
+                        android:background="@drawable/bg_metal_border"
                         android:padding="8dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
@@ -73,7 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_cyber_panel"
+                        android:background="@drawable/bg_metal_border"
                         android:padding="8dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
@@ -88,7 +88,6 @@
 
                 <Space android:layout_width="match_parent" android:layout_height="60dp"/>
 
-                <!-- Title AETH DDOS -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,7 +115,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_cyber_panel"
+                    android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:padding="20dp"
                     android:gravity="center">
@@ -203,6 +202,7 @@
                             android:thumb="@drawable/slider_thumb"
                             android:splitTrack="false"/>
                             
+                        <!-- Slider ke andar ka text -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -257,7 +257,7 @@
                 android:visibility="gone"
                 android:padding="16dp">
 
-                <!-- 🩸 YAHAN ID FIX KI GAYI HAI -->
+                <!-- Dashboard Top Badge -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -269,7 +269,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_cyber_panel"
+                        android:background="@drawable/bg_metal_border"
                         android:padding="8dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
@@ -288,7 +288,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_cyber_panel"
+                    android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:gravity="center"
@@ -327,7 +327,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_cyber_panel"
+                        android:background="@drawable/bg_metal_border"
                         android:orientation="vertical"
                         android:padding="16dp"
                         android:gravity="center"
@@ -341,7 +341,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_cyber_panel"
+                        android:background="@drawable/bg_metal_border"
                         android:orientation="vertical"
                         android:padding="16dp"
                         android:gravity="center"
@@ -356,7 +356,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_cyber_panel"
+                    android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="12dp">
@@ -404,7 +404,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_cyber_panel"
+                    android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
@@ -452,7 +452,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_cyber_panel"
+                    android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:layout_marginBottom="16dp">
