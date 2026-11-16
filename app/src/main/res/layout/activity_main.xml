@@ -249,8 +249,6 @@
             </LinearLayout>
 
             <!-- ================= DASHBOARD SECTION ================= -->
-            <!-- Yahan tera pichla dashboard wala poora code aayega (jo tune pichli baar update kiya tha) -->
-            <!-- Isko same rakho, sirf upar ka login section change kiya hai -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -258,6 +256,33 @@
                 android:orientation="vertical"
                 android:visibility="gone"
                 android:padding="16dp">
+
+                <!-- 🩸 YAHAN ID FIX KI GAYI HAI -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="end">
+                    
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_cyber_panel"
+                        android:padding="8dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textColor="#FFD700"/>
+                        <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium User" android:textColor="#00FF00" android:textSize="10sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="8sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
 
                 <!-- Timer Card -->
                 <LinearLayout
@@ -348,7 +373,6 @@
                         </LinearLayout>
                     </LinearLayout>
                     
-                    <!-- Premium Slider with Arrow -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
@@ -397,7 +421,6 @@
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- Premium Slider with Arrow -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
