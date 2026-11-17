@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 CUSTOM SLIDER DRAG LOGIC (Smooth Reset Animation)
+    // 🔥 FIXED CUSTOM SLIDER DRAG LOGIC (No Stucking, Smooth Reset)
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
         val thumb = sliderContainer.findViewById<FrameLayout>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                             initialX = event.rawX
                         }
                     }
-                    MotionEvent.ACTION_UP -> {
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         isSliding = false
                         v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
                         text.animate().alpha(1f).setDuration(100).start()
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                                 }, 500)
                             }.start()
                         } else {
-                            // Agar pura nahi kheencha, toh wapas start par smooth slide hoga
+                            // 🔥 FIX: Agar pura nahi kheencha, toh automatically wapas start par smooth slide hoga
                             v.animate().x(0f).setDuration(300).start()
                         }
                     }
