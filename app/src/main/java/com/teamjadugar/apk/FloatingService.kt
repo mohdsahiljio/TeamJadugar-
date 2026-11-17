@@ -8,7 +8,6 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -45,7 +44,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlotsHeader: TextView? = null 
-    private var tvOverlayText: TextView? = null 
+    private var tvOverlayText: TextView? = null
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -109,29 +108,25 @@ class FloatingService : Service() {
         panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
         
-        setupOverlayView() 
+        // 🔥 FIX: Tere paas jo layout_big_timer.xml pehle se hai, wahi use kar rahe hain
+        overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
+        
+        // Us layout ke andar jo textview hai usko dhundh rahe hain
+        tvOverlayText = overlayView?.findViewById(R.id.tvBigTimer)
+        
+        // Agar tu textview ka ID nahi jaanta toh ye line usko dhundh legi
+        if (tvOverlayText == null) {
+            val root = overlayView as? android.view.ViewGroup
+            if (root != null && root.childCount > 0) {
+                tvOverlayText = root.getChildAt(0) as? TextView
+            }
+        }
 
         setupPanelUI()
         setupBubbleDrag()
         showBubble()
         
         startSlotsRefresh()
-    }
-
-    private fun setupOverlayView() {
-        // 🔥 FIX: TextView directly create kiya, koi extra params nahi
-        val textView = TextView(this)
-        textView.textSize = 120f
-        textView.setTextColor(Color.parseColor("#FF1744"))
-        textView.setTypeface(null, Typeface.BOLD)
-        textView.gravity = Gravity.CENTER
-        textView.shadowColor = Color.RED
-        textView.shadowRadius = 20f
-        textView.setPadding(40, 40, 40, 40)
-        textView.visibility = View.GONE
-        
-        tvOverlayText = textView
-        overlayView = textView
     }
 
     private fun startAsForeground() {
@@ -327,16 +322,14 @@ class FloatingService : Service() {
                 windowManager.addView(overlayView, paramsOverlay)
             }
             
-            tvOverlayText?.visibility = View.VISIBLE
-            
             if (text == "3") {
                 tvOverlayText?.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
                 tvOverlayText?.textSize = 40f
-                tvOverlayText?.setBackgroundColor(Color.parseColor("#CC000000"))
+                overlayView?.setBackgroundColor(Color.parseColor("#CC000000"))
             } else {
                 tvOverlayText?.text = text
                 tvOverlayText?.textSize = 120f
-                tvOverlayText?.setBackgroundColor(Color.TRANSPARENT)
+                overlayView?.setBackgroundColor(Color.TRANSPARENT)
             }
         } catch (e: Exception) {}
     }
