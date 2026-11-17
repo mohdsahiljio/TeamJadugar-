@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
+        @Volatile var sessionToken: String = "" // Naya added
         val networkExecutor = Executors.newFixedThreadPool(4)
     }
 
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         prefs = getSharedPreferences("AETHPrefs", MODE_PRIVATE)
         userKey = prefs.getString("saved_key", "") ?: ""
         userExpiry = prefs.getString("saved_expiry", "") ?: ""
+        sessionToken = prefs.getString("session_token", "") ?: "" // Naya added
         if (userKey.isNotEmpty()) SessionStore.saveKey(this, userKey)
 
         imgLoginBg = findViewById(R.id.imgLoginBg)
@@ -90,7 +92,6 @@ class MainActivity : AppCompatActivity() {
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
-        // 🔥 CUSTOM SLIDER SETUP (Using ImageView now)
         setupCustomSlider(findViewById(R.id.sliderVerify), "SLIDE TO VERIFY") {
             val key = etKey.text.toString().trim()
             if (key.isEmpty()) {
@@ -103,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         setupCustomSlider(findViewById(R.id.sliderFloating), "SLIDE TO LAUNCH") { checkVpnPermission() }
         setupCustomSlider(findViewById(R.id.sliderGame), "SLIDE TO OPEN") { openBGMI() }
 
-        if (userKey.isNotEmpty()) {
+        if (userKey.isNotEmpty() && sessionToken.isNotEmpty()) { // Check token bhi
             verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
         } else {
             imgLoginBg.visibility = View.VISIBLE
@@ -113,7 +114,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 FIXED CUSTOM SLIDER DRAG LOGIC (Smooth Reset)
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
         val thumb = sliderContainer.findViewById<ImageView>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
@@ -131,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = event.rawX
                         isSliding = true
-                        // 3D Press Animation
                         v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
                         text.animate().alpha(0.3f).setDuration(100).start()
                     }
@@ -154,20 +153,18 @@ class MainActivity : AppCompatActivity() {
                         text.animate().alpha(1f).setDuration(100).start()
 
                         val maxX = sliderContainer.width - v.width.toFloat()
-                        // Agar 85% se zyada kheencha, toh verify hoga
                         if (v.x >= maxX * 0.85f) {
                             isCompleted = true
                             v.animate().x(maxX).setDuration(100).withEndAction {
                                 playSound("success")
                                 onSlideComplete()
-                                // Wapas reset hone ka animation
                                 v.postDelayed({
                                     v.animate().x(0f).setDuration(300).start()
                                     isCompleted = false
                                 }, 500)
                             }.start()
                         } else {
-                            // 🔥 FIX: Agar pura nahi kheencha, toh automatically wapas start par smooth slide hoga
+                            // 🔥 FIX: Agar pura nahi kheencha, toh wapas start pe bhejo
                             v.animate().x(0f).setDuration(300).start()
                         }
                     }
@@ -177,221 +174,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // 🩸 GAME OPEN FIX
     private fun openBGMI() {
         try {
             val packages = arrayOf(
-                "com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm",
-                "com.vng.pubgmobile", "com.pubg.krmobile"
-            )
-            var intent: Intent? = null
-            for (pkg in packages) {
-                intent = packageManager.getLaunchIntentForPackage(pkg)
-                if (intent != null) break
-            }
-            if (intent == null) {
-                val allApps = packageManager.getInstalledApplications(0)
-                for (app in allApps) {
-                    val name = app.packageName.lowercase()
-                    if (name.contains("pubg") || name.contains("bgmi") || name.contains("battlegrounds")) {
-                        intent = packageManager.getLaunchIntentForPackage(app.packageName)
-                        if (intent != null) break
-                    }
-                }
-            }
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Game is not installed on this device!", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Cannot open Game: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
-        val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        
-        networkExecutor.execute {
-            try {
-                val url = URL("${KeyVault.getPanelUrl()}/connect/init")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                conn.doOutput = true
-                conn.connectTimeout = 10000; conn.readTimeout = 10000
-
-                val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-                val timestamp = (System.currentTimeMillis() / 1000).toString()
-                val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
-
-                val mac = Mac.getInstance("HmacSHA256")
-                mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-                val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
-                val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
-                val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
-
-                conn.setRequestProperty("X-App-Signature", signature)
-                conn.setRequestProperty("X-App-Timestamp", timestamp)
-                conn.setRequestProperty("X-App-Nonce", nonce)
-                conn.setRequestProperty("X-Device-Id", deviceId)
-
-                conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
-
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
-
-                if (code in 200..299) {
-                    val json = JSONObject(resp)
-                    if (json.optBoolean("valid", false)) {
-                        userKey = key
-                        userExpiry = json.optString("expires_at", "")
-                        prefs.edit().putString("saved_key", userKey).apply()
-                        prefs.edit().putString("saved_expiry", userExpiry).apply()
-                        SessionStore.saveKey(this@MainActivity, userKey)
-
-                        runOnUiThread {
-                            playSound("success")
-                            Toast.makeText(this@MainActivity, "Login Successful!", Toast.LENGTH_SHORT).show()
-                            
-                            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                            imm.hideSoftInputFromWindow(etKey.windowToken, 0)
-                            etKey.clearFocus()
-                            findViewById<View>(android.R.id.content).requestFocus()
-
-                            imgLoginBg.visibility = View.GONE
-                            imgDashBg.visibility = View.VISIBLE
-                            layoutLogin.visibility = View.GONE
-                            layoutDashboard.visibility = View.VISIBLE
-
-                            tvExpiryDate.text = ": " + formatExpiryString(userExpiry)
-                            tvPlanType.text = ": Premium"
-                            tvDashboardExpiry.text = formatExpiryString(userExpiry)
-
-                            startExpiryTimer(userExpiry, tvDays, tvHours, tvMins, tvSecs)
-                            startSlotsRefresh(tvSlots)
-                        }
-                    } else {
-                        runOnUiThread {
-                            playSound("error")
-                            Toast.makeText(this@MainActivity, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show()
-                        }
-                    }
-                } else {
-                    runOnUiThread {
-                        Toast.makeText(this@MainActivity, "Server Error: $code", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
-    private fun checkVpnPermission() {
-        val intent = VpnService.prepare(this)
-        if (intent != null) startActivityForResult(intent, 102)
-        else checkOverlayPermission()
-    }
-
-    private fun checkOverlayPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 101)
-        } else {
-            startFloatingServiceSafely()
-        }
-    }
-
-    private fun startFloatingServiceSafely() {
-        val intent = Intent(this, FloatingService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
-        Toast.makeText(this, "Floating Panel Started!", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun startExpiryTimer(expiryStr: String, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView) {
-        timer?.cancel()
-        val expiryDate = parseExpiry(expiryStr) ?: return
-        val timeLeft = expiryDate.time - System.currentTimeMillis()
-        if (timeLeft <= 0) return
-        timer = object : CountDownTimer(timeLeft, 1000) {
-            override fun onTick(ms: Long) {
-                tvDays.text = String.format("%02d", (ms / 86400000L).toInt())
-                tvHours.text = String.format("%02d", ((ms / 3600000L) % 24).toInt())
-                tvMins.text = String.format("%02d", ((ms / 60000L) % 60).toInt())
-                tvSecs.text = String.format("%02d", ((ms / 1000L) % 60).toInt())
-            }
-            override fun onFinish() { Toast.makeText(this@MainActivity, "Key Expired", Toast.LENGTH_LONG).show() }
-        }.start()
-    }
-
-    private fun formatExpiryString(expiryStr: String): String {
-        val date = parseExpiry(expiryStr) ?: return "Unknown"
-        val sdf = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
-        sdf.timeZone = TimeZone.getDefault()
-        return sdf.format(date)
-    }
-
-    private fun parseExpiry(s: String): Date? {
-        if (s.isBlank()) return null
-        val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
-            "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss"
-        )
-        for (p in patterns) {
-            try {
-                val sdf = SimpleDateFormat(p, Locale.US)
-                sdf.timeZone = TimeZone.getTimeZone("UTC")
-                sdf.parse(s)?.let { return it }
-            } catch (_: Exception) {}
-        }
-        return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
-    }
-
-    private fun startSlotsRefresh(tvSlots: TextView) {
-        Thread {
-            while (isRefreshingSlots) {
-                try {
-                    val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 3000; conn.readTimeout = 3000
-                    if (conn.responseCode == 200) {
-                        val json = JSONObject(conn.inputStream.bufferedReader().readText())
-                        val u = json.optInt("slots_used", 0)
-                        val t = json.optInt("slots_total", 10)
-                        runOnUiThread { tvSlots.text = "$u/$t" }
-                    }
-                } catch (_: Exception) {}
-                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
-            }
-        }.apply { isDaemon = true; start() }
-    }
-
-    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
-        super.onActivityResult(req, res, data)
-        if (req == 102) {
-            if (res == RESULT_OK) checkOverlayPermission()
-            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
-        } else if (req == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingServiceSafely()
-            } else {
-                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        isRefreshingSlots = false
-        timer?.cancel()
-        toneGenerator?.release()
-    }
-}
+                "com.pubg.im
