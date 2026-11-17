@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Internet & Network -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Overlay & Foreground Service -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- VPN -->
     <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
+
+    <!-- Install Packages -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- 🔥 BGMI DETECTION FIX (SABSE ZAROORI) -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +27,9 @@
         android:label="AETH DDOS"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        
-        <activity 
-            android:name=".MainActivity" 
+
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +37,8 @@
             </intent-filter>
         </activity>
 
-        <service 
-            android:name=".FloatingService" 
+        <service
+            android:name=".FloatingService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
@@ -35,9 +46,9 @@
                 android:value="AETH DDOS overlay panel" />
         </service>
 
-        <service 
-            android:name=".VpnService" 
-            android:exported="false" 
+        <service
+            android:name=".VpnService"
+            android:exported="false"
             android:permission="android.permission.BIND_VPN_SERVICE"
             android:foregroundServiceType="dataSync">
             <intent-filter>
