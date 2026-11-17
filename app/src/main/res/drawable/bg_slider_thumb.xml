@@ -3,25 +3,25 @@
     <!-- Shadow -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="8dp" />
+            <corners android:radius="6dp" />
             <solid android:color="#AA000000" />
-            <size android:width="60dp" android:height="50dp" />
+            <size android:width="55dp" android:height="45dp" />
         </shape>
     </item>
     
     <!-- Metallic Base (Sharp Rectangle) -->
     <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="rectangle">
-            <corners android:radius="6dp" />
+            <corners android:radius="4dp" />
             <gradient android:angle="270" android:startColor="#FF2222" android:endColor="#550000" />
-            <stroke android:width="2dp" android:color="#CCCCCC" />
+            <stroke android:width="1.5dp" android:color="#CCCCCC" />
         </shape>
     </item>
 
     <!-- Inner Red Core -->
-    <item android:left="6dp" android:top="6dp" android:right="6dp" android:bottom="6dp">
+    <item android:left="5dp" android:top="5dp" android:right="5dp" android:bottom="5dp">
         <shape android:shape="rectangle">
-            <corners android:radius="4dp" />
+            <corners android:radius="3dp" />
             <solid android:color="#AA0000" />
         </shape>
     </item>
