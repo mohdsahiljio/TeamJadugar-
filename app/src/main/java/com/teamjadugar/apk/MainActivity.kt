@@ -15,6 +15,7 @@ import android.os.CountDownTimer
 import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -93,27 +94,17 @@ class MainActivity : AppCompatActivity() {
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
         // 🔥 CUSTOM SLIDER SETUP
-        setupCustomSlider(
-            findViewById(R.id.customSliderVerify),
-            onSlideComplete = {
-                val key = etKey.text.toString().trim()
-                if (key.isEmpty()) {
-                    Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
-                } else {
-                    verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
-                }
+        setupCustomSlider(findViewById(R.id.sliderVerify), "SLIDE TO VERIFY") {
+            val key = etKey.text.toString().trim()
+            if (key.isEmpty()) {
+                Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
+            } else {
+                verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
             }
-        )
+        }
 
-        setupCustomSlider(
-            findViewById(R.id.customSliderFloating),
-            onSlideComplete = { checkVpnPermission() }
-        )
-
-        setupCustomSlider(
-            findViewById(R.id.customSliderGame),
-            onSlideComplete = { openBGMI() }
-        )
+        setupCustomSlider(findViewById(R.id.sliderFloating), "SLIDE TO LAUNCH") { checkVpnPermission() }
+        setupCustomSlider(findViewById(R.id.sliderGame), "SLIDE TO OPEN") { openBGMI() }
 
         if (userKey.isNotEmpty()) {
             verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
@@ -125,50 +116,72 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 CUSTOM SLIDER DRAG LOGIC
-    private fun setupCustomSlider(sliderView: View, onSlideComplete: () -> Unit) {
-        val thumb = sliderView.findViewById<ImageView>(R.id.btnThumb)
-        val text = sliderView.findViewById<TextView>(R.id.tvSliderText)
+    // 🔥 CUSTOM SLIDER DRAG & ANIMATION LOGIC
+    private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
+        val thumb = sliderContainer.findViewById<FrameLayout>(R.id.btnThumb)
+        val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
+        val progressGlow = sliderContainer.findViewById<View>(R.id.progressGlow)
+        
+        text.text = textHint
 
         thumb.setOnTouchListener(object : View.OnTouchListener {
             var initialX = 0f
             var isSliding = false
+            var isCompleted = false
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
+                if (isCompleted) return false
+
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = event.rawX
                         isSliding = true
-                        v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
-                        text.alpha = 0.5f
+                        // 3D Press Animation
+                        v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(100).start()
+                        text.animate().alpha(0.3f).setDuration(100).start()
                     }
                     MotionEvent.ACTION_MOVE -> {
                         if (isSliding) {
                             val dx = event.rawX - initialX
                             var newX = v.x + dx
-                            val maxX = sliderView.width - v.width.toFloat()
+                            val maxX = sliderContainer.width - v.width.toFloat()
+                            
                             if (newX < 0f) newX = 0f
                             if (newX > maxX) newX = maxX
+                            
                             v.x = newX
+                            // Update Glowing Progress Bar
+                            progressGlow.layoutParams.width = (newX + v.width / 2).toInt()
+                            progressGlow.requestLayout()
+                            
                             initialX = event.rawX
                         }
                     }
                     MotionEvent.ACTION_UP -> {
                         isSliding = false
                         v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
-                        text.alpha = 1f
+                        text.animate().alpha(1f).setDuration(100).start()
 
-                        val maxX = sliderView.width - v.width.toFloat()
-                        if (v.x >= maxX - 20f) {
+                        val maxX = sliderContainer.width - v.width.toFloat()
+                        if (v.x >= maxX * 0.85f) { // 85% threshold
+                            // Success Animation
+                            isCompleted = true
                             v.animate().x(maxX).setDuration(100).withEndAction {
                                 playSound("success")
                                 onSlideComplete()
+                                // Reset after 1 sec
                                 v.postDelayed({
-                                    v.animate().x(0f).setDuration(300).start()
-                                }, 500)
+                                    v.animate().x(0f).setDuration(300).setInterpolator(OvershootInterpolator()).start()
+                                    progressGlow.layoutParams.width = 0
+                                    progressGlow.requestLayout()
+                                    isCompleted = false
+                                }, 1000)
                             }.start()
                         } else {
-                            v.animate().x(0f).setDuration(300).start()
+                            // Reset smoothly
+                            v.animate().x(0f).setDuration(300).setInterpolator(OvershootInterpolator()).start()
+                            progressGlow.layoutParams.width = 0
+                            progressGlow.requestLayout()
                         }
                     }
                 }
@@ -177,7 +190,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // 🩸 GAME OPEN FIX (Tera purana logic)
+    // 🩸 GAME OPEN FIX
     private fun openBGMI() {
         try {
             val packages = arrayOf(
@@ -210,6 +223,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Baaki tere purane functions (verifyKey, checkVpnPermission, etc.) waise hi rahenge...
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         
