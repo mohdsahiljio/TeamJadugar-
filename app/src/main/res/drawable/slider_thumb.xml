@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 1. Bahar ka deep shadow (Depth ke liye) -->
+    
+    <!-- 1. Outer Deep Shadow -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#CC000000" />
-            <size android:width="60dp" android:height="60dp" />
+            <solid android:color="#DD000000" />
+            <size android:width="64dp" android:height="64dp" />
         </shape>
     </item>
 
-    <!-- 2. Silver/Chrome metallic ring (3D look) -->
+    <!-- 2. Outer Chrome Ring (Silver Metallic) -->
     <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="oval">
             <gradient
                 android:angle="270"
                 android:startColor="#FFFFFF"
-                android:centerColor="#777777"
+                android:centerColor="#555555"
                 android:endColor="#111111" />
-            <stroke android:width="1dp" android:color="#AAAAAA" />
+            <stroke android:width="1dp" android:color="#999999" />
         </shape>
     </item>
 
-    <!-- 3. Inner Blood Red core (Glowing effect) -->
+    <!-- 3. Inner Blood Red Core with Gradient -->
     <item android:left="6dp" android:top="6dp" android:right="6dp" android:bottom="6dp">
         <shape android:shape="oval">
             <gradient
                 android:angle="135"
                 android:startColor="#FF0000"
-                android:centerColor="#990000"
+                android:centerColor="#880000"
                 android:endColor="#220000" />
-            <stroke android:width="1dp" android:color="#FF5555" />
         </shape>
     </item>
 
-    <!-- 4. Center White Glowing Arrow -->
+    <!-- 4. Neon Glowing Arrow (Sharp & Aggressive) -->
     <item android:gravity="center">
-        <vector android:width="22dp" android:height="22dp" android:viewportWidth="24" android:viewportHeight="24">
+        <vector android:width="26dp" android:height="26dp" android:viewportWidth="24" android:viewportHeight="24">
             <path
                 android:fillColor="#FFFFFF"
-                android:pathData="M8,5 L16,12 L8,19 Z" />
+                android:strokeColor="#FF0000"
+                android:strokeWidth="1"
+                android:pathData="M8,4 L18,12 L8,20 Z" />
         </vector>
     </item>
 </layer-list>
