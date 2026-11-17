@@ -3,16 +3,16 @@
     <!-- Outer Metallic Border -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="12dp" />
+            <corners android:radius="8dp" />
             <solid android:color="#111111" />
-            <stroke android:width="1.5dp" android:color="#666666" />
+            <stroke android:width="1.5dp" android:color="#FF0000" />
         </shape>
     </item>
-    <!-- Inner Black Track with Red Glow -->
+    <!-- Inner Black Track -->
     <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="rectangle">
-            <corners android:radius="10dp" />
-            <gradient android:angle="0" android:startColor="#0A0A0A" android:endColor="#1A0000" />
+            <corners android:radius="6dp" />
+            <gradient android:angle="0" android:startColor="#050505" android:endColor="#1A0000" />
         </shape>
     </item>
 </layer-list>
