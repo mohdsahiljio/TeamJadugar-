@@ -33,7 +33,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- LOGIN SCREEN -->
+            <!-- ================= LOGIN SCREEN ================= -->
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <Space android:layout_width="match_parent" android:layout_height="100dp" />
+                <Space android:layout_width="match_parent" android:layout_height="120dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
                     android:textColor="#FF4444"
                     android:textSize="10sp"
                     android:letterSpacing="0.3"
-                    android:layout_marginBottom="30dp" />
+                    android:layout_marginBottom="40dp" />
 
                 <!-- LOGIN CARD -->
                 <LinearLayout
@@ -84,13 +84,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="🔐"
+                        android:textSize="45sp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="License Verification"
                         android:textColor="#FFFFFF"
                         android:textSize="26sp"
                         android:textStyle="bold"
                         android:shadowColor="#FF0000"
-                        android:shadowRadius="10"
-                        android:layout_marginTop="10dp" />
+                        android:shadowRadius="10" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -99,7 +106,7 @@
                         android:textColor="#888888"
                         android:textSize="12sp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="20dp" />
+                        android:layout_marginBottom="30dp" />
 
                     <!-- INPUT BOX -->
                     <LinearLayout
@@ -130,7 +137,7 @@
                         android:id="@+id/sliderVerify"
                         layout="@layout/custom_slider_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp" />
+                        android:layout_height="70dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -143,7 +150,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- DASHBOARD -->
+            <!-- ================= DASHBOARD ================= -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -216,7 +223,7 @@
                         android:id="@+id/sliderFloating"
                         layout="@layout/custom_slider_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="70dp"
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 
@@ -227,7 +234,7 @@
                         android:id="@+id/sliderGame"
                         layout="@layout/custom_slider_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="70dp"
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 
