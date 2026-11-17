@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
-        // 🔥 CUSTOM SLIDER SETUP
+        // 🔥 CUSTOM SLIDER SETUP (Using ImageView now)
         setupCustomSlider(findViewById(R.id.sliderVerify), "SLIDE TO VERIFY") {
             val key = etKey.text.toString().trim()
             if (key.isEmpty()) {
@@ -113,9 +113,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 FIXED CUSTOM SLIDER DRAG LOGIC (No Stucking, Smooth Reset)
+    // 🔥 FIXED CUSTOM SLIDER DRAG LOGIC (Smooth Reset)
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
-        val thumb = sliderContainer.findViewById<FrameLayout>(R.id.btnThumb)
+        val thumb = sliderContainer.findViewById<ImageView>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
         text.text = textHint
 
