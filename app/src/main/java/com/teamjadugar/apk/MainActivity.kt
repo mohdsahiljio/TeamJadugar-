@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sliderFloating: SeekBar
     private lateinit var sliderGame: SeekBar
 
-    // 🔥 Bug Fix: Thread stop karne ke liye flag
     @Volatile private var isRefreshingSlots = true
 
     private fun playSound(type: String) {
@@ -98,7 +97,12 @@ class MainActivity : AppCompatActivity() {
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
-        // 🩸 SLIDER VERIFY LOGIC (with reset fix)
+        // 🔥 Naya: Slider Animations Setup
+        setupSliderAnimation(sliderVerify)
+        setupSliderAnimation(sliderFloating)
+        setupSliderAnimation(sliderGame)
+
+        // 🩸 SLIDER VERIFY LOGIC (Original Logic)
         sliderVerify.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (progress == 100) {
@@ -114,7 +118,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            // 🔥 Bug Fix: Agar user pura slide nahi kare toh reset
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 if (seekBar?.progress != 100) {
                     seekBar?.progress = 0
@@ -122,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // SLIDER LOGIC FOR FLOATING PANEL (with reset fix)
+        // SLIDER LOGIC FOR FLOATING PANEL
         sliderFloating.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (progress == 100) {
@@ -139,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // SLIDER LOGIC FOR ENTER GAME (with reset fix)
+        // SLIDER LOGIC FOR ENTER GAME
         sliderGame.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (progress == 100) {
@@ -166,27 +169,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🩸 GAME OPEN FIX (Smart check + ALL packages scan)
+    // 🔥 Naya: Premium Slider Animation Function
+    private fun setupSliderAnimation(slider: SeekBar) {
+        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                // Thumb ko smooth scale karega jab slide karega
+                val scale = 1f + (progress / 100f) * 0.2f
+                seekBar?.thumb?.setBounds(
+                    0, 0,
+                    (seekBar.thumb.intrinsicWidth * scale).toInt(),
+                    (seekBar.thumb.intrinsicHeight * scale).toInt()
+                )
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Jab user touch karega tab button thoda bada hoga
+                seekBar?.animate()?.scaleX(1.1f)?.scaleY(1.1f)?.setDuration(150)?.start()
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // Chhodne par normal ho jayega
+                seekBar?.animate()?.scaleX(1f)?.scaleY(1f)?.setDuration(150)?.start()
+                // Agar pura slide nahi kiya toh wapas reset
+                if (seekBar?.progress != 100) {
+                    seekBar?.progress = 0
+                }
+            }
+        })
+    }
+
+    // 🩸 GAME OPEN FIX
     private fun openBGMI() {
         try {
             val packages = arrayOf(
-                "com.pubg.imobile",       // BGMI (India)
-                "com.tencent.ig",         // PUBG Global
-                "com.rekoo.pubgm",        // PUBG (Korea/Japan)
-                "com.vng.pubgmobile",     // PUBG (Vietnam)
-                "com.pubg.krmobile"       // PUBG (Korea)
+                "com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm",
+                "com.vng.pubgmobile", "com.pubg.krmobile"
             )
-
             var intent: Intent? = null
-
-            // 1. Known packages check karein
             for (pkg in packages) {
                 intent = packageManager.getLaunchIntentForPackage(pkg)
                 if (intent != null) break
             }
-
-            // 2. Agar nahi mila, toh saare installed apps scan karein
-            // 🔥 Bug Fix: GET_META_DATA ki zaroorat nahi, 0 use karein (faster)
             if (intent == null) {
                 val allApps = packageManager.getInstalledApplications(0)
                 for (app in allApps) {
@@ -197,8 +218,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
-            // 3. Game open karein
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -212,7 +231,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-
         sliderVerify.isEnabled = false
 
         networkExecutor.execute {
@@ -225,13 +243,11 @@ class MainActivity : AppCompatActivity() {
                 conn.connectTimeout = 10000; conn.readTimeout = 10000
 
                 val body = JSONObject().apply { put("key", key); put("device_id", deviceId) }.toString()
-
                 val timestamp = (System.currentTimeMillis() / 1000).toString()
                 val nonce = UUID.randomUUID().toString().replace("-", "").take(16)
 
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
-
                 val tsBytes = ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
@@ -253,13 +269,11 @@ class MainActivity : AppCompatActivity() {
                         userExpiry = json.optString("expires_at", "")
                         prefs.edit().putString("saved_key", userKey).apply()
                         prefs.edit().putString("saved_expiry", userExpiry).apply()
-                        // 🔥 Bug Fix: this@MainActivity use karein
                         SessionStore.saveKey(this@MainActivity, userKey)
 
                         runOnUiThread {
                             playSound("success")
                             Toast.makeText(this@MainActivity, "Login Successful!", Toast.LENGTH_SHORT).show()
-
                             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(etKey.windowToken, 0)
                             etKey.clearFocus()
@@ -349,13 +363,9 @@ class MainActivity : AppCompatActivity() {
     private fun parseExpiry(s: String): Date? {
         if (s.isBlank()) return null
         val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
-            "yyyy-MM-dd'T'HH:mm:ss.SSS",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd HH:mm:ss"
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss"
         )
         for (p in patterns) {
             try {
@@ -369,7 +379,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun startSlotsRefresh(tvSlots: TextView) {
         Thread {
-            // 🔥 Bug Fix: isRefreshingSlots flag check
             while (isRefreshingSlots) {
                 try {
                     val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
@@ -403,7 +412,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // 🔥 Bug Fix: Thread stop
         isRefreshingSlots = false
         timer?.cancel()
         toneGenerator?.release()
