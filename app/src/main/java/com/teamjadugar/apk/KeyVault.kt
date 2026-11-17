@@ -3,25 +3,18 @@ package com.teamjadugar.apk
 import android.util.Base64
 
 object KeyVault {
-    // 🔥 Tera Asli URL (https://panel.spectreapi.net)
-    private const val ENC_URL = "AB4eDUsKDB0cAxsbEBgCXh4LDAYcGwAYAho="
+    // 🔥 Pure Base64 (No XOR, No Corruption)
+    // URL: https://panel.spectreapi.net
+    private const val B64_URL = "aHR0cHM6Ly9wYW5lbC5zcGVjdHJlYXBpLm5ldA=="
     
-    // 🔥 Tera Naya HMAC Key (AETH_SECURE_HMAC_2026_X99!)
-    private const val ENC_HMAC = "HwUdHhsCAxkaEx0aBQRZWRsKDAYcBxoEABEW"
-    
-    // 🔥 XOR Key
-    private const val XOR_KEY = "Sable@2026SecureKey"
+    // HMAC: SPECTRE_SIG_999X_SECURE
+    private const val B64_HMAC = "U1BFQ1RSRV9TSUdfOTk5WF9TRUNVUkU="
 
-    private fun decrypt(encoded: String): String {
-        val decoded = Base64.decode(encoded, Base64.DEFAULT)
-        val keyBytes = XOR_KEY.toByteArray()
-        val result = ByteArray(decoded.size)
-        for (i in decoded.indices) {
-            result[i] = (decoded[i].toInt() xor keyBytes[i % keyBytes.size].toInt()).toByte()
-        }
-        return String(result, Charsets.UTF_8)
+    fun getPanelUrl(): String {
+        return String(Base64.decode(B64_URL, Base64.DEFAULT), Charsets.UTF_8)
     }
 
-    fun getPanelUrl(): String = decrypt(ENC_URL)
-    fun getHmacKey(): ByteArray = decrypt(ENC_HMAC).toByteArray()
+    fun getHmacKey(): ByteArray {
+        return Base64.decode(B64_HMAC, Base64.DEFAULT)
+    }
 }
