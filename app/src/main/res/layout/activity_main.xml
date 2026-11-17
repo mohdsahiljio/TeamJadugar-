@@ -4,12 +4,14 @@
     android:layout_height="match_parent"
     android:background="#020202">
 
+    <!-- Background Image -->
     <ImageView
         android:id="@+id/imgLoginBg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/bg_login_screen"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:alpha="0.8" />
 
     <ImageView
         android:id="@+id/imgDashBg"
@@ -17,7 +19,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/bg_dashboard"
         android:scaleType="centerCrop"
-        android:alpha="0.45"
+        android:alpha="0.5"
         android:visibility="gone" />
 
     <androidx.core.widget.NestedScrollView
@@ -41,7 +43,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <!-- TOP STATUS -->
+                <!-- TOP STATUS (Glass Card) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -53,36 +55,13 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_metal_border"
+                        android:background="@drawable/bg_glass_card"
                         android:gravity="center"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="👑"
-                            android:textSize="22sp" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Premium"
-                                android:textColor="#FFD700"
-                                android:textStyle="bold"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Version v3.0.0"
-                                android:textColor="#AAAAAA"
-                                android:textSize="9sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑" android:textSize="22sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Premium" android:textColor="#FFD700" android:textStyle="bold" android:textSize="12sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Version v3.0.0" android:textColor="#AAAAAA" android:textSize="9sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -91,74 +70,49 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:layout_marginStart="6dp"
-                        android:background="@drawable/bg_metal_border"
+                        android:background="@drawable/bg_glass_card"
                         android:gravity="center"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="▣"
-                            android:textColor="#00FF00"
-                            android:textSize="25sp" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginStart="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Server Status"
-                                android:textColor="#FFFFFF"
-                                android:textSize="10sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="● ONLINE"
-                                android:textColor="#00FF00"
-                                android:textStyle="bold"
-                                android:textSize="11sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▣" android:textColor="#00FF00" android:textSize="25sp" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server Status" android:textColor="#FFFFFF" android:textSize="10sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="● ONLINE" android:textColor="#00FF00" android:textStyle="bold" android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp" />
+                <Space android:layout_width="match_parent" android:layout_height="100dp" />
 
+                <!-- MAIN TITLE -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="AETH DDOS"
                     android:textColor="#FFFFFF"
-                    android:textSize="45sp"
+                    android:textSize="46sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="#FF0000"
-                    android:shadowRadius="25"
-                    android:shadowDx="3"
-                    android:shadowDy="3"
-                    android:letterSpacing="0.05" />
+                    android:shadowRadius="35"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:letterSpacing="0.08" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="U N L O C K  •  A C C E S S  •  C O N T R O L"
-                    android:textColor="#FFFFFF"
-                    android:textSize="9sp"
-                    android:letterSpacing="0.15"
-                    android:layout_marginBottom="20dp" />
+                    android:textColor="#FF5555"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.2"
+                    android:layout_marginBottom="30dp" />
 
-                <!-- LOGIN CARD -->
+                <!-- LOGIN GLASS CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="20dp"
+                    android:padding="24dp"
                     android:gravity="center">
 
                     <TextView
@@ -166,53 +120,49 @@
                         android:layout_height="wrap_content"
                         android:text="[ SYSTEM ACCESS ]"
                         android:textColor="#FF1744"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
-                        android:fontFamily="monospace" />
+                        android:fontFamily="monospace"
+                        android:shadowColor="#FF0000"
+                        android:shadowRadius="12" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🔐"
-                        android:textSize="45sp"
-                        android:layout_marginTop="8dp" />
+                        android:textSize="50sp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="License Verification"
                         android:textColor="#FFFFFF"
-                        android:textSize="26sp"
+                        android:textSize="28sp"
                         android:textStyle="bold|italic"
                         android:shadowColor="#FF0000"
-                        android:shadowRadius="15"
-                        android:layout_marginTop="8dp" />
+                        android:shadowRadius="20" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Enter your valid license to continue"
-                        android:textColor="#BBBBBB"
+                        android:textColor="#AAAAAA"
                         android:textSize="13sp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="25dp" />
+                        android:layout_marginBottom="30dp" />
 
+                    <!-- INPUT BOX -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:background="@drawable/bg_red_input"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:layout_marginBottom="25dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔑"
-                            android:textSize="22sp" />
-
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginBottom="30dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔑" android:textSize="22sp" />
                         <EditText
                             android:id="@+id/etKey"
                             android:layout_width="match_parent"
@@ -221,29 +171,29 @@
                             android:background="@android:color/transparent"
                             android:hint="Enter License Key..."
                             android:textColor="#FFFFFF"
-                            android:textColorHint="#888888"
-                            android:textSize="15sp"
+                            android:textColorHint="#666666"
+                            android:textSize="16sp"
                             android:singleLine="true"
                             android:imeOptions="actionDone"
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- VERIFY SLIDER (Premium Glow) -->
+                    <!-- PREMIUM VERIFY SLIDER -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="75dp"
+                        android:layout_height="65dp"
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderVerify"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="45dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
+                            android:progressDrawable="@drawable/slider_track_premium"
+                            android:thumb="@drawable/slider_thumb_premium"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
@@ -256,10 +206,11 @@
                             android:layout_gravity="center"
                             android:text="SLIDE TO VERIFY"
                             android:textColor="#FFFFFF"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
+                            android:letterSpacing="0.1"
                             android:shadowColor="#FF0000"
-                            android:shadowRadius="10"
+                            android:shadowRadius="15"
                             android:clickable="false"
                             android:focusable="false" />
                     </FrameLayout>
@@ -267,16 +218,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🛡 SECURE CONNECTION ESTABLISHED"
+                        android:text="🛡 SECURE CONNECTION"
                         android:textColor="#00FF00"
                         android:textSize="11sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="15dp" />
+                        android:layout_marginTop="20dp"
+                        android:shadowColor="#00FF00"
+                        android:shadowRadius="10" />
                 </LinearLayout>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp" />
             </LinearLayout>
 
             <!-- ================= DASHBOARD ================= -->
@@ -291,132 +240,41 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="20dp"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:gravity="center"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="👑 PREMIUM USER"
-                        android:textColor="#FFD700"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/tvDashboardExpiry"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="Loading..."
-                        android:textColor="#FFFFFF"
-                        android:textSize="11sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👑 PREMIUM USER" android:textColor="#FFD700" android:textStyle="bold" android:textSize="14sp" android:shadowColor="#FFD700" android:shadowRadius="8" />
+                    <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="11sp" />
                 </LinearLayout>
 
                 <!-- TIMER CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="20dp"
+                    android:padding="24dp"
                     android:layout_marginBottom="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="◆ PANEL ACTIVE ◆"
-                        android:textColor="#00FF00"
-                        android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:layout_marginBottom="15dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="◆ PANEL ACTIVE ◆" android:textColor="#00FF00" android:textStyle="bold" android:textSize="16sp" android:shadowColor="#00FF00" android:shadowRadius="15" android:layout_marginBottom="15dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvDays"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00"
-                            android:textColor="#FF1010"
-                            android:textSize="38sp"
-                            android:textStyle="bold"
-                            android:fontFamily="monospace"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="15" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="#FF0000"
-                            android:textSize="38sp" />
-
-                        <TextView
-                            android:id="@+id/tvHours"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00"
-                            android:textColor="#FF1010"
-                            android:textSize="38sp"
-                            android:textStyle="bold"
-                            android:fontFamily="monospace"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="15" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="#FF0000"
-                            android:textSize="38sp" />
-
-                        <TextView
-                            android:id="@+id/tvMins"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00"
-                            android:textColor="#FF1010"
-                            android:textSize="38sp"
-                            android:textStyle="bold"
-                            android:fontFamily="monospace"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="15" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="#FF0000"
-                            android:textSize="38sp" />
-
-                        <TextView
-                            android:id="@+id/tvSecs"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00"
-                            android:textColor="#FF1010"
-                            android:textSize="38sp"
-                            android:textStyle="bold"
-                            android:fontFamily="monospace"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="15" />
+                        <TextView android:id="@+id/tvDays" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF1010" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="20" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" />
+                        <TextView android:id="@+id/tvHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF1010" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="20" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" />
+                        <TextView android:id="@+id/tvMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF1010" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="20" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=":" android:textColor="#FF0000" android:textSize="36sp" />
+                        <TextView android:id="@+id/tvSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="00" android:textColor="#FF1010" android:textSize="36sp" android:textStyle="bold" android:fontFamily="monospace" android:shadowColor="#FF0000" android:shadowRadius="20" />
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⏱ Time Remaining"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:layout_marginTop="10dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏱ Time Remaining" android:textColor="#FFFFFF" android:textSize="12sp" android:layout_marginTop="10dp" />
                 </LinearLayout>
 
                 <!-- LIVE SLOTS AND DEVICE ID -->
@@ -431,31 +289,12 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_metal_border"
+                        android:background="@drawable/bg_glass_card"
                         android:gravity="center"
                         android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="👥"
-                            android:textSize="30sp" />
-
-                        <TextView
-                            android:id="@+id/tvSlots"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0/10"
-                            android:textColor="#FFFFFF"
-                            android:textSize="26sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Live Slots"
-                            android:textColor="#FF3030"
-                            android:textSize="13sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👥" android:textSize="28sp" />
+                        <TextView android:id="@+id/tvSlots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0/10" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Live Slots" android:textColor="#FF5555" android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -463,31 +302,12 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_metal_border"
+                        android:background="@drawable/bg_glass_card"
                         android:gravity="center"
                         android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📱"
-                            android:textSize="28sp" />
-
-                        <TextView
-                            android:id="@+id/tvDeviceId"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="SM-7492"
-                            android:textColor="#FFFFFF"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Device ID"
-                            android:textColor="#FF3030"
-                            android:textSize="13sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📱" android:textSize="28sp" />
+                        <TextView android:id="@+id/tvDeviceId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SM-7492" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Device ID" android:textColor="#FF5555" android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -495,81 +315,34 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp"
+                    android:padding="20dp"
                     android:layout_marginBottom="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🚀"
-                            android:textSize="34sp"
-                            android:layout_marginEnd="14dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Launch Floating Panel"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Slide to activate"
-                                android:textColor="#AAAAAA"
-                                android:textSize="12sp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀" android:textSize="30sp" android:layout_marginEnd="12dp" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Launch Floating Panel" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide to activate" android:textColor="#AAAAAA" android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_marginTop="15dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false">
-
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="65dp" android:layout_marginTop="15dp" android:clipChildren="false" android:clipToPadding="false">
                         <SeekBar
                             android:id="@+id/sliderFloating"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="45dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
+                            android:progressDrawable="@drawable/slider_track_premium"
+                            android:thumb="@drawable/slider_thumb_premium"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
                             android:background="@android:color/transparent"
                             android:splitTrack="false" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="SLIDE TO LAUNCH"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="8"
-                            android:clickable="false"
-                            android:focusable="false" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO LAUNCH" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" android:letterSpacing="0.1" android:shadowColor="#FF0000" android:shadowRadius="12" android:clickable="false" android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
 
@@ -577,81 +350,34 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp"
+                    android:padding="20dp"
                     android:layout_marginBottom="20dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🎮"
-                            android:textSize="34sp"
-                            android:layout_marginEnd="14dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Enter Game"
-                                android:textColor="#FFFFFF"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Slide right to open Game"
-                                android:textColor="#AAAAAA"
-                                android:textSize="12sp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮" android:textSize="30sp" android:layout_marginEnd="12dp" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enter Game" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Slide right to open Game" android:textColor="#AAAAAA" android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_marginTop="15dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false">
-
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="65dp" android:layout_marginTop="15dp" android:clipChildren="false" android:clipToPadding="false">
                         <SeekBar
                             android:id="@+id/sliderGame"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="45dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
+                            android:progressDrawable="@drawable/slider_track_premium"
+                            android:thumb="@drawable/slider_thumb_premium"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
                             android:background="@android:color/transparent"
                             android:splitTrack="false" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="SLIDE TO OPEN"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:shadowColor="#FF0000"
-                            android:shadowRadius="8"
-                            android:clickable="false"
-                            android:focusable="false" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO OPEN" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" android:letterSpacing="0.1" android:shadowColor="#FF0000" android:shadowRadius="12" android:clickable="false" android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
 
@@ -659,9 +385,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_metal_border"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="18dp"
+                    android:padding="20dp"
                     android:layout_marginBottom="30dp">
 
                     <TextView
@@ -669,77 +395,23 @@
                         android:layout_height="wrap_content"
                         android:text="||| SYSTEM INFORMATION"
                         android:textColor="#FF3030"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
+                        android:shadowColor="#FF0000"
+                        android:shadowRadius="10"
                         android:layout_marginBottom="15dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="👑 Plan Type"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvPlanType"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=": Premium"
-                            android:textColor="#FFD700"
-                            android:textSize="14sp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="👑 Plan Type" android:textColor="#DDDDDD" android:textSize="13sp" />
+                        <TextView android:id="@+id/tvPlanType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Premium" android:textColor="#FFD700" android:textSize="13sp" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="📅 Expiry Date"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvExpiryDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=": Loading..."
-                            android:textColor="#00FF00"
-                            android:textSize="14sp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="📅 Expiry Date" android:textColor="#DDDDDD" android:textSize="13sp" />
+                        <TextView android:id="@+id/tvExpiryDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=": Loading..." android:textColor="#00FF00" android:textSize="13sp" />
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="⚡ Status"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="● ACTIVE"
-                            android:textColor="#00FF00"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="⚡ Status" android:textColor="#DDDDDD" android:textSize="13sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="● ACTIVE" android:textColor="#00FF00" android:textSize="13sp" android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
