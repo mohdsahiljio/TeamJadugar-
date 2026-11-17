@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="70dp"
     android:clipChildren="false">
 
     <!-- Background Track -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/bg_slider_track" />
+        android:background="@drawable/slider_track" />
 
     <!-- Text -->
     <TextView
@@ -19,26 +19,16 @@
         android:layout_gravity="center"
         android:text="SLIDE TO VERIFY"
         android:textColor="#888888"
-        android:textSize="13sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:letterSpacing="0.15" />
 
-    <!-- Draggable Button (Sharp Arrow Shape) -->
-    <FrameLayout
+    <!-- Draggable Button (Using Premium Vector) -->
+    <ImageView
         android:id="@+id/btnThumb"
-        android:layout_width="55dp"
-        android:layout_height="45dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="center_vertical|start"
-        android:background="@drawable/bg_slider_thumb"
-        android:elevation="8dp">
-
-        <!-- Right Arrow Icon (Rotation = 180 karke play icon ko arrow banaya) -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_media_play"
-            android:rotation="0"
-            android:tint="#FFFFFF" />
-    </FrameLayout>
+        android:src="@drawable/slider_thumb_premium"
+        android:elevation="10dp" />
 </FrameLayout>
