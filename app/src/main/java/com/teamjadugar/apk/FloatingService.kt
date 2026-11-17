@@ -51,7 +51,6 @@ class FloatingService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var countdownRunnable: Runnable? = null
     private var slotsRunnable: Runnable? = null
-    private var overlayTextView: TextView? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -123,17 +122,18 @@ class FloatingService : Service() {
         val layout = FrameLayout(this)
         layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
         
-        overlayTextView = TextView(this)
-        overlayTextView?.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-        overlayTextView?.setTextColor(Color.parseColor("#FF1744"))
-        overlayTextView?.textSize = 60f
-        overlayTextView?.setTypeface(null, Typeface.BOLD)
-        overlayTextView?.gravity = Gravity.CENTER
-        overlayTextView?.shadowColor = Color.RED
-        overlayTextView?.shadowRadius = 20f
-        overlayTextView?.setPadding(20, 20, 20, 20)
+        val textView = TextView(this)
+        textView.id = View.generateViewId()
+        textView.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+        textView.setTextColor(Color.parseColor("#FF1744"))
+        textView.textSize = 60f
+        textView.setTypeface(null, Typeface.BOLD)
+        textView.gravity = Gravity.CENTER
+        textView.shadowColor = Color.RED
+        textView.shadowRadius = 20f
+        textView.setPadding(20, 20, 20, 20)
         
-        overlayTextView?.let { layout.addView(it) }
+        layout.addView(textView)
         return layout
     }
 
@@ -326,14 +326,16 @@ class FloatingService : Service() {
 
     private fun showBigOverlay(text: String) {
         try {
+            val textView = (overlayView as FrameLayout).getChildAt(0) as TextView
+            
             if (text == "3") {
-                overlayTextView?.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
-                overlayTextView?.textSize = 40f
-                overlayTextView?.setBackgroundColor(Color.parseColor("#CC000000"))
+                textView.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
+                textView.textSize = 40f
+                textView.setBackgroundColor(Color.parseColor("#CC000000"))
             } else {
-                overlayTextView?.text = text
-                overlayTextView?.textSize = 120f
-                overlayTextView?.setBackgroundColor(Color.TRANSPARENT)
+                textView.text = text
+                textView.textSize = 120f
+                textView.setBackgroundColor(Color.TRANSPARENT)
             }
             
             if (overlayView?.parent == null) {
