@@ -1,25 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="80dp"
+    android:clipChildren="false">
 
-    <!-- Background Track -->
+    <!-- 1. The Track -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/slider_track" />
+        android:background="@drawable/slider_track_bg" />
 
-    <!-- The Animated Button (Thumb) -->
-    <ImageView
+    <!-- 2. Glowing Red Progress (Fills up as you slide) -->
+    <View
+        android:id="@+id/progressGlow"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/slider_track_bg"
+        android:alpha="0.3" /> <!-- Placeholder for dynamic width -->
+
+    <!-- 3. The Draggable Thumb -->
+    <FrameLayout
         android:id="@+id/btnThumb"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="center_vertical|start"
-        android:src="@drawable/slider_thumb"
-        android:elevation="10dp" />
+        android:elevation="10dp">
 
-    <!-- Text -->
+        <!-- Metal Ring -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/slider_thumb_metal" />
+
+        <!-- Red Core -->
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/slider_thumb_red_core" />
+
+        <!-- White Icon (Play Arrow) -->
+        <ImageView
+            android:id="@+id/imgIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_media_play"
+            android:tint="#FFFFFF" />
+    </FrameLayout>
+
+    <!-- 4. Center Text -->
     <TextView
         android:id="@+id/tvSliderText"
         android:layout_width="wrap_content"
@@ -27,8 +59,12 @@
         android:layout_gravity="center"
         android:text="SLIDE TO VERIFY"
         android:textColor="#FFFFFF"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:letterSpacing="0.15" />
+        android:letterSpacing="0.2"
+        android:shadowColor="#FF0000"
+        android:shadowRadius="10"
+        android:clickable="false"
+        android:focusable="false" />
 
 </FrameLayout>
