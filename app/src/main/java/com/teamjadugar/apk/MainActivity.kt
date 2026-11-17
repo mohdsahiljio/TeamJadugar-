@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -43,9 +44,6 @@ class MainActivity : AppCompatActivity() {
     private var toneGenerator: ToneGenerator? = null
     private lateinit var imgLoginBg: ImageView
     private lateinit var imgDashBg: ImageView
-    private lateinit var sliderVerify: SeekBar
-    private lateinit var sliderFloating: SeekBar
-    private lateinit var sliderGame: SeekBar
 
     @Volatile private var isRefreshingSlots = true
 
@@ -80,9 +78,6 @@ class MainActivity : AppCompatActivity() {
         layoutLogin = findViewById(R.id.layoutLogin)
         layoutDashboard = findViewById(R.id.layoutDashboard)
         etKey = findViewById(R.id.etKey)
-        sliderVerify = findViewById(R.id.sliderVerify)
-        sliderFloating = findViewById(R.id.sliderFloating)
-        sliderGame = findViewById(R.id.sliderGame)
 
         val tvDays = findViewById<TextView>(R.id.tvDays)
         val tvHours = findViewById<TextView>(R.id.tvHours)
@@ -97,67 +92,28 @@ class MainActivity : AppCompatActivity() {
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
-        // 🔥 Naya: Slider Animations Setup
-        setupSliderAnimation(sliderVerify)
-        setupSliderAnimation(sliderFloating)
-        setupSliderAnimation(sliderGame)
+        // 🔥 CUSTOM SLIDER SETUP
+        setupCustomSlider(
+            findViewById(R.id.customSliderVerify),
+            onSlideComplete = {
+                val key = etKey.text.toString().trim()
+                if (key.isEmpty()) {
+                    Toast.makeText(this, "Enter Key First!", Toast.LENGTH_SHORT).show()
+                } else {
+                    verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
+                }
+            }
+        )
 
-        // 🩸 SLIDER VERIFY LOGIC (Original Logic)
-        sliderVerify.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (progress == 100) {
-                    playSound("success")
-                    val key = etKey.text.toString().trim()
-                    if (key.isEmpty()) {
-                        Toast.makeText(this@MainActivity, "Enter Key First!", Toast.LENGTH_SHORT).show()
-                        sliderVerify.postDelayed({ sliderVerify.progress = 0 }, 500)
-                    } else {
-                        verifyKey(key, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
-                        sliderVerify.postDelayed({ sliderVerify.progress = 0 }, 500)
-                    }
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (seekBar?.progress != 100) {
-                    seekBar?.progress = 0
-                }
-            }
-        })
+        setupCustomSlider(
+            findViewById(R.id.customSliderFloating),
+            onSlideComplete = { checkVpnPermission() }
+        )
 
-        // SLIDER LOGIC FOR FLOATING PANEL
-        sliderFloating.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (progress == 100) {
-                    playSound("success")
-                    checkVpnPermission()
-                    sliderFloating.postDelayed({ sliderFloating.progress = 0 }, 500)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (seekBar?.progress != 100) {
-                    seekBar?.progress = 0
-                }
-            }
-        })
-
-        // SLIDER LOGIC FOR ENTER GAME
-        sliderGame.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (progress == 100) {
-                    playSound("success")
-                    openBGMI()
-                    sliderGame.postDelayed({ sliderGame.progress = 0 }, 500)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (seekBar?.progress != 100) {
-                    seekBar?.progress = 0
-                }
-            }
-        })
+        setupCustomSlider(
+            findViewById(R.id.customSliderGame),
+            onSlideComplete = { openBGMI() }
+        )
 
         if (userKey.isNotEmpty()) {
             verifyKey(userKey, layoutLogin, layoutDashboard, tvDays, tvHours, tvMins, tvSecs, tvSlots, tvPlanType, tvExpiryDate, tvDashboardExpiry)
@@ -169,34 +125,59 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 Naya: Premium Slider Animation Function
-    private fun setupSliderAnimation(slider: SeekBar) {
-        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                // Thumb ko smooth scale karega jab slide karega
-                val scale = 1f + (progress / 100f) * 0.2f
-                seekBar?.thumb?.setBounds(
-                    0, 0,
-                    (seekBar.thumb.intrinsicWidth * scale).toInt(),
-                    (seekBar.thumb.intrinsicHeight * scale).toInt()
-                )
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                // Jab user touch karega tab button thoda bada hoga
-                seekBar?.animate()?.scaleX(1.1f)?.scaleY(1.1f)?.setDuration(150)?.start()
-            }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                // Chhodne par normal ho jayega
-                seekBar?.animate()?.scaleX(1f)?.scaleY(1f)?.setDuration(150)?.start()
-                // Agar pura slide nahi kiya toh wapas reset
-                if (seekBar?.progress != 100) {
-                    seekBar?.progress = 0
+    // 🔥 CUSTOM SLIDER DRAG LOGIC
+    private fun setupCustomSlider(sliderView: View, onSlideComplete: () -> Unit) {
+        val thumb = sliderView.findViewById<ImageView>(R.id.btnThumb)
+        val text = sliderView.findViewById<TextView>(R.id.tvSliderText)
+
+        thumb.setOnTouchListener(object : View.OnTouchListener {
+            var initialX = 0f
+            var isSliding = false
+
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = event.rawX
+                        isSliding = true
+                        v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
+                        text.alpha = 0.5f
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (isSliding) {
+                            val dx = event.rawX - initialX
+                            var newX = v.x + dx
+                            val maxX = sliderView.width - v.width.toFloat()
+                            if (newX < 0f) newX = 0f
+                            if (newX > maxX) newX = maxX
+                            v.x = newX
+                            initialX = event.rawX
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        isSliding = false
+                        v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                        text.alpha = 1f
+
+                        val maxX = sliderView.width - v.width.toFloat()
+                        if (v.x >= maxX - 20f) {
+                            v.animate().x(maxX).setDuration(100).withEndAction {
+                                playSound("success")
+                                onSlideComplete()
+                                v.postDelayed({
+                                    v.animate().x(0f).setDuration(300).start()
+                                }, 500)
+                            }.start()
+                        } else {
+                            v.animate().x(0f).setDuration(300).start()
+                        }
+                    }
                 }
+                return true
             }
         })
     }
 
-    // 🩸 GAME OPEN FIX
+    // 🩸 GAME OPEN FIX (Tera purana logic)
     private fun openBGMI() {
         try {
             val packages = arrayOf(
@@ -231,8 +212,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        sliderVerify.isEnabled = false
-
+        
         networkExecutor.execute {
             try {
                 val url = URL("${KeyVault.getPanelUrl()}/connect/init")
@@ -274,6 +254,7 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             playSound("success")
                             Toast.makeText(this@MainActivity, "Login Successful!", Toast.LENGTH_SHORT).show()
+                            
                             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                             imm.hideSoftInputFromWindow(etKey.windowToken, 0)
                             etKey.clearFocus()
@@ -295,18 +276,15 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             playSound("error")
                             Toast.makeText(this@MainActivity, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show()
-                            sliderVerify.isEnabled = true
                         }
                     }
                 } else {
                     runOnUiThread {
-                        sliderVerify.isEnabled = true
                         Toast.makeText(this@MainActivity, "Server Error: $code", Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
                 runOnUiThread {
-                    sliderVerify.isEnabled = true
                     Toast.makeText(this@MainActivity, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
