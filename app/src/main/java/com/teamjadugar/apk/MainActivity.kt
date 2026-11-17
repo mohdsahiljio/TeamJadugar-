@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 CUSTOM SLIDER DRAG LOGIC
+    // 🔥 CUSTOM SLIDER DRAG LOGIC (Smooth Reset Animation)
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
         val thumb = sliderContainer.findViewById<FrameLayout>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = event.rawX
                         isSliding = true
+                        // 3D Press Animation
                         v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
                         text.animate().alpha(0.3f).setDuration(100).start()
                     }
@@ -153,17 +154,20 @@ class MainActivity : AppCompatActivity() {
                         text.animate().alpha(1f).setDuration(100).start()
 
                         val maxX = sliderContainer.width - v.width.toFloat()
+                        // Agar 85% se zyada kheencha, toh verify hoga
                         if (v.x >= maxX * 0.85f) {
                             isCompleted = true
                             v.animate().x(maxX).setDuration(100).withEndAction {
                                 playSound("success")
                                 onSlideComplete()
+                                // Wapas reset hone ka animation
                                 v.postDelayed({
                                     v.animate().x(0f).setDuration(300).start()
                                     isCompleted = false
-                                }, 1000)
+                                }, 500)
                             }.start()
                         } else {
+                            // Agar pura nahi kheencha, toh wapas start par smooth slide hoga
                             v.animate().x(0f).setDuration(300).start()
                         }
                     }
