@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userExpiry: String = ""
         val networkExecutor = Executors.newFixedThreadPool(4)
         
-        // 🔥 Server Response Decryption Key (Agar server AES use kar raha hai)
         private const val AES_KEY = "SableSecure2026!" 
         private const val AES_IV = "SecureInitVector"  
     }
@@ -67,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 🔥 SECURITY: Root / Emulator / Hook Check
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Device Compromised!", Toast.LENGTH_LONG).show()
             finishAffinity()
@@ -176,7 +174,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // 🔥 YAHAN FIX HUA THA: openBGMI() function add kar diya
     private fun openBGMI() {
         try {
             val packages = arrayOf(
@@ -242,11 +239,10 @@ class MainActivity : AppCompatActivity() {
                 val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
                 if (code in 200..299) {
-                    // 🔥 AES Decryption (Bypass Rokne Ke Liye)
                     val json = try {
                         JSONObject(decryptAES(resp))
                     } catch (e: Exception) {
-                        JSONObject(resp) // Fallback
+                        JSONObject(resp)
                     }
                     
                     if (json.optBoolean("valid", false)) {
@@ -356,6 +352,7 @@ class MainActivity : AppCompatActivity() {
         return sdf.format(date)
     }
 
+    // 🔥 FIXED TIMEZONE FUNCTION
     private fun parseExpiry(s: String): Date? {
         if (s.isBlank()) return null
         val patterns = listOf(
@@ -369,15 +366,12 @@ class MainActivity : AppCompatActivity() {
                 sdf.timeZone = TimeZone.getTimeZone("UTC")
                 val date = sdf.parse(s)
                 if (date != null) {
-                    val offset = TimeZone.getDefault().getOffset(date.time)
-                    return Date(date.time + offset)
+                    return date // Direct return, Android handles timezone locally
                 }
             } catch (_: Exception) {}
         }
         return s.toLongOrNull()?.let { 
-            val d = Date(if (it < 10_000_000_000L) it * 1000 else it)
-            val offset = TimeZone.getDefault().getOffset(d.time)
-            Date(d.time + offset)
+            Date(if (it < 10_000_000_000L) it * 1000 else it)
         }
     }
 
