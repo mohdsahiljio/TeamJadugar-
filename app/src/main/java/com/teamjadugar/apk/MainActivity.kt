@@ -36,9 +36,9 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userExpiry: String = ""
         val networkExecutor = Executors.newFixedThreadPool(4)
         
-        // 🔥 Server Response Decryption Key (Ye key server aur app dono mein same honi chahiye)
-        private const val AES_KEY = "SableSecure2026!" // 16 chars for AES-128
-        private const val AES_IV = "SecureInitVector"  // 16 chars
+        // 🔥 Server Response Decryption Key (Agar server AES use kar raha hai)
+        private const val AES_KEY = "SableSecure2026!" 
+        private const val AES_IV = "SecureInitVector"  
     }
 
     private lateinit var prefs: SharedPreferences
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 🔥 SECURITY: Root / Emulator / Hook Check
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Device Compromised!", Toast.LENGTH_LONG).show()
             finishAffinity()
@@ -175,6 +176,39 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    // 🔥 YAHAN FIX HUA THA: openBGMI() function add kar diya
+    private fun openBGMI() {
+        try {
+            val packages = arrayOf(
+                "com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm",
+                "com.vng.pubgmobile", "com.pubg.krmobile"
+            )
+            var intent: Intent? = null
+            for (pkg in packages) {
+                intent = packageManager.getLaunchIntentForPackage(pkg)
+                if (intent != null) break
+            }
+            if (intent == null) {
+                val allApps = packageManager.getInstalledApplications(0)
+                for (app in allApps) {
+                    val name = app.packageName.lowercase()
+                    if (name.contains("pubg") || name.contains("bgmi") || name.contains("battlegrounds")) {
+                        intent = packageManager.getLaunchIntentForPackage(app.packageName)
+                        if (intent != null) break
+                    }
+                }
+            }
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Game is not installed on this device!", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Cannot open Game: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         
@@ -208,12 +242,11 @@ class MainActivity : AppCompatActivity() {
                 val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
                 if (code in 200..299) {
-                    // 🔥 SERVER RESPONSE DECRYPTION (Bypass Rokne Ka Asli Tarika)
+                    // 🔥 AES Decryption (Bypass Rokne Ke Liye)
                     val json = try {
                         JSONObject(decryptAES(resp))
                     } catch (e: Exception) {
-                        // Fallback agar server plain JSON bhej raha hai (abhi ke liye)
-                        JSONObject(resp)
+                        JSONObject(resp) // Fallback
                     }
                     
                     if (json.optBoolean("valid", false)) {
@@ -263,7 +296,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 AES Decryption Function (Server Response ko decrypt karne ke liye)
     private fun decryptAES(encryptedData: String): String {
         try {
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
