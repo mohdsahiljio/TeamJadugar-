@@ -92,8 +92,8 @@ object SecurityManager {
     }
 
     private fun verifySignature(context: Context): Boolean {
-        // 🩸 IMPORTANT: Abhi ke liye maine isko true kar diya hai taaki tera app test mein crash na ho.
-        // Jab tera APK final build ho jaye, tab apna SHA-256 hash yahan daal dena.
+        // 🔥 IMPORTANT: Jab tera final release APK ban jaye, tab isko hash se replace karna.
+        // Niche tarika diya hai hash nikalne ka.
         val expectedHash = "APNA_APK_HASH_YAHAN"
         if (expectedHash == "APNA_APK_HASH_YAHAN") return true
 
