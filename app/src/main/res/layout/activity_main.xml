@@ -36,7 +36,6 @@
             android:padding="16dp">
 
             <!-- ================= LOGIN SCREEN ================= -->
-
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -129,7 +128,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- LOGO SPACE (Thoda kam kiya taaki pura content fit ho jaye) -->
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="120dp" />
@@ -139,13 +137,13 @@
                     android:layout_height="wrap_content"
                     android:text="AETH DDOS"
                     android:textColor="#FFFFFF"
-                    android:textSize="42sp"
+                    android:textSize="45sp"
                     android:textStyle="bold|italic"
                     android:shadowColor="#FF0000"
-                    android:shadowRadius="18"
-                    android:shadowDx="2"
-                    android:shadowDy="2"
-                    android:letterSpacing="0.04" />
+                    android:shadowRadius="25"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:letterSpacing="0.05" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
-                    android:padding="18dp"
+                    android:padding="20dp"
                     android:gravity="center">
 
                     <TextView
@@ -170,7 +168,7 @@
                         android:layout_height="wrap_content"
                         android:text="[ SYSTEM ACCESS ]"
                         android:textColor="#FF1744"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:fontFamily="monospace" />
 
@@ -178,7 +176,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🔐"
-                        android:textSize="42sp"
+                        android:textSize="45sp"
                         android:layout_marginTop="8dp" />
 
                     <TextView
@@ -186,10 +184,10 @@
                         android:layout_height="wrap_content"
                         android:text="License Verification"
                         android:textColor="#FFFFFF"
-                        android:textSize="25sp"
+                        android:textSize="26sp"
                         android:textStyle="bold|italic"
                         android:shadowColor="#FF0000"
-                        android:shadowRadius="12"
+                        android:shadowRadius="15"
                         android:layout_marginTop="8dp" />
 
                     <TextView
@@ -197,37 +195,37 @@
                         android:layout_height="wrap_content"
                         android:text="Enter your valid license to continue"
                         android:textColor="#BBBBBB"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="20dp" />
+                        android:layout_marginBottom="25dp" />
 
                     <!-- LICENSE INPUT -->
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="55dp"
+                        android:layout_height="60dp"
                         android:background="@drawable/bg_red_input"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingLeft="14dp"
-                        android:paddingRight="14dp"
-                        android:layout_marginBottom="20dp">
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:layout_marginBottom="25dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🔑"
-                            android:textSize="20sp" />
+                            android:textSize="22sp" />
 
                         <EditText
                             android:id="@+id/etKey"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="12dp"
                             android:background="@android:color/transparent"
                             android:hint="Enter License Key..."
                             android:textColor="#FFFFFF"
                             android:textColorHint="#888888"
-                            android:textSize="14sp"
+                            android:textSize="15sp"
                             android:singleLine="true"
                             android:imeOptions="actionDone"
                             android:inputType="textVisiblePassword" />
@@ -243,7 +241,7 @@
                         <SeekBar
                             android:id="@+id/sliderVerify"
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
@@ -261,9 +259,9 @@
                             android:layout_gravity="center"
                             android:text="SLIDE TO VERIFY"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
-                            android:shadowColor="#FF0000"
+                            android:shadowColor="#000000"
                             android:shadowRadius="5"
                             android:clickable="false"
                             android:focusable="false" />
@@ -274,7 +272,7 @@
                         android:layout_height="wrap_content"
                         android:text="🛡 SECURE CONNECTION ESTABLISHED"
                         android:textColor="#00FF00"
-                        android:textSize="10sp"
+                        android:textSize="11sp"
                         android:textStyle="bold"
                         android:layout_marginTop="15dp" />
                 </LinearLayout>
@@ -285,7 +283,6 @@
             </LinearLayout>
 
             <!-- ================= DASHBOARD ================= -->
-
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -296,9 +293,9 @@
                 <!-- PREMIUM HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
+                    android:layout_height="60dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/bg_metal_border"
                     android:gravity="center"
                     android:orientation="horizontal">
@@ -309,16 +306,16 @@
                         android:text="👑 PREMIUM USER"
                         android:textColor="#FFD700"
                         android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/tvDashboardExpiry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:text="Loading..."
                         android:textColor="#FFFFFF"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <!-- TIMER CARD -->
@@ -328,8 +325,8 @@
                     android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="15dp"
-                    android:layout_marginBottom="15dp">
+                    android:padding="20dp"
+                    android:layout_marginBottom="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -337,8 +334,8 @@
                         android:text="◆ PANEL ACTIVE ◆"
                         android:textColor="#00FF00"
                         android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginBottom="10dp" />
+                        android:textSize="18sp"
+                        android:layout_marginBottom="15dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -352,18 +349,18 @@
                             android:layout_height="wrap_content"
                             android:text="00"
                             android:textColor="#FF1010"
-                            android:textSize="35sp"
+                            android:textSize="38sp"
                             android:textStyle="bold"
                             android:fontFamily="monospace"
                             android:shadowColor="#FF0000"
-                            android:shadowRadius="12" />
+                            android:shadowRadius="15" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="#FF0000"
-                            android:textSize="35sp" />
+                            android:textSize="38sp" />
 
                         <TextView
                             android:id="@+id/tvHours"
@@ -371,18 +368,18 @@
                             android:layout_height="wrap_content"
                             android:text="00"
                             android:textColor="#FF1010"
-                            android:textSize="35sp"
+                            android:textSize="38sp"
                             android:textStyle="bold"
                             android:fontFamily="monospace"
                             android:shadowColor="#FF0000"
-                            android:shadowRadius="12" />
+                            android:shadowRadius="15" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="#FF0000"
-                            android:textSize="35sp" />
+                            android:textSize="38sp" />
 
                         <TextView
                             android:id="@+id/tvMins"
@@ -390,18 +387,18 @@
                             android:layout_height="wrap_content"
                             android:text="00"
                             android:textColor="#FF1010"
-                            android:textSize="35sp"
+                            android:textSize="38sp"
                             android:textStyle="bold"
                             android:fontFamily="monospace"
                             android:shadowColor="#FF0000"
-                            android:shadowRadius="12" />
+                            android:shadowRadius="15" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="#FF0000"
-                            android:textSize="35sp" />
+                            android:textSize="38sp" />
 
                         <TextView
                             android:id="@+id/tvSecs"
@@ -409,11 +406,11 @@
                             android:layout_height="wrap_content"
                             android:text="00"
                             android:textColor="#FF1010"
-                            android:textSize="35sp"
+                            android:textSize="38sp"
                             android:textStyle="bold"
                             android:fontFamily="monospace"
                             android:shadowColor="#FF0000"
-                            android:shadowRadius="12" />
+                            android:shadowRadius="15" />
                     </LinearLayout>
 
                     <TextView
@@ -421,22 +418,22 @@
                         android:layout_height="wrap_content"
                         android:text="⏱ Time Remaining"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:layout_marginTop="8dp" />
+                        android:textSize="13sp"
+                        android:layout_marginTop="10dp" />
                 </LinearLayout>
 
                 <!-- LIVE SLOTS AND DEVICE ID -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="125dp"
+                    android:layout_height="130dp"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="15dp">
+                    android:layout_marginBottom="20dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
+                        android:layout_marginEnd="8dp"
                         android:background="@drawable/bg_metal_border"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -445,7 +442,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="👥"
-                            android:textSize="27sp" />
+                            android:textSize="30sp" />
 
                         <TextView
                             android:id="@+id/tvSlots"
@@ -453,7 +450,7 @@
                             android:layout_height="wrap_content"
                             android:text="0/10"
                             android:textColor="#FFFFFF"
-                            android:textSize="24sp"
+                            android:textSize="26sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -461,14 +458,14 @@
                             android:layout_height="wrap_content"
                             android:text="Live Slots"
                             android:textColor="#FF3030"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="8dp"
                         android:background="@drawable/bg_metal_border"
                         android:gravity="center"
                         android:orientation="vertical">
@@ -477,7 +474,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="📱"
-                            android:textSize="25sp" />
+                            android:textSize="28sp" />
 
                         <TextView
                             android:id="@+id/tvDeviceId"
@@ -485,7 +482,7 @@
                             android:layout_height="wrap_content"
                             android:text="SM-7492"
                             android:textColor="#FFFFFF"
-                            android:textSize="19sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -493,7 +490,7 @@
                             android:layout_height="wrap_content"
                             android:text="Device ID"
                             android:textColor="#FF3030"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -503,8 +500,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
-                    android:padding="14dp"
-                    android:layout_marginBottom="14dp">
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -516,8 +513,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🚀"
-                            android:textSize="32sp"
-                            android:layout_marginEnd="12dp" />
+                            android:textSize="34sp"
+                            android:layout_marginEnd="14dp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -530,7 +527,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Launch Floating Panel"
                                 android:textColor="#FFFFFF"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -538,21 +535,21 @@
                                 android:layout_height="wrap_content"
                                 android:text="Slide to activate"
                                 android:textColor="#AAAAAA"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="15dp"
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderFloating"
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
@@ -570,9 +567,9 @@
                             android:layout_gravity="center"
                             android:text="SLIDE TO LAUNCH"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:shadowColor="#FF0000"
+                            android:shadowColor="#000000"
                             android:shadowRadius="5"
                             android:clickable="false"
                             android:focusable="false" />
@@ -585,8 +582,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
-                    android:padding="14dp"
-                    android:layout_marginBottom="15dp">
+                    android:padding="16dp"
+                    android:layout_marginBottom="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -598,8 +595,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="🎮"
-                            android:textSize="32sp"
-                            android:layout_marginEnd="12dp" />
+                            android:textSize="34sp"
+                            android:layout_marginEnd="14dp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -612,7 +609,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Enter Game"
                                 android:textColor="#FFFFFF"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -620,21 +617,21 @@
                                 android:layout_height="wrap_content"
                                 android:text="Slide right to open Game"
                                 android:textColor="#AAAAAA"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="15dp"
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderGame"
                             android:layout_width="match_parent"
-                            android:layout_height="48dp"
+                            android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
@@ -652,9 +649,9 @@
                             android:layout_gravity="center"
                             android:text="SLIDE TO OPEN"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:shadowColor="#FF0000"
+                            android:shadowColor="#000000"
                             android:shadowRadius="5"
                             android:clickable="false"
                             android:focusable="false" />
@@ -667,23 +664,23 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_metal_border"
                     android:orientation="vertical"
-                    android:padding="15dp"
-                    android:layout_marginBottom="25dp">
+                    android:padding="18dp"
+                    android:layout_marginBottom="30dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="||| SYSTEM INFORMATION"
                         android:textColor="#FF3030"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="15dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="12dp">
 
                         <TextView
                             android:layout_width="0dp"
@@ -691,7 +688,7 @@
                             android:layout_weight="1"
                             android:text="👑 Plan Type"
                             android:textColor="#FFFFFF"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvPlanType"
@@ -699,14 +696,14 @@
                             android:layout_height="wrap_content"
                             android:text=": Premium"
                             android:textColor="#FFD700"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="12dp">
 
                         <TextView
                             android:layout_width="0dp"
@@ -714,7 +711,7 @@
                             android:layout_weight="1"
                             android:text="📅 Expiry Date"
                             android:textColor="#FFFFFF"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tvExpiryDate"
@@ -722,7 +719,7 @@
                             android:layout_height="wrap_content"
                             android:text=": Loading..."
                             android:textColor="#00FF00"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -737,14 +734,14 @@
                             android:layout_weight="1"
                             android:text="⚡ Status"
                             android:textColor="#FFFFFF"
-                            android:textSize="13sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="● ACTIVE"
                             android:textColor="#00FF00"
-                            android:textSize="12sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
