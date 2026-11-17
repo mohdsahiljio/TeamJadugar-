@@ -52,6 +52,10 @@ class FloatingService : Service() {
     private var countdownRunnable: Runnable? = null
     private var slotsRunnable: Runnable? = null
 
+    // 🔥 LOCAL SLOTS COUNTER (Server fail ho toh kaam aaye)
+    private var localSlotsUsed = 0
+    private val MAX_SLOTS = 10
+
     companion object {
         var instance: FloatingService? = null
         fun onIpFound(ip: String, port: String) {
@@ -108,13 +112,10 @@ class FloatingService : Service() {
         panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
         
-        // 🔥 FIX: Tere paas jo layout_big_timer.xml pehle se hai, wahi use kar rahe hain
+        // Timer ke liye layout_big_timer use kar rahe hain
         overlayView = LayoutInflater.from(this).inflate(R.layout.layout_big_timer, null)
-        
-        // Us layout ke andar jo textview hai usko dhundh rahe hain
         tvOverlayText = overlayView?.findViewById(R.id.tvBigTimer)
         
-        // Agar tu textview ka ID nahi jaanta toh ye line usko dhundh legi
         if (tvOverlayText == null) {
             val root = overlayView as? android.view.ViewGroup
             if (root != null && root.childCount > 0) {
@@ -204,7 +205,19 @@ class FloatingService : Service() {
         }
 
         btnAttack?.setOnClickListener {
-            if (isAttacking) return@setOnClickListener
+            if (isAttacking) {
+                tvLog?.text = "> PLEASE WAIT, ATTACK IN PROGRESS"
+                tvLog?.setTextColor(Color.parseColor("#FFC107"))
+                return@setOnClickListener
+            }
+            
+            // 🔥 SLOTS FULL CHECK
+            if (localSlotsUsed >= MAX_SLOTS) {
+                tvLog?.text = "> SLOTS FULL! WAIT FOR OTHERS."
+                tvLog?.setTextColor(Color.parseColor("#FF1744"))
+                return@setOnClickListener
+            }
+
             val ip = etIp?.text.toString().trim()
             val port = etPort?.text.toString().trim().toIntOrNull() ?: 0
             if (ip.isEmpty() || port <= 0) {
@@ -266,6 +279,11 @@ class FloatingService : Service() {
                         if (json.optBoolean("attack", false)) {
                             tvLog?.text = "> ATTACK SENT [${duration}s]"
                             tvLog?.setTextColor(Color.parseColor("#00FF00"))
+                            
+                            // 🔥 LOCAL SLOT INCREMENT
+                            localSlotsUsed++
+                            updateSlotsUI()
+                            
                             runCountdown(duration)
                         } else {
                             tvLog?.text = "> FAILED: ${json.optString("msg", "Unknown")}"
@@ -308,6 +326,11 @@ class FloatingService : Service() {
                     hideBigOverlay()
                     tvLog?.text = "> ATTACK FINISHED"
                     tvLog?.setTextColor(Color.parseColor("#00FF00"))
+                    
+                    // 🔥 LOCAL SLOT DECREMENT
+                    if (localSlotsUsed > 0) localSlotsUsed--
+                    updateSlotsUI()
+                    
                     resetAttack()
                     refreshSlotsOnce()
                 }
@@ -322,15 +345,11 @@ class FloatingService : Service() {
                 windowManager.addView(overlayView, paramsOverlay)
             }
             
-            if (text == "3") {
-                tvOverlayText?.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
-                tvOverlayText?.textSize = 40f
-                overlayView?.setBackgroundColor(Color.parseColor("#CC000000"))
-            } else {
-                tvOverlayText?.text = text
-                tvOverlayText?.textSize = 120f
-                overlayView?.setBackgroundColor(Color.TRANSPARENT)
-            }
+            // 🔥 FIX: Maa chudna wala message hata diya, sirf 3, 2, 1 dikhega
+            tvOverlayText?.text = text
+            tvOverlayText?.textSize = 120f
+            overlayView?.setBackgroundColor(Color.TRANSPARENT)
+            
         } catch (e: Exception) {}
     }
 
@@ -349,6 +368,18 @@ class FloatingService : Service() {
         btnAttack?.setBackgroundColor(Color.parseColor("#B026FF"))
     }
     
+    private fun updateSlotsUI() {
+        // Agar server ka data nahi aa raha toh local counter dikhao
+        handler.post { 
+            tvSlotsHeader?.text = "$localSlotsUsed/$MAX_SLOTS" 
+            if (localSlotsUsed >= MAX_SLOTS) {
+                tvSlotsHeader?.setTextColor(Color.parseColor("#FF1744")) // Red
+            } else {
+                tvSlotsHeader?.setTextColor(Color.parseColor("#00FF00")) // Green
+            }
+        }
+    }
+
     private fun refreshSlotsOnce() {
         Thread {
             try {
@@ -362,12 +393,22 @@ class FloatingService : Service() {
                     val resp = conn.inputStream.bufferedReader().readText()
                     val json = JSONObject(resp)
                     
-                    val u = json.optInt("slots_used", json.optJSONObject("data")?.optInt("slots_used") ?: 0)
-                    val t = json.optInt("slots_total", json.optJSONObject("data")?.optInt("slots_total") ?: 10)
+                    // 🔥 FIX: Local slot aur server slot me se jo bada ho, wo dikhao
+                    val serverUsed = json.optInt("slots_used", json.optJSONObject("data")?.optInt("slots_used") ?: 0)
+                    val serverTotal = json.optInt("slots_total", json.optJSONObject("data")?.optInt("slots_total") ?: MAX_SLOTS)
                     
+                    val displayUsed = if (serverUsed > localSlotsUsed) serverUsed else localSlotsUsed
+                    val displayTotal = if (serverTotal > 0) serverTotal else MAX_SLOTS
+                    
+                    localSlotsUsed = displayUsed // Sync local with server
+
                     handler.post { 
-                        tvSlotsHeader?.text = "$u/$t" 
-                        tvSlotsHeader?.setTextColor(Color.parseColor("#00FF00"))
+                        tvSlotsHeader?.text = "$displayUsed/$displayTotal" 
+                        if (displayUsed >= displayTotal) {
+                            tvSlotsHeader?.setTextColor(Color.parseColor("#FF1744"))
+                        } else {
+                            tvSlotsHeader?.setTextColor(Color.parseColor("#00FF00"))
+                        }
                     }
                 }
             } catch (_: Exception) {}
