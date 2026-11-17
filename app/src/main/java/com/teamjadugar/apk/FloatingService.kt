@@ -84,8 +84,8 @@ class FloatingService : Service() {
             x = 50; y = 150
         }
 
-        panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
-        bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+        panelView = LayoutInflater.from(this).inflate(R.layout.layout_floating_panel, null)
+        bubbleView = LayoutInflater.from(this).inflate(R.layout.layout_floating_bubble, null)
 
         setupPanelUI()
         setupBubbleDrag()
@@ -156,6 +156,8 @@ class FloatingService : Service() {
         Thread {
             try {
                 val key = SessionStore.currentKey(this)
+                val sessionToken = getSharedPreferences("AETHPrefs", MODE_PRIVATE).getString("session_token", "") ?: ""
+                
                 val url = URL("${KeyVault.getPanelUrl()}/connect/action")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
@@ -165,6 +167,7 @@ class FloatingService : Service() {
 
                 val body = JSONObject().apply {
                     put("key", key)
+                    put("session_token", sessionToken) // 🔥 Security check
                     put("ip", ip)
                     put("port", port)
                     put("time", duration)
@@ -177,7 +180,6 @@ class FloatingService : Service() {
                 val mac = Mac.getInstance("HmacSHA256")
                 mac.init(SecretKeySpec(KeyVault.getHmacKey(), "HmacSHA256"))
                 
-                // 🩸 YAHAN ERROR FIX KIYA GAYA HAI
                 val tsBytes = java.nio.ByteBuffer.allocate(8).putLong(timestamp.toLong()).array()
                 val msgBytes = tsBytes + body.toByteArray() + deviceId.toByteArray()
                 val signature = mac.doFinal(msgBytes).joinToString("") { String.format("%02x", it) }
