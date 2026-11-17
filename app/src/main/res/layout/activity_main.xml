@@ -132,7 +132,7 @@
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- VERIFY SLIDER (UPDATED) -->
+                    <!-- VERIFY SLIDER (FIXED NAME) -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="65dp"
@@ -146,8 +146,8 @@
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/bg_slider_track"
-                            android:thumb="@drawable/bg_slider_thumb"
+                            android:progressDrawable="@drawable/slider_track"
+                            android:thumb="@drawable/slider_thumb"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
@@ -243,7 +243,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- SLIDER CARDS (UPDATED) -->
+                <!-- SLIDER CARDS (FIXED NAME) -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀 Floating Panel" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
                     <FrameLayout android:layout_width="match_parent" android:layout_height="65dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
@@ -254,8 +254,8 @@
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/bg_slider_track"
-                            android:thumb="@drawable/bg_slider_thumb"
+                            android:progressDrawable="@drawable/slider_track"
+                            android:thumb="@drawable/slider_thumb"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
@@ -274,8 +274,8 @@
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/bg_slider_track"
-                            android:thumb="@drawable/bg_slider_thumb"
+                            android:progressDrawable="@drawable/slider_track"
+                            android:thumb="@drawable/slider_thumb"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
