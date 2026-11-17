@@ -351,4 +351,43 @@ class MainActivity : AppCompatActivity() {
         return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
     }
 
-    private fun startSl
+    private fun startSlotsRefresh(tvSlots: TextView) {
+        Thread {
+            while (isRefreshingSlots) {
+                try {
+                    val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
+                    val conn = url.openConnection() as HttpURLConnection
+                    conn.connectTimeout = 3000; conn.readTimeout = 3000
+                    if (conn.responseCode == 200) {
+                        val json = JSONObject(conn.inputStream.bufferedReader().readText())
+                        val u = json.optInt("slots_used", 0)
+                        val t = json.optInt("slots_total", 10)
+                        runOnUiThread { tvSlots.text = "$u/$t" }
+                    }
+                } catch (_: Exception) {}
+                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
+            }
+        }.apply { isDaemon = true; start() }
+    }
+
+    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
+        super.onActivityResult(req, res, data)
+        if (req == 102) {
+            if (res == RESULT_OK) checkOverlayPermission()
+            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
+        } else if (req == 101) {
+            if (Settings.canDrawOverlays(this)) {
+                startFloatingServiceSafely()
+            } else {
+                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        isRefreshingSlots = false
+        timer?.cancel()
+        toneGenerator?.release()
+    }
+}
