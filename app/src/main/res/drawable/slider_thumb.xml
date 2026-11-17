@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48dp"
-    android:height="48dp"
-    android:viewportWidth="48"
-    android:viewportHeight="48">
-
-    <!-- Outer Neon Red Circle -->
-    <path
-        android:fillColor="#FF1010"
-        android:strokeColor="#FFFF7777"
-        android:strokeWidth="2"
-        android:pathData="M24,2 A22,22 0,1 0,24,46 A22,22 0,1 0,24,2 Z" />
-
-    <!-- Inner Dark Circle -->
-    <path
-        android:fillColor="#99000000"
-        android:strokeColor="#FFFF3333"
-        android:strokeWidth="1.5"
-        android:pathData="M24,7 A17,17 0,1 0,24,41 A17,17 0,1 0,24,7 Z" />
-
-    <!-- Single Arrow (Cleaner at small size) -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="3"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M20,17 L27,24 L20,31" />
-
-</vector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#55000000" />
+            <size android:width="54dp" android:height="54dp" />
+        </shape>
+    </item>
+    <!-- Main Thumb Base -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="270"
+                android:startColor="#FF5555"
+                android:endColor="#990000" />
+            <stroke android:width="2dp" android:color="#FFFFFF" />
+        </shape>
+    </item>
+    <!-- Inner Arrow (Vector path) -->
+    <item android:gravity="center">
+        <vector android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M8,5 L16,12 L8,19 Z" />
+        </vector>
+    </item>
+</layer-list>
