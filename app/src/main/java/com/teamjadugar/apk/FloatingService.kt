@@ -8,6 +8,7 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -31,9 +32,11 @@ class FloatingService : Service() {
     private lateinit var windowManager: WindowManager
     private var panelView: View? = null
     private var bubbleView: View? = null
+    private var overlayView: View? = null
 
     private lateinit var paramsPanel: WindowManager.LayoutParams
     private lateinit var paramsBubble: WindowManager.LayoutParams
+    private lateinit var paramsOverlay: WindowManager.LayoutParams
 
     private var etIp: EditText? = null
     private var etPort: EditText? = null
@@ -41,7 +44,6 @@ class FloatingService : Service() {
     private var btnAttack: Button? = null
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
-    private var tvBubbleTimer: TextView? = null
     private var tvSlotsHeader: TextView? = null 
 
     private var selectedTime = 120
@@ -49,6 +51,7 @@ class FloatingService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var countdownRunnable: Runnable? = null
     private var slotsRunnable: Runnable? = null
+    private lateinit var overlayTextView: TextView
 
     companion object {
         var instance: FloatingService? = null
@@ -93,14 +96,44 @@ class FloatingService : Service() {
             x = 50; y = 150
         }
 
+        paramsOverlay = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            type,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.CENTER
+        }
+
         panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+        
+        overlayView = createOverlayView()
 
         setupPanelUI()
         setupBubbleDrag()
         showBubble()
         
         startSlotsRefresh()
+    }
+
+    private fun createOverlayView(): View {
+        val layout = FrameLayout(this)
+        layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        
+        overlayTextView = TextView(this)
+        overlayTextView.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+        overlayTextView.setTextColor(Color.parseColor("#FF1744"))
+        overlayTextView.textSize = 60f
+        overlayTextView.setTypeface(null, Typeface.BOLD)
+        overlayTextView.gravity = Gravity.CENTER
+        overlayTextView.shadowColor = Color.RED
+        overlayTextView.shadowRadius = 20f
+        overlayTextView.setPadding(20, 20, 20, 20)
+        
+        layout.addView(overlayTextView)
+        return layout
     }
 
     private fun startAsForeground() {
@@ -121,7 +154,7 @@ class FloatingService : Service() {
 
         val notification: Notification = Notification.Builder(this, channelId)
             .setContentTitle("AETH DDOS Running")
-            .setContentText("Floating panel is active in background")
+            .setContentText("Floating panel is active")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)
             .build()
@@ -140,7 +173,6 @@ class FloatingService : Service() {
         tvLog = panelView?.findViewById(R.id.tvLog)
         btnAttack = panelView?.findViewById(R.id.fBtnAttack)
         btnGetIp = panelView?.findViewById(R.id.fBtnGetIp)
-        tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
         tvSlotsHeader = panelView?.findViewById(R.id.tvSlots) 
 
         val seekBar = panelView?.findViewById<SeekBar>(R.id.fSeekBar)
@@ -270,12 +302,17 @@ class FloatingService : Service() {
         countdownRunnable = object : Runnable {
             override fun run() {
                 if (currentTime > 0) {
-                    tvBubbleTimer?.text = "${currentTime}s"
-                    tvBubbleTimer?.visibility = View.VISIBLE
+                    tvLog?.text = "> ATTACK TIME REMAINING: ${currentTime}s"
+                    tvLog?.setTextColor(Color.parseColor("#FFC107"))
+                    
+                    if (currentTime <= 3) {
+                        showBigOverlay(currentTime.toString())
+                    }
+
                     currentTime--
                     handler.postDelayed(this, 1000)
                 } else {
-                    tvBubbleTimer?.visibility = View.GONE
+                    hideBigOverlay()
                     tvLog?.text = "> ATTACK FINISHED"
                     tvLog?.setTextColor(Color.parseColor("#00FF00"))
                     resetAttack()
@@ -284,6 +321,32 @@ class FloatingService : Service() {
             }
         }
         handler.post(countdownRunnable!!)
+    }
+
+    private fun showBigOverlay(text: String) {
+        try {
+            if (text == "3") {
+                overlayTextView.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
+                overlayTextView.textSize = 40f
+                overlayTextView.setBackgroundColor(Color.parseColor("#CC000000"))
+            } else {
+                overlayTextView.text = text
+                overlayTextView.textSize = 120f
+                overlayTextView.setBackgroundColor(Color.TRANSPARENT)
+            }
+            
+            if (overlayView?.parent == null) {
+                windowManager.addView(overlayView, paramsOverlay)
+            }
+        } catch (e: Exception) {}
+    }
+
+    private fun hideBigOverlay() {
+        try {
+            if (overlayView?.parent != null) {
+                windowManager.removeView(overlayView)
+            }
+        } catch (e: Exception) {}
     }
 
     private fun resetAttack() {
@@ -299,8 +362,8 @@ class FloatingService : Service() {
                 val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
-                conn.connectTimeout = 5000
-                conn.readTimeout = 5000
+                conn.connectTimeout = 3000
+                conn.readTimeout = 3000
                 
                 if (conn.responseCode == 200) {
                     val resp = conn.inputStream.bufferedReader().readText()
@@ -322,7 +385,7 @@ class FloatingService : Service() {
         slotsRunnable = object : Runnable {
             override fun run() {
                 refreshSlotsOnce()
-                handler.postDelayed(this, 3000)
+                handler.postDelayed(this, 2000) // 🔥 Har 2 second update
             }
         }
         handler.post(slotsRunnable!!)
@@ -388,6 +451,7 @@ class FloatingService : Service() {
         instance = null
         countdownRunnable?.let { handler.removeCallbacks(it) }
         slotsRunnable?.let { handler.removeCallbacks(it) }
+        hideBigOverlay()
         try { windowManager.removeView(panelView) } catch (_: Exception) {}
         try { windowManager.removeView(bubbleView) } catch (_: Exception) {}
     }
