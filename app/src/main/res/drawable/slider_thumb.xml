@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Shadow -->
+    <!-- 1. Bahar ka deep shadow (Depth ke liye) -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#AA000000" />
-            <size android:width="54dp" android:height="54dp" />
+            <solid android:color="#CC000000" />
+            <size android:width="60dp" android:height="60dp" />
         </shape>
     </item>
 
-    <!-- Chrome Metallic Ring -->
-    <item android:left="1dp" android:top="1dp" android:right="1dp" android:bottom="1dp">
+    <!-- 2. Silver/Chrome metallic ring (3D look) -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="oval">
             <gradient
                 android:angle="270"
                 android:startColor="#FFFFFF"
-                android:centerColor="#888888"
-                android:endColor="#222222" />
+                android:centerColor="#777777"
+                android:endColor="#111111" />
+            <stroke android:width="1dp" android:color="#AAAAAA" />
         </shape>
     </item>
 
-    <!-- Inner Deep Red Core -->
-    <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+    <!-- 3. Inner Blood Red core (Glowing effect) -->
+    <item android:left="6dp" android:top="6dp" android:right="6dp" android:bottom="6dp">
         <shape android:shape="oval">
             <gradient
                 android:angle="135"
-                android:startColor="#FF1111"
-                android:centerColor="#880000"
-                android:endColor="#330000" />
+                android:startColor="#FF0000"
+                android:centerColor="#990000"
+                android:endColor="#220000" />
+            <stroke android:width="1dp" android:color="#FF5555" />
         </shape>
     </item>
 
-    <!-- Play Arrow -->
+    <!-- 4. Center White Glowing Arrow -->
     <item android:gravity="center">
-        <vector android:width="18dp" android:height="18dp" android:viewportWidth="24" android:viewportHeight="24">
-            <path android:fillColor="#FFFFFF" android:pathData="M8,5 L16,12 L8,19 Z" />
+        <vector android:width="22dp" android:height="22dp" android:viewportWidth="24" android:viewportHeight="24">
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M8,5 L16,12 L8,19 Z" />
         </vector>
     </item>
 </layer-list>
