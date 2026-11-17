@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- 1. Outer Metallic Ring (Silver Gradient) -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M24,2 A22,22 0,1 0,24,46 A22,22 0,1 0,24,2 Z" />
+    <path
+        android:fillColor="#EEEEEE"
+        android:pathData="M24,4 A20,20 0,1 0,24,44 A20,20 0,1 0,24,4 Z" />
+
+    <!-- 2. Inner Dark Red Core -->
+    <path
+        android:fillColor="#990000"
+        android:pathData="M24,7 A17,17 0,1 0,24,41 A17,17 0,1 0,24,7 Z" />
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M24,9 A15,15 0,1 0,24,39 A15,15 0,1 0,24,9 Z" />
+
+    <!-- 3. Glowing White Double Arrow (>>) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M16,16 L24,24 L16,32" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M25,16 L33,24 L25,32" />
+</vector>
