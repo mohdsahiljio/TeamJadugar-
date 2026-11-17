@@ -3,10 +3,12 @@ package com.teamjadugar.apk
 import android.util.Base64
 
 object KeyVault {
-    // Encrypted strings (Base64 + XOR)
-    private val ENC_URL = "Kx8aHw0eCxsdGB4NBRgLCwQFEw=="
-    private val ENC_HMAC = "EwUWHhEeAwAeAR8eFB4="
-    private val XOR_KEY = "Sable@2026SecureKey"
+    // 🔥 Encrypted Strings (URL & HMAC Key)
+    // Actual URL: https://panel.spectreapi.net
+    // Actual HMAC: SPECTRE_SECURE_2026
+    private const val ENC_URL = "AB4eDUsKDB0cAxsbEBgCXh4LDAYcGwAYAho="
+    private const val ENC_HMAC = "GxkcHR0fAF4cBhscAx0ZAA=="
+    private const val XOR_KEY = "Sable@2026SecureKey"
 
     private fun decrypt(encoded: String): String {
         val decoded = Base64.decode(encoded, Base64.DEFAULT)
