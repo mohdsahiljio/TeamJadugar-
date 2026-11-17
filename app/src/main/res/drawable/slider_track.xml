@@ -1,40 +1,30 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Background Track -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <corners android:radius="12dp"/>
-            <solid android:color="#171717"/>
+            <corners android:radius="25dp" />
+            <solid android:color="#0D0D0D" />
             <stroke
-                android:width="1dp"
-                android:color="#FF2525"/>
+                android:width="1.5dp"
+                android:color="#FF2525" />
         </shape>
     </item>
 
-    <!-- Secondary Progress -->
-    <item android:id="@android:id/secondaryProgress">
-        <clip>
-            <shape android:shape="rectangle">
-                <corners android:radius="12dp"/>
-                <solid android:color="#99AA0000"/>
-            </shape>
-        </clip>
-    </item>
-
-    <!-- Main Red Progress -->
+    <!-- Main Red Progress (Glowing) -->
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <corners android:radius="12dp"/>
+                <corners android:radius="25dp" />
                 <gradient
                     android:angle="0"
-                    android:startColor="#FF660000"
-                    android:centerColor="#FFFF0000"
-                    android:endColor="#FFFF5555"/>
+                    android:startColor="#FF0000"
+                    android:centerColor="#FF3333"
+                    android:endColor="#FF7777" />
                 <stroke
                     android:width="1dp"
-                    android:color="#FFFF7777"/>
+                    android:color="#FFFF9999" />
             </shape>
         </clip>
     </item>
