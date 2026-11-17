@@ -132,22 +132,22 @@
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- VERIFY SLIDER -->
+                    <!-- VERIFY SLIDER (UPDATED) -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="65dp"
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
                         <SeekBar
                             android:id="@+id/sliderVerify"
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="55dp"
                             android:layout_gravity="center"
                             android:max="100"
                             android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
+                            android:progressDrawable="@drawable/bg_slider_track"
+                            android:thumb="@drawable/bg_slider_thumb"
                             android:thumbOffset="0dp"
                             android:paddingStart="0dp"
                             android:paddingEnd="0dp"
@@ -243,19 +243,43 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- SLIDER CARDS -->
+                <!-- SLIDER CARDS (UPDATED) -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀 Floating Panel" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
-                        <SeekBar android:id="@+id/sliderFloating" android:layout_width="match_parent" android:layout_height="45dp" android:layout_gravity="center" android:max="100" android:progress="0" android:progressDrawable="@drawable/slider_track" android:thumb="@drawable/slider_thumb" android:thumbOffset="0dp" android:paddingStart="0dp" android:paddingEnd="0dp" android:splitTrack="false" />
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="65dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
+                        <SeekBar
+                            android:id="@+id/sliderFloating"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_gravity="center"
+                            android:max="100"
+                            android:progress="0"
+                            android:progressDrawable="@drawable/bg_slider_track"
+                            android:thumb="@drawable/bg_slider_thumb"
+                            android:thumbOffset="0dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
+                            android:splitTrack="false" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO LAUNCH" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.1" android:clickable="false" android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮 Enter Game" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
-                        <SeekBar android:id="@+id/sliderGame" android:layout_width="match_parent" android:layout_height="45dp" android:layout_gravity="center" android:max="100" android:progress="0" android:progressDrawable="@drawable/slider_track" android:thumb="@drawable/slider_thumb" android:thumbOffset="0dp" android:paddingStart="0dp" android:paddingEnd="0dp" android:splitTrack="false" />
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="65dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
+                        <SeekBar
+                            android:id="@+id/sliderGame"
+                            android:layout_width="match_parent"
+                            android:layout_height="55dp"
+                            android:layout_gravity="center"
+                            android:max="100"
+                            android:progress="0"
+                            android:progressDrawable="@drawable/bg_slider_track"
+                            android:thumb="@drawable/bg_slider_thumb"
+                            android:thumbOffset="0dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
+                            android:splitTrack="false" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO OPEN" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.1" android:clickable="false" android:focusable="false" />
                     </FrameLayout>
                 </LinearLayout>
