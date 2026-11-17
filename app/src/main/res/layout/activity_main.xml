@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="#020202">
 
-    <!-- LOGIN BACKGROUND -->
     <ImageView
         android:id="@+id/imgLoginBg"
         android:layout_width="match_parent"
@@ -12,7 +11,6 @@
         android:src="@drawable/bg_login_screen"
         android:scaleType="centerCrop" />
 
-    <!-- DASHBOARD BACKGROUND -->
     <ImageView
         android:id="@+id/imgDashBg"
         android:layout_width="match_parent"
@@ -199,7 +197,6 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="25dp" />
 
-                    <!-- LICENSE INPUT -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
@@ -231,7 +228,7 @@
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- VERIFY SLIDER -->
+                    <!-- VERIFY SLIDER (Premium Glow) -->
                     <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="75dp"
@@ -247,9 +244,9 @@
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="24dp"
-                            android:paddingStart="24dp"
-                            android:paddingEnd="24dp"
+                            android:thumbOffset="0dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
                             android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
@@ -261,8 +258,8 @@
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="10"
                             android:clickable="false"
                             android:focusable="false" />
                     </FrameLayout>
@@ -555,9 +552,9 @@
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="24dp"
-                            android:paddingStart="24dp"
-                            android:paddingEnd="24dp"
+                            android:thumbOffset="0dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
                             android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
@@ -569,8 +566,8 @@
                             android:textColor="#FFFFFF"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="8"
                             android:clickable="false"
                             android:focusable="false" />
                     </FrameLayout>
@@ -637,9 +634,9 @@
                             android:progress="0"
                             android:progressDrawable="@drawable/slider_track"
                             android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="24dp"
-                            android:paddingStart="24dp"
-                            android:paddingEnd="24dp"
+                            android:thumbOffset="0dp"
+                            android:paddingStart="0dp"
+                            android:paddingEnd="0dp"
                             android:background="@android:color/transparent"
                             android:splitTrack="false" />
 
@@ -651,8 +648,8 @@
                             android:textColor="#FFFFFF"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:shadowColor="#000000"
-                            android:shadowRadius="5"
+                            android:shadowColor="#FF0000"
+                            android:shadowRadius="8"
                             android:clickable="false"
                             android:focusable="false" />
                     </FrameLayout>
