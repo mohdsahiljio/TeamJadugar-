@@ -51,7 +51,7 @@ class FloatingService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var countdownRunnable: Runnable? = null
     private var slotsRunnable: Runnable? = null
-    private lateinit var overlayTextView: TextView
+    private var overlayTextView: TextView? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -118,21 +118,22 @@ class FloatingService : Service() {
         startSlotsRefresh()
     }
 
+    // 🔥 FIXED: Val cannot be reassigned bug
     private fun createOverlayView(): View {
         val layout = FrameLayout(this)
         layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
         
         overlayTextView = TextView(this)
-        overlayTextView.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-        overlayTextView.setTextColor(Color.parseColor("#FF1744"))
-        overlayTextView.textSize = 60f
-        overlayTextView.setTypeface(null, Typeface.BOLD)
-        overlayTextView.gravity = Gravity.CENTER
-        overlayTextView.shadowColor = Color.RED
-        overlayTextView.shadowRadius = 20f
-        overlayTextView.setPadding(20, 20, 20, 20)
+        overlayTextView?.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+        overlayTextView?.setTextColor(Color.parseColor("#FF1744"))
+        overlayTextView?.textSize = 60f
+        overlayTextView?.setTypeface(null, Typeface.BOLD)
+        overlayTextView?.gravity = Gravity.CENTER
+        overlayTextView?.shadowColor = Color.RED
+        overlayTextView?.shadowRadius = 20f
+        overlayTextView?.setPadding(20, 20, 20, 20)
         
-        layout.addView(overlayTextView)
+        overlayTextView?.let { layout.addView(it) }
         return layout
     }
 
@@ -326,13 +327,13 @@ class FloatingService : Service() {
     private fun showBigOverlay(text: String) {
         try {
             if (text == "3") {
-                overlayTextView.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
-                overlayTextView.textSize = 40f
-                overlayTextView.setBackgroundColor(Color.parseColor("#CC000000"))
+                overlayTextView?.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
+                overlayTextView?.textSize = 40f
+                overlayTextView?.setBackgroundColor(Color.parseColor("#CC000000"))
             } else {
-                overlayTextView.text = text
-                overlayTextView.textSize = 120f
-                overlayTextView.setBackgroundColor(Color.TRANSPARENT)
+                overlayTextView?.text = text
+                overlayTextView?.textSize = 120f
+                overlayTextView?.setBackgroundColor(Color.TRANSPARENT)
             }
             
             if (overlayView?.parent == null) {
@@ -385,7 +386,7 @@ class FloatingService : Service() {
         slotsRunnable = object : Runnable {
             override fun run() {
                 refreshSlotsOnce()
-                handler.postDelayed(this, 2000) // 🔥 Har 2 second update
+                handler.postDelayed(this, 2000) 
             }
         }
         handler.post(slotsRunnable!!)
