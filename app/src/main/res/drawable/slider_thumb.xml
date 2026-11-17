@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Outer Glow (Shadow) -->
     <item>
         <shape android:shape="oval">
             <solid android:color="#AA000000" />
             <size android:width="60dp" android:height="60dp" />
         </shape>
     </item>
-    
-    <!-- Metallic Base -->
     <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="oval">
-            <gradient
-                android:angle="270"
-                android:startColor="#FF2222"
-                android:endColor="#990000" />
+            <gradient android:angle="270" android:startColor="#FF2222" android:endColor="#990000" />
             <stroke android:width="2dp" android:color="#FFFFFF" />
         </shape>
     </item>
-
-    <!-- Inner Dark Core -->
     <item android:left="12dp" android:top="12dp" android:right="12dp" android:bottom="12dp">
         <shape android:shape="oval">
             <solid android:color="#1A0000" />
         </shape>
     </item>
-
-    <!-- Center Play Icon (Vector) -->
     <item android:gravity="center">
         <vector android:width="20dp" android:height="20dp" android:viewportWidth="24" android:viewportHeight="24">
             <path android:fillColor="#FFFFFF" android:pathData="M8,5 L16,12 L8,19 Z" />
