@@ -298,12 +298,21 @@ class FloatingService : Service() {
             try {
                 val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
                 val conn = url.openConnection() as HttpURLConnection
-                conn.connectTimeout = 3000; conn.readTimeout = 3000
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 5000
+                conn.readTimeout = 5000
+                
                 if (conn.responseCode == 200) {
-                    val json = JSONObject(conn.inputStream.bufferedReader().readText())
-                    val u = json.optInt("slots_used", 0)
-                    val t = json.optInt("slots_total", 10)
-                    handler.post { tvSlotsHeader?.text = "$u/$t" }
+                    val resp = conn.inputStream.bufferedReader().readText()
+                    val json = JSONObject(resp)
+                    
+                    val u = json.optInt("slots_used", json.optJSONObject("data")?.optInt("slots_used") ?: 0)
+                    val t = json.optInt("slots_total", json.optJSONObject("data")?.optInt("slots_total") ?: 10)
+                    
+                    handler.post { 
+                        tvSlotsHeader?.text = "$u/$t" 
+                        tvSlotsHeader?.setTextColor(Color.parseColor("#00FF00"))
+                    }
                 }
             } catch (_: Exception) {}
         }.start()
@@ -312,9 +321,8 @@ class FloatingService : Service() {
     private fun startSlotsRefresh() {
         slotsRunnable = object : Runnable {
             override fun run() {
-                // 🔥 FIX: Attack ke dauran bhi slots refresh honge
                 refreshSlotsOnce()
-                handler.postDelayed(this, 3000) // har 3 second mein
+                handler.postDelayed(this, 3000)
             }
         }
         handler.post(slotsRunnable!!)
