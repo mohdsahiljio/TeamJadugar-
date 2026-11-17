@@ -1,10 +1,8 @@
 package com.teamjadugar.apk
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.Uri
@@ -15,7 +13,6 @@ import android.os.CountDownTimer
 import android.provider.Settings
 import android.view.MotionEvent
 import android.view.View
-import android.view.animation.OvershootInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -116,12 +113,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 CUSTOM SLIDER DRAG & ANIMATION LOGIC
+    // 🔥 CUSTOM SLIDER DRAG LOGIC
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
         val thumb = sliderContainer.findViewById<FrameLayout>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
-        val progressGlow = sliderContainer.findViewById<View>(R.id.progressGlow)
-        
         text.text = textHint
 
         thumb.setOnTouchListener(object : View.OnTouchListener {
@@ -136,8 +131,7 @@ class MainActivity : AppCompatActivity() {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = event.rawX
                         isSliding = true
-                        // 3D Press Animation
-                        v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(100).start()
+                        v.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
                         text.animate().alpha(0.3f).setDuration(100).start()
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -150,10 +144,6 @@ class MainActivity : AppCompatActivity() {
                             if (newX > maxX) newX = maxX
                             
                             v.x = newX
-                            // Update Glowing Progress Bar
-                            progressGlow.layoutParams.width = (newX + v.width / 2).toInt()
-                            progressGlow.requestLayout()
-                            
                             initialX = event.rawX
                         }
                     }
@@ -163,25 +153,18 @@ class MainActivity : AppCompatActivity() {
                         text.animate().alpha(1f).setDuration(100).start()
 
                         val maxX = sliderContainer.width - v.width.toFloat()
-                        if (v.x >= maxX * 0.85f) { // 85% threshold
-                            // Success Animation
+                        if (v.x >= maxX * 0.85f) {
                             isCompleted = true
                             v.animate().x(maxX).setDuration(100).withEndAction {
                                 playSound("success")
                                 onSlideComplete()
-                                // Reset after 1 sec
                                 v.postDelayed({
-                                    v.animate().x(0f).setDuration(300).setInterpolator(OvershootInterpolator()).start()
-                                    progressGlow.layoutParams.width = 0
-                                    progressGlow.requestLayout()
+                                    v.animate().x(0f).setDuration(300).start()
                                     isCompleted = false
                                 }, 1000)
                             }.start()
                         } else {
-                            // Reset smoothly
-                            v.animate().x(0f).setDuration(300).setInterpolator(OvershootInterpolator()).start()
-                            progressGlow.layoutParams.width = 0
-                            progressGlow.requestLayout()
+                            v.animate().x(0f).setDuration(300).start()
                         }
                     }
                 }
@@ -223,7 +206,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Baaki tere purane functions (verifyKey, checkVpnPermission, etc.) waise hi rahenge...
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
         val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         
@@ -369,43 +351,4 @@ class MainActivity : AppCompatActivity() {
         return s.toLongOrNull()?.let { Date(if (it < 10_000_000_000L) it * 1000 else it) }
     }
 
-    private fun startSlotsRefresh(tvSlots: TextView) {
-        Thread {
-            while (isRefreshingSlots) {
-                try {
-                    val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 3000; conn.readTimeout = 3000
-                    if (conn.responseCode == 200) {
-                        val json = JSONObject(conn.inputStream.bufferedReader().readText())
-                        val u = json.optInt("slots_used", 0)
-                        val t = json.optInt("slots_total", 10)
-                        runOnUiThread { tvSlots.text = "$u/$t" }
-                    }
-                } catch (_: Exception) {}
-                try { Thread.sleep(5000) } catch (_: InterruptedException) { break }
-            }
-        }.apply { isDaemon = true; start() }
-    }
-
-    override fun onActivityResult(req: Int, res: Int, data: Intent?) {
-        super.onActivityResult(req, res, data)
-        if (req == 102) {
-            if (res == RESULT_OK) checkOverlayPermission()
-            else Toast.makeText(this, "VPN Permission Denied", Toast.LENGTH_SHORT).show()
-        } else if (req == 101) {
-            if (Settings.canDrawOverlays(this)) {
-                startFloatingServiceSafely()
-            } else {
-                Toast.makeText(this, "Overlay Permission Denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        isRefreshingSlots = false
-        timer?.cancel()
-        toneGenerator?.release()
-    }
-}
+    private fun startSl
