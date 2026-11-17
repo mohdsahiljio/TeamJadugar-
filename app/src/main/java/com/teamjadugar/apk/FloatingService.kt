@@ -45,6 +45,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvSlotsHeader: TextView? = null 
+    private var tvOverlayText: TextView? = null // 🔥 Overlay text global variable
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -97,7 +98,7 @@ class FloatingService : Service() {
 
         paramsOverlay = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
             type,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
@@ -108,7 +109,7 @@ class FloatingService : Service() {
         panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
         
-        overlayView = createOverlayView()
+        setupOverlayView() // 🔥 Overlay setup
 
         setupPanelUI()
         setupBubbleDrag()
@@ -117,24 +118,24 @@ class FloatingService : Service() {
         startSlotsRefresh()
     }
 
-    // 🔥 FIXED: Val cannot be reassigned bug
-    private fun createOverlayView(): View {
+    // 🔥 FIX: Overlay banane ka naya tarika
+    private fun setupOverlayView() {
         val layout = FrameLayout(this)
-        layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         
-        val textView = TextView(this)
-        textView.id = View.generateViewId()
-        textView.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
-        textView.setTextColor(Color.parseColor("#FF1744"))
-        textView.textSize = 60f
-        textView.setTypeface(null, Typeface.BOLD)
-        textView.gravity = Gravity.CENTER
-        textView.shadowColor = Color.RED
-        textView.shadowRadius = 20f
-        textView.setPadding(20, 20, 20, 20)
+        tvOverlayText = TextView(this)
+        val params = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+        tvOverlayText?.layoutParams = params
+        tvOverlayText?.setTextColor(Color.parseColor("#FF1744"))
+        tvOverlayText?.textSize = 120f
+        tvOverlayText?.setTypeface(null, Typeface.BOLD)
+        tvOverlayText?.gravity = Gravity.CENTER
+        tvOverlayText?.shadowColor = Color.RED
+        tvOverlayText?.shadowRadius = 20f
+        tvOverlayText?.setPadding(40, 40, 40, 40)
         
-        layout.addView(textView)
-        return layout
+        layout.addView(tvOverlayText)
+        overlayView = layout
     }
 
     private fun startAsForeground() {
@@ -326,20 +327,18 @@ class FloatingService : Service() {
 
     private fun showBigOverlay(text: String) {
         try {
-            val textView = (overlayView as FrameLayout).getChildAt(0) as TextView
-            
-            if (text == "3") {
-                textView.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
-                textView.textSize = 40f
-                textView.setBackgroundColor(Color.parseColor("#CC000000"))
-            } else {
-                textView.text = text
-                textView.textSize = 120f
-                textView.setBackgroundColor(Color.TRANSPARENT)
-            }
-            
             if (overlayView?.parent == null) {
                 windowManager.addView(overlayView, paramsOverlay)
+            }
+            
+            if (text == "3") {
+                tvOverlayText?.text = "BGMI MAA\nCHUDNA COMPLETE\nHO GAYA HAI"
+                tvOverlayText?.textSize = 40f
+                overlayView?.setBackgroundColor(Color.parseColor("#CC000000"))
+            } else {
+                tvOverlayText?.text = text
+                tvOverlayText?.textSize = 120f
+                overlayView?.setBackgroundColor(Color.TRANSPARENT)
             }
         } catch (e: Exception) {}
     }
