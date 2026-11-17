@@ -38,10 +38,12 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvBubbleTimer: TextView? = null
+    private var tvSlotsHeader: TextView? = null // 🔥 Live Slots ke liye
 
     private var selectedTime = 120
     private var isAttacking = false
     private val handler = Handler(Looper.getMainLooper())
+    private var countdownRunnable: Runnable? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -84,13 +86,15 @@ class FloatingService : Service() {
             x = 50; y = 150
         }
 
-        // 🔥 Yahan Layout ke naam fix kar diye hain
         panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
 
         setupPanelUI()
         setupBubbleDrag()
         showBubble()
+        
+        // 🔥 Live Slots Refresh Thread Start
+        startSlotsRefresh()
     }
 
     private fun setupPanelUI() {
@@ -101,6 +105,9 @@ class FloatingService : Service() {
         btnAttack = panelView?.findViewById(R.id.fBtnAttack)
         btnGetIp = panelView?.findViewById(R.id.fBtnGetIp)
         tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
+        
+        // Layout mein tvSlots ka ID use hoga
+        tvSlotsHeader = panelView?.findViewById(R.id.tvSlots) 
 
         val seekBar = panelView?.findViewById<SeekBar>(R.id.fSeekBar)
         seekBar?.max = 290
@@ -157,8 +164,6 @@ class FloatingService : Service() {
         Thread {
             try {
                 val key = SessionStore.currentKey(this)
-                val sessionToken = getSharedPreferences("AETHPrefs", MODE_PRIVATE).getString("session_token", "") ?: ""
-                
                 val url = URL("${KeyVault.getPanelUrl()}/connect/action")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
@@ -168,7 +173,6 @@ class FloatingService : Service() {
 
                 val body = JSONObject().apply {
                     put("key", key)
-                    put("session_token", sessionToken)
                     put("ip", ip)
                     put("port", port)
                     put("time", duration)
@@ -223,22 +227,29 @@ class FloatingService : Service() {
         }.start()
     }
 
+    // 🔥 FIXED COUNTDOWN: Ab UI thread pe chalega, crash nahi hoga
     private fun runCountdown(duration: Int) {
-        Thread {
-            for (i in duration downTo 1) {
-                handler.post {
-                    tvBubbleTimer?.text = "${i}s"
+        countdownRunnable?.let { handler.removeCallbacks(it) }
+        
+        var currentTime = duration
+        countdownRunnable = object : Runnable {
+            override fun run() {
+                if (currentTime > 0) {
+                    tvBubbleTimer?.text = "${currentTime}s"
                     tvBubbleTimer?.visibility = View.VISIBLE
+                    currentTime--
+                    handler.postDelayed(this, 1000)
+                } else {
+                    tvBubbleTimer?.visibility = View.GONE
+                    tvLog?.text = "> ATTACK FINISHED"
+                    tvLog?.setTextColor(Color.parseColor("#00FF00"))
+                    resetAttack()
+                    // 🔥 Attack ke baad slots refresh
+                    refreshSlotsOnce()
                 }
-                Thread.sleep(1000)
             }
-            handler.post {
-                tvBubbleTimer?.visibility = View.GONE
-                tvLog?.text = "> ATTACK FINISHED"
-                tvLog?.setTextColor(Color.parseColor("#00FF00"))
-                resetAttack()
-            }
-        }.start()
+        }
+        handler.post(countdownRunnable!!)
     }
 
     private fun resetAttack() {
@@ -246,6 +257,35 @@ class FloatingService : Service() {
         btnAttack?.text = "🚀 LAUNCH ATTACK"
         btnAttack?.isEnabled = true
         btnAttack?.setBackgroundColor(Color.parseColor("#B026FF"))
+    }
+    
+    private fun refreshSlotsOnce() {
+        Thread {
+            try {
+                val url = URL("${KeyVault.getPanelUrl()}/connect/slots")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.connectTimeout = 3000; conn.readTimeout = 3000
+                if (conn.responseCode == 200) {
+                    val json = JSONObject(conn.inputStream.bufferedReader().readText())
+                    val u = json.optInt("slots_used", 0)
+                    val t = json.optInt("slots_total", 10)
+                    handler.post { tvSlotsHeader?.text = "$u/$t" }
+                }
+            } catch (_: Exception) {}
+        }.start()
+    }
+
+    // 🔥 BACKGROUND REFRESH (Har 5 second mein)
+    private fun startSlotsRefresh() {
+        val slotsRunnable = object : Runnable {
+            override fun run() {
+                if (!isAttacking) { // Attack ke time refresh mat karo
+                    refreshSlotsOnce()
+                }
+                handler.postDelayed(this, 5000)
+            }
+        }
+        handler.post(slotsRunnable)
     }
 
     private fun setupBubbleDrag() {
@@ -289,6 +329,7 @@ class FloatingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         instance = null
+        countdownRunnable?.let { handler.removeCallbacks(it) }
         try { windowManager.removeView(panelView) } catch (_: Exception) {}
         try { windowManager.removeView(bubbleView) } catch (_: Exception) {}
     }
