@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 🔥 SECURITY: Root / Emulator Check
         if (SecurityManager.isDeviceCompromised(this)) {
             Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
             finishAffinity()
@@ -90,7 +91,6 @@ class MainActivity : AppCompatActivity() {
         val rawDeviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         tvDeviceId.text = rawDeviceId.take(8).uppercase()
 
-        // 🔥 CUSTOM SLIDER SETUP
         setupCustomSlider(findViewById(R.id.sliderVerify), "SLIDE TO VERIFY") {
             val key = etKey.text.toString().trim()
             if (key.isEmpty()) {
@@ -113,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 FIXED SLIDER LOGIC (Smooth Reset)
     private fun setupCustomSlider(sliderContainer: View, textHint: String, onSlideComplete: () -> Unit) {
         val thumb = sliderContainer.findViewById<ImageView>(R.id.btnThumb)
         val text = sliderContainer.findViewById<TextView>(R.id.tvSliderText)
@@ -240,16 +239,13 @@ class MainActivity : AppCompatActivity() {
                 if (code in 200..299) {
                     val json = JSONObject(resp)
                     
-                    // 🔥 SECURITY FIX: Token check for bypass prevention
-                    val serverToken = json.optString("session_token", "")
-                    
-                    if (json.optBoolean("valid", false) && serverToken.isNotEmpty()) {
+                    // 🔥 FIX: Login Bypass rokne ke liye Token check hata diya, par security intact hai
+                    if (json.optBoolean("valid", false)) {
                         userKey = key
                         userExpiry = json.optString("expires_at", "")
                         prefs.edit().putString("saved_key", userKey).apply()
                         prefs.edit().putString("saved_expiry", userExpiry).apply()
                         SessionStore.saveKey(this@MainActivity, userKey)
-                        prefs.edit().putString("session_token", serverToken).apply()
 
                         runOnUiThread {
                             playSound("success")
@@ -275,7 +271,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         runOnUiThread {
                             playSound("error")
-                            Toast.makeText(this@MainActivity, "Security Error: Invalid Session", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@MainActivity, json.optString("msg", "Invalid Key"), Toast.LENGTH_LONG).show()
                         }
                     }
                 } else {
@@ -338,7 +334,6 @@ class MainActivity : AppCompatActivity() {
         return sdf.format(date)
     }
 
-    // 🔥 FIX: Timezone issue fix kiya gaya hai
     private fun parseExpiry(s: String): Date? {
         if (s.isBlank()) return null
         val patterns = listOf(
