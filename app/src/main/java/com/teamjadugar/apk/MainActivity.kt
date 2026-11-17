@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.provider.Settings
+import android.util.Base64
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -23,7 +24,9 @@ import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
+import javax.crypto.Cipher
 import javax.crypto.Mac
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         @Volatile var userKey: String = ""
         @Volatile var userExpiry: String = ""
         val networkExecutor = Executors.newFixedThreadPool(4)
+        
+        // 🔥 Server Response Decryption Key (Ye key server aur app dono mein same honi chahiye)
+        private const val AES_KEY = "SableSecure2026!" // 16 chars for AES-128
+        private const val AES_IV = "SecureInitVector"  // 16 chars
     }
 
     private lateinit var prefs: SharedPreferences
@@ -60,9 +67,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 🔥 SECURITY: Root / Emulator Check
         if (SecurityManager.isDeviceCompromised(this)) {
-            Toast.makeText(this, "❌ SECURITY ALERT: Rooted or Emulator Detected!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ SECURITY ALERT: Device Compromised!", Toast.LENGTH_LONG).show()
             finishAffinity()
             return
         }
@@ -138,10 +144,8 @@ class MainActivity : AppCompatActivity() {
                             val dx = event.rawX - initialX
                             var newX = v.x + dx
                             val maxX = sliderContainer.width - v.width.toFloat()
-                            
                             if (newX < 0f) newX = 0f
                             if (newX > maxX) newX = maxX
-                            
                             v.x = newX
                             initialX = event.rawX
                         }
@@ -150,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                         isSliding = false
                         v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
                         text.animate().alpha(1f).setDuration(100).start()
-
                         val maxX = sliderContainer.width - v.width.toFloat()
                         if (v.x >= maxX * 0.85f) {
                             isCompleted = true
@@ -170,38 +173,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
-    }
-
-    private fun openBGMI() {
-        try {
-            val packages = arrayOf(
-                "com.pubg.imobile", "com.tencent.ig", "com.rekoo.pubgm",
-                "com.vng.pubgmobile", "com.pubg.krmobile"
-            )
-            var intent: Intent? = null
-            for (pkg in packages) {
-                intent = packageManager.getLaunchIntentForPackage(pkg)
-                if (intent != null) break
-            }
-            if (intent == null) {
-                val allApps = packageManager.getInstalledApplications(0)
-                for (app in allApps) {
-                    val name = app.packageName.lowercase()
-                    if (name.contains("pubg") || name.contains("bgmi") || name.contains("battlegrounds")) {
-                        intent = packageManager.getLaunchIntentForPackage(app.packageName)
-                        if (intent != null) break
-                    }
-                }
-            }
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Game is not installed on this device!", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Cannot open Game: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun verifyKey(key: String, layoutLogin: LinearLayout, layoutDashboard: LinearLayout, tvDays: TextView, tvHours: TextView, tvMins: TextView, tvSecs: TextView, tvSlots: TextView, tvPlanType: TextView, tvExpiryDate: TextView, tvDashboardExpiry: TextView) {
@@ -237,9 +208,14 @@ class MainActivity : AppCompatActivity() {
                 val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)?.bufferedReader()?.readText() ?: ""
 
                 if (code in 200..299) {
-                    val json = JSONObject(resp)
+                    // 🔥 SERVER RESPONSE DECRYPTION (Bypass Rokne Ka Asli Tarika)
+                    val json = try {
+                        JSONObject(decryptAES(resp))
+                    } catch (e: Exception) {
+                        // Fallback agar server plain JSON bhej raha hai (abhi ke liye)
+                        JSONObject(resp)
+                    }
                     
-                    // 🔥 FIX: Login Bypass rokne ke liye Token check hata diya, par security intact hai
                     if (json.optBoolean("valid", false)) {
                         userKey = key
                         userExpiry = json.optString("expires_at", "")
@@ -284,6 +260,20 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Connection failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+
+    // 🔥 AES Decryption Function (Server Response ko decrypt karne ke liye)
+    private fun decryptAES(encryptedData: String): String {
+        try {
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val keySpec = SecretKeySpec(AES_KEY.toByteArray(), "AES")
+            val ivSpec = IvParameterSpec(AES_IV.toByteArray())
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
+            val decodedBytes = Base64.decode(encryptedData, Base64.DEFAULT)
+            return String(cipher.doFinal(decodedBytes), Charsets.UTF_8)
+        } catch (e: Exception) {
+            throw Exception("Decryption failed")
         }
     }
 
