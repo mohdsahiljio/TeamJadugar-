@@ -33,7 +33,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- LOGIN SCREEN -->
+            <!-- ================= LOGIN SCREEN ================= -->
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -63,6 +63,7 @@
                     android:letterSpacing="0.3"
                     android:layout_marginBottom="40dp" />
 
+                <!-- LOGIN CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -107,6 +108,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="30dp" />
 
+                    <!-- INPUT BOX -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
@@ -130,39 +132,13 @@
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- KHATARNAK SLIDER 1 -->
-                    <FrameLayout
+                    <!-- VERIFY SLIDER (CUSTOM INCLUDE) -->
+                    <include
+                        android:id="@+id/customSliderVerify"
+                        layout="@layout/custom_slider_layout"
                         android:layout_width="match_parent"
                         android:layout_height="80dp"
-                        android:clipChildren="false"
-                        android:clipToPadding="false">
-
-                        <SeekBar
-                            android:id="@+id/sliderVerify"
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:layout_gravity="center"
-                            android:max="100"
-                            android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="0dp"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
-                            android:splitTrack="false" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="SLIDE TO VERIFY"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.15"
-                            android:clickable="false"
-                            android:focusable="false" />
-                    </FrameLayout>
+                        android:layout_marginBottom="20dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -175,7 +151,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- DASHBOARD -->
+            <!-- ================= DASHBOARD ================= -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -183,6 +159,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <!-- HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -195,6 +172,7 @@
                     <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="10sp" />
                 </LinearLayout>
 
+                <!-- TIMER CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -221,6 +199,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- LIVE SLOTS -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
@@ -238,46 +217,28 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- KHATARNAK SLIDER 2 (Floating) -->
+                <!-- FLOATING PANEL CARD -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀 Floating Panel" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="80dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
-                        <SeekBar
-                            android:id="@+id/sliderFloating"
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:layout_gravity="center"
-                            android:max="100"
-                            android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="0dp"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
-                            android:splitTrack="false" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO LAUNCH" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.1" android:clickable="false" android:focusable="false" />
-                    </FrameLayout>
+                    
+                    <include
+                        android:id="@+id/customSliderFloating"
+                        layout="@layout/custom_slider_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="10dp" />
                 </LinearLayout>
 
-                <!-- KHATARNAK SLIDER 3 (Game) -->
+                <!-- ENTER GAME CARD -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮 Enter Game" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="80dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
-                        <SeekBar
-                            android:id="@+id/sliderGame"
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:layout_gravity="center"
-                            android:max="100"
-                            android:progress="0"
-                            android:progressDrawable="@drawable/slider_track"
-                            android:thumb="@drawable/slider_thumb"
-                            android:thumbOffset="0dp"
-                            android:paddingStart="0dp"
-                            android:paddingEnd="0dp"
-                            android:splitTrack="false" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="SLIDE TO OPEN" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:letterSpacing="0.1" android:clickable="false" android:focusable="false" />
-                    </FrameLayout>
+                    
+                    <include
+                        android:id="@+id/customSliderGame"
+                        layout="@layout/custom_slider_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_marginTop="10dp" />
                 </LinearLayout>
 
                 <!-- INFO -->
