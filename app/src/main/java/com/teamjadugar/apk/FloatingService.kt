@@ -84,8 +84,9 @@ class FloatingService : Service() {
             x = 50; y = 150
         }
 
-        panelView = LayoutInflater.from(this).inflate(R.layout.layout_floating_panel, null)
-        bubbleView = LayoutInflater.from(this).inflate(R.layout.layout_floating_bubble, null)
+        // 🔥 Yahan Layout ke naam fix kar diye hain
+        panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null)
+        bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
 
         setupPanelUI()
         setupBubbleDrag()
@@ -167,7 +168,7 @@ class FloatingService : Service() {
 
                 val body = JSONObject().apply {
                     put("key", key)
-                    put("session_token", sessionToken) // 🔥 Security check
+                    put("session_token", sessionToken)
                     put("ip", ip)
                     put("port", port)
                     put("time", duration)
