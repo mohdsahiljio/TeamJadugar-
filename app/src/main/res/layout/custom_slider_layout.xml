@@ -23,7 +23,7 @@
         android:textStyle="bold"
         android:letterSpacing="0.15" />
 
-    <!-- Draggable Button (Thin Arrow Shape) -->
+    <!-- Draggable Button (Sharp Arrow Shape) -->
     <FrameLayout
         android:id="@+id/btnThumb"
         android:layout_width="55dp"
@@ -32,10 +32,10 @@
         android:background="@drawable/bg_slider_thumb"
         android:elevation="8dp">
 
-        <!-- Right Arrow Icon -->
+        <!-- Right Arrow Icon (Rotation = 180 karke play icon ko arrow banaya) -->
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_media_play"
             android:rotation="0"
