@@ -3,6 +3,7 @@ package com.teamjadugar.apk
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
@@ -47,6 +48,7 @@ class FloatingService : Service() {
     private var isAttacking = false
     private val handler = Handler(Looper.getMainLooper())
     private var countdownRunnable: Runnable? = null
+    private var slotsRunnable: Runnable? = null
 
     companion object {
         var instance: FloatingService? = null
@@ -64,11 +66,7 @@ class FloatingService : Service() {
         super.onCreate()
         instance = this
 
-        try {
-            startForegroundService()
-        } catch (e: Exception) {
-            // Ignore if notification fails
-        }
+        startAsForeground()
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
@@ -105,24 +103,29 @@ class FloatingService : Service() {
         startSlotsRefresh()
     }
 
-    private fun startForegroundService() {
-        val channelId = "floating_service_channel"
+    private fun startAsForeground() {
+        val channelId = "aeth_service_channel"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                channelId, "AETH DDOS Service",
+                channelId, "AETH DDOS Active",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
 
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification: Notification = Notification.Builder(this, channelId)
-            .setContentTitle("AETH DDOS Active")
-            .setContentText("Floating panel is running")
+            .setContentTitle("AETH DDOS Running")
+            .setContentText("Floating panel is active in background")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentIntent(pendingIntent)
             .build()
 
-        // 🔥 TRY-CATCH: Taaki permission na hone par bhi crash na ho
         try {
             startForeground(1, notification)
         } catch (e: Exception) {
@@ -153,13 +156,14 @@ class FloatingService : Service() {
         })
 
         panelView?.findViewById<View>(R.id.btnMinimize)?.setOnClickListener {
-            panelView?.let { windowManager.removeView(it) }
-            bubbleView?.let { windowManager.addView(it, paramsBubble) }
+            try {
+                windowManager.removeView(panelView)
+                windowManager.addView(bubbleView, paramsBubble)
+            } catch (e: Exception) {}
         }
 
-        // 🔥 CROSS BUTTON (Band karne ka asli tarika)
         panelView?.findViewById<View>(R.id.btnClose)?.setOnClickListener {
-            stopSelf() // Ye service ko band karega aur window hat jayegi
+            stopSelf() 
         }
 
         panelView?.findViewById<Button>(R.id.fBtnVpnOff)?.setOnClickListener {
@@ -306,15 +310,14 @@ class FloatingService : Service() {
     }
 
     private fun startSlotsRefresh() {
-        val slotsRunnable = object : Runnable {
+        slotsRunnable = object : Runnable {
             override fun run() {
-                if (!isAttacking) { 
-                    refreshSlotsOnce()
-                }
-                handler.postDelayed(this, 5000)
+                // 🔥 FIX: Attack ke dauran bhi slots refresh honge
+                refreshSlotsOnce()
+                handler.postDelayed(this, 3000) // har 3 second mein
             }
         }
-        handler.post(slotsRunnable)
+        handler.post(slotsRunnable!!)
     }
 
     private fun setupBubbleDrag() {
@@ -336,8 +339,10 @@ class FloatingService : Service() {
                 }
                 MotionEvent.ACTION_UP -> {
                     if (!dragged) {
-                        windowManager.removeView(bubbleView)
-                        windowManager.addView(panelView, paramsPanel)
+                        try {
+                            windowManager.removeView(bubbleView)
+                            windowManager.addView(panelView, paramsPanel)
+                        } catch (e: Exception) {}
                     }
                     true
                 }
@@ -356,11 +361,10 @@ class FloatingService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        // 🔥 App recent se clear karne par bhi service zinda rahegi
         val restartServiceIntent = Intent(applicationContext, this.javaClass)
         restartServiceIntent.setPackage(packageName)
-        val restartServicePendingIntent = android.app.PendingIntent.getService(
-            applicationContext, 1, restartServiceIntent, android.app.PendingIntent.FLAG_ONE_SHOT or android.app.PendingIntent.FLAG_IMMUTABLE
+        val restartServicePendingIntent = PendingIntent.getService(
+            applicationContext, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
         val alarmService = getSystemService(ALARM_SERVICE) as android.app.AlarmManager
         alarmService.set(
@@ -375,6 +379,7 @@ class FloatingService : Service() {
         super.onDestroy()
         instance = null
         countdownRunnable?.let { handler.removeCallbacks(it) }
+        slotsRunnable?.let { handler.removeCallbacks(it) }
         try { windowManager.removeView(panelView) } catch (_: Exception) {}
         try { windowManager.removeView(bubbleView) } catch (_: Exception) {}
     }
