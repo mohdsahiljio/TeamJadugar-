@@ -1,5 +1,8 @@
 package com.teamjadugar.apk
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.graphics.Color
@@ -38,7 +41,7 @@ class FloatingService : Service() {
     private var btnGetIp: Button? = null
     private var tvLog: TextView? = null
     private var tvBubbleTimer: TextView? = null
-    private var tvSlotsHeader: TextView? = null // 🔥 Live Slots ke liye
+    private var tvSlotsHeader: TextView? = null 
 
     private var selectedTime = 120
     private var isAttacking = false
@@ -60,6 +63,12 @@ class FloatingService : Service() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        try {
+            startForegroundService()
+        } catch (e: Exception) {
+            // Ignore if notification fails
+        }
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_PHONE
@@ -93,8 +102,32 @@ class FloatingService : Service() {
         setupBubbleDrag()
         showBubble()
         
-        // 🔥 Live Slots Refresh Thread Start
         startSlotsRefresh()
+    }
+
+    private fun startForegroundService() {
+        val channelId = "floating_service_channel"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId, "AETH DDOS Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+
+        val notification: Notification = Notification.Builder(this, channelId)
+            .setContentTitle("AETH DDOS Active")
+            .setContentText("Floating panel is running")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .build()
+
+        // 🔥 TRY-CATCH: Taaki permission na hone par bhi crash na ho
+        try {
+            startForeground(1, notification)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun setupPanelUI() {
@@ -105,8 +138,6 @@ class FloatingService : Service() {
         btnAttack = panelView?.findViewById(R.id.fBtnAttack)
         btnGetIp = panelView?.findViewById(R.id.fBtnGetIp)
         tvBubbleTimer = bubbleView?.findViewById(R.id.tvBubbleTimer)
-        
-        // Layout mein tvSlots ka ID use hoga
         tvSlotsHeader = panelView?.findViewById(R.id.tvSlots) 
 
         val seekBar = panelView?.findViewById<SeekBar>(R.id.fSeekBar)
@@ -126,8 +157,9 @@ class FloatingService : Service() {
             bubbleView?.let { windowManager.addView(it, paramsBubble) }
         }
 
+        // 🔥 CROSS BUTTON (Band karne ka asli tarika)
         panelView?.findViewById<View>(R.id.btnClose)?.setOnClickListener {
-            stopSelf()
+            stopSelf() // Ye service ko band karega aur window hat jayegi
         }
 
         panelView?.findViewById<Button>(R.id.fBtnVpnOff)?.setOnClickListener {
@@ -227,7 +259,6 @@ class FloatingService : Service() {
         }.start()
     }
 
-    // 🔥 FIXED COUNTDOWN: Ab UI thread pe chalega, crash nahi hoga
     private fun runCountdown(duration: Int) {
         countdownRunnable?.let { handler.removeCallbacks(it) }
         
@@ -244,7 +275,6 @@ class FloatingService : Service() {
                     tvLog?.text = "> ATTACK FINISHED"
                     tvLog?.setTextColor(Color.parseColor("#00FF00"))
                     resetAttack()
-                    // 🔥 Attack ke baad slots refresh
                     refreshSlotsOnce()
                 }
             }
@@ -275,11 +305,10 @@ class FloatingService : Service() {
         }.start()
     }
 
-    // 🔥 BACKGROUND REFRESH (Har 5 second mein)
     private fun startSlotsRefresh() {
         val slotsRunnable = object : Runnable {
             override fun run() {
-                if (!isAttacking) { // Attack ke time refresh mat karo
+                if (!isAttacking) { 
                     refreshSlotsOnce()
                 }
                 handler.postDelayed(this, 5000)
@@ -324,6 +353,22 @@ class FloatingService : Service() {
             Toast.makeText(this, "Overlay permission missing!", Toast.LENGTH_SHORT).show()
             stopSelf()
         }
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        // 🔥 App recent se clear karne par bhi service zinda rahegi
+        val restartServiceIntent = Intent(applicationContext, this.javaClass)
+        restartServiceIntent.setPackage(packageName)
+        val restartServicePendingIntent = android.app.PendingIntent.getService(
+            applicationContext, 1, restartServiceIntent, android.app.PendingIntent.FLAG_ONE_SHOT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+        val alarmService = getSystemService(ALARM_SERVICE) as android.app.AlarmManager
+        alarmService.set(
+            android.app.AlarmManager.ELAPSED_REALTIME,
+            android.os.SystemClock.elapsedRealtime() + 1000,
+            restartServicePendingIntent
+        )
+        super.onTaskRemoved(rootIntent)
     }
 
     override fun onDestroy() {
