@@ -33,7 +33,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ================= LOGIN SCREEN ================= -->
+            <!-- LOGIN SCREEN -->
             <LinearLayout
                 android:id="@+id/layoutLogin"
                 android:layout_width="match_parent"
@@ -63,7 +63,6 @@
                     android:letterSpacing="0.3"
                     android:layout_marginBottom="40dp" />
 
-                <!-- LOGIN CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,7 +107,6 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="30dp" />
 
-                    <!-- INPUT BOX -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
@@ -132,10 +130,10 @@
                             android:inputType="textVisiblePassword" />
                     </LinearLayout>
 
-                    <!-- VERIFY SLIDER (Height 65dp) -->
+                    <!-- KHATARNAK SLIDER 1 -->
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="75dp"
+                        android:layout_height="80dp"
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
@@ -177,7 +175,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ================= DASHBOARD ================= -->
+            <!-- DASHBOARD -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -185,7 +183,6 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -198,7 +195,6 @@
                     <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="10sp" />
                 </LinearLayout>
 
-                <!-- TIMER CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -225,7 +221,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- LIVE SLOTS -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
@@ -243,10 +238,10 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- SLIDER CARDS (Height 65dp) -->
+                <!-- KHATARNAK SLIDER 2 (Floating) -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀 Floating Panel" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="75dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="80dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
                         <SeekBar
                             android:id="@+id/sliderFloating"
                             android:layout_width="match_parent"
@@ -264,9 +259,10 @@
                     </FrameLayout>
                 </LinearLayout>
 
+                <!-- KHATARNAK SLIDER 3 (Game) -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮 Enter Game" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" />
-                    <FrameLayout android:layout_width="match_parent" android:layout_height="75dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
+                    <FrameLayout android:layout_width="match_parent" android:layout_height="80dp" android:layout_marginTop="10dp" android:clipChildren="false" android:clipToPadding="false">
                         <SeekBar
                             android:id="@+id/sliderGame"
                             android:layout_width="match_parent"
