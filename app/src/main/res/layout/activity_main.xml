@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     android:background="#050505">
 
-    <!-- Background Image -->
+    <!-- Background Image (Hoodie Wala) -->
     <ImageView
         android:id="@+id/imgLoginBg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/bg_login_screen"
         android:scaleType="centerCrop"
-        android:alpha="0.6" />
+        android:alpha="0.7" />
 
     <ImageView
         android:id="@+id/imgDashBg"
@@ -20,10 +20,9 @@
         android:layout_height="match_parent"
         android:src="@drawable/bg_dashboard"
         android:scaleType="centerCrop"
-        android:alpha="0.3"
+        android:alpha="0.4"
         android:visibility="gone" />
 
-    <!-- Smooth Scroll -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +45,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
-                <!-- Title Section -->
+                <!-- Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -56,7 +55,7 @@
                     android:textStyle="bold|italic"
                     android:shadowColor="#FF0000"
                     android:shadowRadius="25"
-                    android:letterSpacing="0.15"
+                    android:letterSpacing="0.1"
                     android:fontFamily="sans-serif-condensed" />
 
                 <TextView
@@ -68,7 +67,7 @@
                     android:letterSpacing="0.4"
                     android:layout_marginBottom="30dp" />
 
-                <!-- Premium Glass Card -->
+                <!-- Premium Glass Card (Frosted Effect) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -168,7 +167,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ================= DASHBOARD ================= -->
+            <!-- ================= DASHBOARD (Same rahega) ================= -->
             <LinearLayout
                 android:id="@+id/layoutDashboard"
                 android:layout_width="match_parent"
@@ -176,7 +175,6 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -190,7 +188,6 @@
                     <TextView android:id="@+id/tvDashboardExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="Loading..." android:textColor="#FFFFFF" android:textSize="11sp" />
                 </LinearLayout>
 
-                <!-- TIMER CARD -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -218,7 +215,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- LIVE SLOTS & DEVICE ID -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
@@ -238,7 +234,6 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- FLOATING PANEL SLIDER -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card_glass" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp" android:elevation="6dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🚀 Floating Panel" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" android:letterSpacing="0.05" />
                     <include
@@ -249,7 +244,6 @@
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 
-                <!-- ENTER GAME SLIDER -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_premium_card_glass" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="15dp" android:elevation="6dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮 Enter Game" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" android:letterSpacing="0.05" />
                     <include
@@ -260,7 +254,6 @@
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 
-                <!-- SYSTEM INFO -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
